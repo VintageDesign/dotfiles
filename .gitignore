@@ -1,0 +1,15 @@
+# Ignore everything
+/*
+
+# Everything But these files
+!.gitignore
+!.bash_aliases
+!.bashrc
+!.gitconfig
+!.vimrc
+!README.md
+!update.sh
+
+# Everything but these directories
+!.vim/
+!bin/
