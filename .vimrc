@@ -11,15 +11,25 @@ set smarttab
 
 set number "line numbers
 set cursorline
+set showcmd
+set scrolloff=4
 
 set wildmenu
 set lazyredraw
 set showmatch "Matching brackets highlighted
+" Highlight as characters are entered
 set incsearch
 set hlsearch "Must be turned off manually
+" Turn off search highlighting with enter
+nnoremap <CR> :nohl<CR><CR>
 
-" turn off search highlight `,<space>`
-nnoremap <leader><space> :nohlsearch<CR>
+" Use ctrl+[jk] to move lines up and down in normal, insert, and visual mode.
+nnoremap <C-j> :m .+1<CR>==
+nnoremap <C-k> :m .-2<CR>==
+inoremap <C-j> <Esc>:m .+1<CR>==gi
+inoremap <C-k> <Esc>:m .-2<CR>==gi
+vnoremap <C-j> :m '>+1<CR>gv=gv
+vnoremap <C-k> :m '<-2<CR>gv=gv
 
 set foldenable "enable folding
 set foldlevelstart=15
@@ -28,8 +38,26 @@ set foldnestmax=10 "max fold level
 nnoremap <space> za "Space za folds, unfolds
 set foldmethod=indent
 
+" Visual movement
 nnoremap j gj
 nnoremap k gk
+
+" Move to beginning and end of line
+nnoremap B ^
+nnoremap E $
+" Unset $ and ^ to deter vim professionals from using my device.
+nnoremap $ <nop>
+nnoremap ^ <nop>
+
+" Move the cursor to the left after inserting two matching containers
+inoremap '' ''<Left>
+inoremap "" ""<Left>
+inoremap () ()<Left>
+inoremap <> <><Left>
+inoremap {} {}<Left>
+inoremap [] []<Left>
+
+set complete=.
 
 " Cursor
 set cursorline
