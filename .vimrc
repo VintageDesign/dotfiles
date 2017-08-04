@@ -9,19 +9,23 @@ set expandtab
 set shiftwidth=4
 set smarttab
 
-set number "line numbers
-set cursorline
+set number
 set showcmd
+" Keep the cursor 6 lines from bottom of screen.
 set scrolloff=6
-" Disable auto indent on paste
 set paste
+"set nopaste
+" Toggle paste mode with f3
+set pastetoggle=<F3>
 
 set wildmenu
 set lazyredraw
-set showmatch "Matching brackets highlighted
+"Matching brackets highlighted
+set showmatch
 " Highlight as characters are entered
 set incsearch
-set hlsearch "Must be turned off manually
+"Must be turned off manually
+set hlsearch
 " Turn off search highlighting with enter
 nnoremap <CR> :nohl<CR><CR>
 
@@ -59,14 +63,68 @@ inoremap <> <><Left>
 inoremap {} {}<Left>
 inoremap [] []<Left>
 
+let s:comment_map = {
+    \   "c": '\/\/',
+    \   "cpp": '\/\/',
+    \   "go": '\/\/',
+    \   "java": '\/\/',
+    \   "javascript": '\/\/',
+    \   "lua": '--',
+    \   "scala": '\/\/',
+    \   "php": '\/\/',
+    \   "python": '#',
+    \   "ruby": '#',
+    \   "rust": '\/\/',
+    \   "sh": '#',
+    \   "desktop": '#',
+    \   "fstab": '#',
+    \   "conf": '#',
+    \   "profile": '#',
+    \   "bashrc": '#',
+    \   "bash_profile": '#',
+    \   "mail": '>',
+    \   "eml": '>',
+    \   "bat": 'REM',
+    \   "ahk": ';',
+    \   "vim": '"',
+    \   "tex": '%',
+    \ }
+
+function! ToggleComment()
+    if has_key(s:comment_map, &filetype)
+        let comment_leader = s:comment_map[&filetype]
+        if getline('.') =~ "^\\s*" . comment_leader . " "
+            " Uncomment the line
+            execute "silent s/^\\(\\s*\\)" . comment_leader . " /\\1/"
+        else
+            if getline('.') =~ "^\\s*" . comment_leader
+                " Uncomment the line
+                execute "silent s/^\\(\\s*\\)" . comment_leader . "/\\1/"
+            else
+                " Comment the line
+                execute "silent s/^\\(\\s*\\)/\\1" . comment_leader . " /"
+            end
+        end
+    else
+        echo "No comment leader found for filetype"
+    end
+endfunction
+
+" Comments a single line, use visual mode and gc to comment blocks
+nnoremap <C-_> :call ToggleComment()<CR>
+vnoremap <C-_> :call ToggleComment()<CR>
+
+set complete=.
+
 " Cursor
 set cursorline
 set cursorcolumn
+"hi Cursor guifg=Green guibg=Black
+"hi CursorLine guibg=#333333
+"hi CursorColumn guibg=#333333
 
-" Nerdtree settings
 autocmd vimenter * NERDTree
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 map <C-n> :NERDTreeToggle<CR>
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-
