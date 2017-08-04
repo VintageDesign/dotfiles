@@ -12,7 +12,9 @@ set smarttab
 set number "line numbers
 set cursorline
 set showcmd
-set scrolloff=4
+set scrolloff=6
+" Disable auto indent on paste
+set paste
 
 set wildmenu
 set lazyredraw
@@ -57,15 +59,11 @@ inoremap <> <><Left>
 inoremap {} {}<Left>
 inoremap [] []<Left>
 
-set complete=.
-
 " Cursor
 set cursorline
-"set cursorcolumn
-"hi Cursor guifg=Green guibg=Black
-"hi CursorLine guibg=#333333
-"hi CursorColumn guibg=#333333
+set cursorcolumn
 
+" Nerdtree settings
 autocmd vimenter * NERDTree
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif

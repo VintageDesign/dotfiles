@@ -105,6 +105,6 @@ if ! shopt -oq posix; then
 fi
 
 export PATH="$HOME/bin:$PATH"
-#source "$HOME/bin/utils.sh"
-source "/etc/profile.d/utils.sh"
+source "$HOME/bin/utils.sh"
+# source "/etc/profile.d/utils.sh"
 
