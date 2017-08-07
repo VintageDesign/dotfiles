@@ -30,6 +30,12 @@ rhyme()
     { cat /usr/share/dict/words; printf %s\\n "$1"; } | rev | sort | rev | grep -FxC15 -e "${1?}" | grep -Fxve "$1" | shuf -n1;
 }
 
+# Give list of unique commands in history and count their usage.
+uhist()
+{
+	history | awk '{print $2}' | awk 'BEGIN {FS="|"} {print $1}' | sort | uniq -c | sort -r
+}
+
 # grabs the local IP
 localip()
 {
