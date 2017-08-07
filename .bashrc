@@ -15,7 +15,7 @@ esac
 HISTCONTROL=ignorebot
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=100
+HISTSIZE=5000
 HISTFILESIZE=20000
 
 # check the window size after each command and, if necessary,
