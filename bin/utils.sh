@@ -36,6 +36,12 @@ uhist()
 	history | awk '{print $2}' | awk 'BEGIN {FS="|"} {print $1}' | sort | uniq -c | sort -r
 }
 
+# Lists your path one item per line
+print_path()
+{
+	echo $PATH | tr ':' '\n'
+}
+
 # grabs the local IP
 localip()
 {
