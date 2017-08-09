@@ -13,8 +13,6 @@ set number
 set showcmd
 " Keep the cursor 6 lines from bottom of screen.
 set scrolloff=6
-set paste
-"set nopaste
 " Toggle paste mode with f3
 set pastetoggle=<F3>
 
