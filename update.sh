@@ -14,25 +14,14 @@ fi
 
 # Pull vim plugin repositories in .vim/bundle/
 mkdir -p ~/.vim/bundle/
-cd ~/.vim/bundle/
+cd ~/.vim
 
-echo "Updating vim-sensible"
-if [ ! -d "$HOME/.vim/bundle/vim-sensible" ]; then
-    git clone https://github.com/tpope/vim-sensible.git
-else
-    cd vim-sensible && git pull && cd ..
-fi
-echo "Updating nerdtree"
-if [ ! -d "$HOME/.vim/bundle/nerdtree" ]; then
-    git clone https://github.com/tpope/nerdtree.git
-else
-    cd nerdtree && git pull && cd ..
-fi
-echo "Updating vim-commentary"
-if [ ! -d "$HOME/.vim/bundle/vim-commentary" ]; then
-    git clone https://github.com/tpope/vim-commentary.git
-else
-    cd vim-commentary && git pull && cd ..
-fi
+git submodule add https://github.com/flazz/vim-colorschemes.git bundle/colorschemes
+git submodule add https://github.com/tpope/vim-sensible.git bundle/sensible
+git submodule add https://github.com/scrooloose/nerdtree.git bundle/nerdtree
+git submodule add https://github.com/tpope/vim-commentary.git bundle/commentary
 
 cd ~
+
+git submodule update --remote
+

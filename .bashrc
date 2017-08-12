@@ -77,7 +77,6 @@ else
 fi
 unset color_prompt force_color_prompt
 
-# Allow colored man pages.
 man() {
 	env \
 		LESS_TERMCAP_mb=$(printf "\e[1;31m") \

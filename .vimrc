@@ -1,8 +1,7 @@
 execute pathogen#infect()
 
-colorscheme badwolf " saved in ~/.vim/colors/*.vim
+colorscheme wargrey
 
-syntax enable
 set tabstop=4 " Number of visual spaces per TAB
 set softtabstop=0 "Number of spaces in tab when editing
 set expandtab

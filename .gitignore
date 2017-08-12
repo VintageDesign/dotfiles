@@ -12,5 +12,4 @@
 
 # Everything but these directories
 !.vim/
-.vim/bundle/*
 !bin/
