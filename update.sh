@@ -18,5 +18,5 @@ cd ~/.vim
 
 cd ~
 
-git submodule update --remote
+git submodule update --remote --recursive --init
 
