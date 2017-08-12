@@ -6,6 +6,7 @@
 !.bash_aliases
 !.bashrc
 !.gitconfig
+!.gitmodules
 !.vimrc
 !README.md
 !update.sh
