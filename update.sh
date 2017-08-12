@@ -16,11 +16,6 @@ fi
 mkdir -p ~/.vim/bundle/
 cd ~/.vim
 
-git submodule add https://github.com/flazz/vim-colorschemes.git bundle/colorschemes
-git submodule add https://github.com/tpope/vim-sensible.git bundle/sensible
-git submodule add https://github.com/scrooloose/nerdtree.git bundle/nerdtree
-git submodule add https://github.com/tpope/vim-commentary.git bundle/commentary
-
 cd ~
 
 git submodule update --remote
