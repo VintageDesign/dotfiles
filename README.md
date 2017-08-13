@@ -27,5 +27,8 @@ Running `./configure.sh` will prompt for the following:
 
 ## TODO:
 * Reduce `$HOME` clutter?
-* Improve/clean up `.bashrc` and `.bash_aliases`
+* Import and configure fonts
+* Edit `/etc/hosts`
+* Add `~/.ssh/config`
+* Good way to generate/store ssh keys
 
