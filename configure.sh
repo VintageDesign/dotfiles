@@ -110,7 +110,7 @@ read -p "Install essential packages? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
 	echo "Installing Packages...."
-	sudo apt install traceroute htop screen screenfetch pandoc linux-tools-common linux-tools-generic printer-driver-escpr libfreetype6-dev pep8 atom openssh-server chktex texmaker pithos gcc g++ make clang shellcheck gdb
+	sudo apt install traceroute htop screen screenfetch pandoc linux-tools-common linux-tools-generic printer-driver-escpr libfreetype6-dev pep8 atom openssh-server chktex texmaker pithos gcc g++ make clang shellcheck gdb tree
 fi
 
 # Install useful Python (3) packages
@@ -130,11 +130,20 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 	sudo -H pip3 install jupyter
 fi
 
+# Install Jekyll
+read -p "Install Jekyll? (y/N) " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo "Installing Jekyll..."
+    sudo apt install ruby ruby-dev gcc make
+    sudo gem install jekyll bundler jekyll-sitemap
+fi
+
 # Atom packages
 read -p "Install Atom packages? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-	apm install linter linter-chktex linter-gcc linter-pep8 linter-shellcheck intentions busy-signal linter-ui-default autoclose-html autocomplete-python highlight-selected language-latex language-liquid language-viml language-haskell markdown-preview-plus minimap minimap-cursorline minimap-find-and-replace minimap-git-diff minimap-highlight-selected tabs-to-spaces autocomplete-clang file-icons file-watcher highlight-selected gruvbox-plus-syntax 
+	apm install linter linter-chktex linter-gcc linter-pep8 linter-shellcheck intentions busy-signal linter-ui-default autoclose-html autocomplete-python highlight-selected language-latex language-liquid language-viml language-haskell markdown-preview-plus minimap minimap-cursorline minimap-find-and-replace minimap-git-diff minimap-highlight-selected tabs-to-spaces autocomplete-clang file-icons file-watcher highlight-selected gruvbox-plus-syntax
 fi
 
 # Update and upgrade system
@@ -146,3 +155,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 	sudo apt autoremove && sudo apt autoclean
 fi
 
+# sudo cp assets/Fonts/Meslo/MesloLGSDZ-Regular.ttf /usr/share/fonts/
+# sudo cp assets/Fonts/Apple\ San\ Fransisco/SystemSanFranciscoDisplayBold.ttf assets/Fonts/Apple\ San\ Fransisco/SystemSanFranciscoDisplayRegular.ttf /usr/share/fonts/
+#
+# sudo fc-cache -fv
