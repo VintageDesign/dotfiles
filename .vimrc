@@ -52,14 +52,6 @@ nnoremap E $
 nnoremap $ <nop>
 nnoremap ^ <nop>
 
-" Move the cursor to the left after inserting two matching containers
-inoremap '' ''<Left>
-inoremap "" ""<Left>
-inoremap () ()<Left>
-inoremap <> <><Left>
-inoremap {} {}<Left>
-inoremap [] []<Left>
-
 let s:comment_map = {
     \   "c": '\/\/',
     \   "cpp": '\/\/',

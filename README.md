@@ -1,22 +1,31 @@
 # dotfiles
 My personal dotfiles and shell scripts
 
-* Clone repository into `~/`.
-* Run `update.sh` to unpack repo into `~/`, delete the repository (must be named `dotfiles`)
-    - This will move *all* files to `~/`, including `.git/`, and `.gitignore`, effectively turning your home directory into this repository. 
-    - The `.gitignore` file *should* be set up to ignore everything correctly.
-    - Run `update.sh` to update the vim plugin repositories, or reclone them if they have been deleted.
+* Clone repository into `~/dotfiles/`
+* Run `./configure.sh` and answer `y` to all prompts as necessary
+
+---
+
+## Documentation:
+Running `./configure.sh` will prompt for the following:
+
+* Install `git`, `vim`, and `unp`. No system is complete without these essentials
+* Clone this repository - useful for keeping this script on a flash drive for emergency Linux installs...
+* Unpack the contents of this repository into `~/`, including `.git/` and `.gitignore`. The `.gitignore` file ignores everything but the contents of this repository. Also pulls the vim plugins submodules determined by `.gitmodules`
+* Update this repository (pull) and vim plugin submodules. Not necessary if immediately preceded by the above step
+* Generate GitHub SSH key. Generates an SSH key and saves it as `~/.ssh/github`. Does not add the SSH key to GitHub account, but gives reminder and link
+* Since the script to clone this repository clones it with HTTPS, prompt for setting the remote URL to use SSH. Not done be default to allow for setting up SSH keys
+* Install Google Chrome
+* Add [Atom](https:atom.io) apt repository and Oracle Java repository
+* Install essential packages. Things like system tools, `gcc`, `g++`, `gdb`, etc
+* Install Python (version 3) SciPy stack and related
+* Install Jupyter
+* Install Atom packages
+* Update and upgrade system
+
+---
 
 ## TODO:
-
-* Rename `update.sh` to `unpack.sh`?
-* Reduce clutter in `~/`
-* Work out a system configuration script that clones and unpacks this repository
-* Make `update.sh`/`unpack.sh` more sophisticated...
-	- Check for pre-existing Git repository in `~/`
-	- Fetch changes
-	- If there are local changes, prompt to update master
-* Use branches to allow for system-dependent configuration?
+* Reduce `$HOME` clutter?
 * Improve/clean up `.bashrc` and `.bash_aliases`
-* Documentation
 

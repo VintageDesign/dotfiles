@@ -9,7 +9,7 @@
 !.gitmodules
 !.vimrc
 !README.md
-!update.sh
+!configure.sh
 
 # Everything but these directories
 !.vim/
