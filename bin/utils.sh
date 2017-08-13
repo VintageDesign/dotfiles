@@ -15,9 +15,6 @@ up()
     export OLDPWD=$TMP
 }
 
-alias uncd="cd -"
-alias back="cd -"
-
 # a convenience wrapper around window.py
 window()
 {
@@ -37,7 +34,7 @@ uhist()
 }
 
 # Lists your path one item per line
-print_path()
+path()
 {
 	echo $PATH | tr ':' '\n'
 }

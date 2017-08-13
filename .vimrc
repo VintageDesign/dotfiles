@@ -1,27 +1,32 @@
 execute pathogen#infect()
 
+" Found in ~/.vim/bundle/colorschemes/colors
 colorscheme wargrey
 
-set tabstop=4 " Number of visual spaces per TAB
-set softtabstop=0 "Number of spaces in tab when editing
+" Number of visual spaces per TAB
+set tabstop=4
+" Number of spaces in tab when editing
+set softtabstop=0
 set expandtab
 set shiftwidth=4
 set smarttab
 
+" Show line numbers
 set number
-set showcmd
 " Keep the cursor 6 lines from bottom of screen.
 set scrolloff=6
 " Toggle paste mode with f3
 set pastetoggle=<F3>
 
+" Allow fuzzy menu
 set wildmenu
+" Redraw screen lazily
 set lazyredraw
 "Matching brackets highlighted
 set showmatch
 " Highlight as characters are entered
 set incsearch
-"Must be turned off manually
+" Must be turned off manually
 set hlsearch
 " Turn off search highlighting with enter
 nnoremap <CR> :nohl<CR><CR>
@@ -34,12 +39,13 @@ inoremap <C-k> <Esc>:m .-2<CR>==gi
 vnoremap <C-j> :m '>+1<CR>gv=gv
 vnoremap <C-k> :m '<-2<CR>gv=gv
 
-set foldenable "enable folding
+" enable code folding
+set foldenable
 set foldlevelstart=15
-set foldnestmax=10 "max fold level
+set foldnestmax=10
+set foldmethod=indent
 
 nnoremap <space> za "Space za folds, unfolds
-set foldmethod=indent
 
 " Visual movement
 nnoremap j gj
@@ -103,16 +109,14 @@ endfunction
 nnoremap <C-_> :call ToggleComment()<CR>
 vnoremap <C-_> :call ToggleComment()<CR>
 
-" Cursor
+" Highlight current line
 set cursorline
+" Highlight current column
 set cursorcolumn
-"hi Cursor guifg=Green guibg=Black
-"hi CursorLine guibg=#333333
-"hi CursorColumn guibg=#333333
 
+" Add file pane
 autocmd vimenter * NERDTree
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 map <C-n> :NERDTreeToggle<CR>
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-
