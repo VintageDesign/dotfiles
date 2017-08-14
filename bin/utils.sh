@@ -30,13 +30,13 @@ rhyme()
 # Give list of unique commands in history and count their usage.
 uhist()
 {
-	history | awk '{print $2}' | awk 'BEGIN {FS="|"} {print $1}' | sort | uniq -c | sort -r
+	 history | awk '{print $2}' | awk 'BEGIN {FS="|"} {print $1}' | sort | uniq -c | sort -r
 }
 
 # Lists your path one item per line
 path()
 {
-	echo $PATH | tr ':' '\n'
+	 echo $PATH | tr ':' '\n'
 }
 
 # grabs the local IP
@@ -75,6 +75,31 @@ dsort()
 completely_remove_package()
 {
     apt-get purge "$("apt-cache depends $1 | awk '{ print $2 }' | tr '\n' ' '")"
+}
+
+# Gives number of additions author has made in current git repo
+additions()
+{
+    git log --author="$*" --pretty=tformat: --numstat | cut -f 1 | sed '/^$/d' | paste -s -d+ | bc
+}
+
+# Gives number of removals author has made in current git repo
+removals()
+{
+    git log --author="$*" --pretty=tformat: --numstat | cut -f 2 | sed '/^$/d' | paste -s -d+ | bc
+}
+
+# converts CRLF endings to LF endings
+dos2unix()
+{
+	 sed -i 's/.$//' $1
+}
+
+# converts LF endings to CRLF endings
+unix2dos()
+{
+	 # requires GNU sed
+	 sed -i 's/$/\r/' $1
 }
 
 # colored text variables.
