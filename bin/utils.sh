@@ -30,13 +30,13 @@ rhyme()
 # Give list of unique commands in history and count their usage.
 uhist()
 {
-	 history | awk '{print $2}' | awk 'BEGIN {FS="|"} {print $1}' | sort | uniq -c | sort -r
+    history | awk '{print $2}' | awk 'BEGIN {FS="|"} {print $1}' | sort | uniq -c | sort -r
 }
 
 # Lists your path one item per line
 path()
 {
-	 echo $PATH | tr ':' '\n'
+    echo $PATH | tr ':' '\n'
 }
 
 # grabs the local IP
@@ -92,14 +92,14 @@ removals()
 # converts CRLF endings to LF endings
 dos2unix()
 {
-	 sed -i 's/.$//' $1
+    sed -i 's/.$//' $1
 }
 
 # converts LF endings to CRLF endings
 unix2dos()
 {
-	 # requires GNU sed
-	 sed -i 's/$/\r/' $1
+    # requires GNU sed
+    sed -i 's/$/\r/' $1
 }
 
 # colored text variables.
@@ -114,3 +114,4 @@ export PURPLE=$(tput setaf 5)
 export CYAN=$(tput setaf 6)
 export WHITE=$(tput setaf 7)
 export RESET=$(tput sgr0)
+
