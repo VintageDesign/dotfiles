@@ -105,12 +105,20 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 	sudo add-apt-repository ppa:webupd8team/java
 fi
 
+# After adding the repositories, install Atom and Java?
+read -p "Install Atom and Java? (y/N) " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo "Installing Atom and Java..."
+    sudo apt install atom oracle-java8-installer
+fi
+
 # Install useful packages
 read -p "Install essential packages? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
 	echo "Installing Packages...."
-	sudo apt install traceroute htop screen screenfetch pandoc linux-tools-common linux-tools-generic printer-driver-escpr libfreetype6-dev pep8 atom openssh-server chktex texmaker pithos gcc g++ make clang shellcheck gdb tree
+	sudo apt install traceroute htop screen screenfetch pandoc linux-tools-common linux-tools-generic printer-driver-escpr libfreetype6-dev pep8 openssh-server chktex texmaker pithos gcc g++ make clang shellcheck gdb tree
 fi
 
 # Install useful Python (3) packages
@@ -155,7 +163,10 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 	sudo apt autoremove && sudo apt autoclean
 fi
 
+# Install fonts
+# TODO: Find way to store font files
 # sudo cp assets/Fonts/Meslo/MesloLGSDZ-Regular.ttf /usr/share/fonts/
 # sudo cp assets/Fonts/Apple\ San\ Fransisco/SystemSanFranciscoDisplayBold.ttf assets/Fonts/Apple\ San\ Fransisco/SystemSanFranciscoDisplayRegular.ttf /usr/share/fonts/
 #
 # sudo fc-cache -fv
+
