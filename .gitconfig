@@ -1,21 +1,21 @@
 [user]
-	name = Austin Gill
-	email = notgnoshi@gmail.com
+    name = Austin Gill
+    email = notgnoshi@gmail.com
 [core]
-	editor = vim 
-	fileMode = false
-	eol = lf
-	autocrlf = input
+    editor = vim 
+    fileMode = false
+    eol = lf
+    autocrlf = input
 [credential]
-	helper = cache
-	help = cache --timeout=60000
+    helper = cache
+    help = cache --timeout=60000
 [push]
-	default = simple
+    default = simple
 [alias]
-	lg    = log --color --graph --pretty=format:'%C(red)%h%C(reset) -%C(yellow)%d%C(reset) %s %C(green)(%cr) %C(bold blue)<%an>%C(reset)' --abbrev-commit --decorate
-	ll    = log --pretty=format:'%C(red)%h%C(reset) -%C(yellow)%d%C(reset) %s %C(bold blue) <%an>' --decorate --numstat --abbrev-commit
-	co    = checkout
-	amend =  commit --amend --no-edit
-	st    = status
-	b     = branch
+    lg    = log --color --graph --pretty=format:'%C(red)%h%C(reset) -%C(yellow)%d%C(reset) %s %C(green)(%cr) %C(bold blue)<%an>%C(reset)' --abbrev-commit --decorate
+    ll    = log --pretty=format:'%C(red)%h%C(reset) -%C(yellow)%d%C(reset) %s %C(bold blue) <%an>' --decorate --numstat --abbrev-commit
+    co    = checkout
+    amend =  commit --amend --no-edit
+    st    = status
+    b     = branch
 
