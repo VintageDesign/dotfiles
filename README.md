@@ -31,4 +31,5 @@ Running `./configure.sh` will prompt for the following:
 * Edit `/etc/hosts`
 * Add `~/.ssh/config`
 * Good way to generate/store ssh keys
+* Headless install (no pithos, texmaker, atom, etc)
 

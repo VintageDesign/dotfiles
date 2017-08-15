@@ -113,12 +113,20 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     sudo apt install atom oracle-java8-installer
 fi
 
+# Install LaTeX?
+read -p "Install LaTeX and related? (y/N) " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo "Installing texlive, chktex, and texmaker..."
+    sudo apt install texlive-full chktex texmaker pdf2svg
+fi
+
 # Install useful packages
 read -p "Install essential packages? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
 	echo "Installing Packages...."
-	sudo apt install traceroute htop screen screenfetch pandoc linux-tools-common linux-tools-generic printer-driver-escpr libfreetype6-dev pep8 openssh-server chktex texmaker pithos gcc g++ make clang shellcheck gdb tree
+	sudo apt install traceroute htop screen screenfetch pandoc linux-tools-common linux-tools-generic printer-driver-escpr libfreetype6-dev pep8 openssh-server pithos gcc g++ make clang shellcheck gdb tree
 fi
 
 # Install useful Python (3) packages
