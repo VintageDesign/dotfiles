@@ -117,19 +117,34 @@ fi
 read -p "Install LaTeX and related? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "Installing texlive, chktex, and texmaker..."
-    sudo apt install texlive-full chktex texmaker pdf2svg
+    echo "Installing texlive, chktex..."
+    sudo apt install texlive-full chktex pdf2svg pandoc
+fi
+
+# Install dev packages
+read -p "Install dev packages? (y/N) " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo "Installing dev packages..."
+    sudo apt install gcc g++ make clang shellcheck gdb pep8 libcppunit-dev astyle doxygen
 fi
 
 # Install useful packages
-read -p "Install essential packages? (y/N) " -n 1 -r
+read -p "Install headless packages? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-	echo "Installing Packages...."
-	sudo apt install traceroute htop screen screenfetch pandoc linux-tools-common linux-tools-generic printer-driver-escpr libfreetype6-dev pep8 openssh-server pithos gcc g++ make clang shellcheck gdb tree
+	echo "Installing headless Packages...."
+	sudo apt install traceroute nmap htop screen screenfetch linux-tools-common linux-tools-generic openssh-server tree
 fi
 
-# Install useful Python (3) packages
+# Install gui packages?
+read -p "Install GUI packages? (y/N) " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    sudo apt install pithos texmaker printer-driver-escpr
+fi
+
+# Install useful Python 3 packages
 read -p "Install python3 scipy stack? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -143,7 +158,7 @@ echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
 	echo "Installing Jupyter..."
 	sudo -H pip3 install --upgrade pip
-	sudo -H pip3 install jupyter
+	sudo -H pip3 install --upgrade jupyter ipython
 fi
 
 # Install Jekyll
@@ -177,4 +192,3 @@ fi
 # sudo cp assets/Fonts/Apple\ San\ Fransisco/SystemSanFranciscoDisplayBold.ttf assets/Fonts/Apple\ San\ Fransisco/SystemSanFranciscoDisplayRegular.ttf /usr/share/fonts/
 #
 # sudo fc-cache -fv
-
