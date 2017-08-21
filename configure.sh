@@ -70,7 +70,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "==============================================="
     echo
     echo "SSH public key:"
-    cat ~.ssh/github.pub
+    cat ~/.ssh/github.pub
     echo
 fi
 
