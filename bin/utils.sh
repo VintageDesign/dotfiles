@@ -44,8 +44,8 @@ localip()
 {
     echo "local IP(s):"
     echo ""
-    ifconfig | perl -nle'/dr:(\S+)/ && print $1'
-    # echo "local IP: $(hostname -I)"
+    # ifconfig | perl -nle'/dr:(\S+)/ && print $1'
+    echo "local IP: $(hostname -I)"
 }
 
 # grabs the external IP
