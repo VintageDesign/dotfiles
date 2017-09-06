@@ -3,6 +3,9 @@ execute pathogen#infect()
 " Found in ~/.vim/bundle/colorschemes/colors
 colorscheme wargrey
 
+" Set default encoding to UTF-8
+set enc=utf-8
+
 " Number of visual spaces per TAB
 set tabstop=4
 " Number of spaces in tab when editing
@@ -10,6 +13,11 @@ set softtabstop=0
 set expandtab
 set shiftwidth=4
 set smarttab
+set backspace=indent,eol,start
+
+"Use terminal title
+set title
+set titlestring=%F
 
 " Show line numbers
 set number
@@ -120,3 +128,4 @@ autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 map <C-n> :NERDTreeToggle<CR>
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
