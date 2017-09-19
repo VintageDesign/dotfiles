@@ -174,7 +174,7 @@ fi
 read -p "Install Atom packages? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-	apm install linter linter-chktex linter-gcc linter-pep8 linter-shellcheck intentions busy-signal linter-ui-default autoclose-html autocomplete-python highlight-selected language-latex language-liquid language-viml language-haskell markdown-preview-plus minimap minimap-cursorline minimap-find-and-replace minimap-git-diff minimap-highlight-selected tabs-to-spaces autocomplete-clang file-icons file-watcher highlight-selected gruvbox-plus-syntax
+	apm install linter linter-chktex linter-gcc linter-pep8 linter-shellcheck intentions busy-signal linter-ui-default autoclose-html autocomplete-python highlight-selected language-latex language-liquid language-viml language-haskell markdown-preview-plus minimap minimap-cursorline minimap-find-and-replace minimap-git-diff minimap-highlight-selected tabs-to-spaces autocomplete-clang file-icons file-watcher highlight-selected gruvbox-plus-syntax pdf-view latex latexer python-autopep8 language-matlab
 fi
 
 # Update and upgrade system
