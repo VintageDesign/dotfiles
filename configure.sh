@@ -136,7 +136,7 @@ read -p "Install headless packages? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
 	echo "Installing headless Packages...."
-	sudo apt install traceroute nmap htop screen screenfetch linux-tools-common linux-tools-generic openssh-server tree
+	sudo apt install traceroute nmap htop screen screenfetch linux-tools-common linux-tools-generic openssh-server tree iperf
 fi
 
 # Install gui packages?
