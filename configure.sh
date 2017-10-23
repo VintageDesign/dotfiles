@@ -43,7 +43,7 @@ fi
 # Install fzf
 read -p "Install fzf? (y/N) " -n 1 -r
 echo
-if [[ $REPLY +~ ^[Yy]$ ]]; then
+if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "Installing fzf"
     $HOME/.fzf/install
     echo "Done installing fzf"
