@@ -7,6 +7,7 @@
 !.bashrc
 !.gitconfig
 !.gitmodules
+!.pylintrc
 !.vimrc
 !README.md
 !configure.sh

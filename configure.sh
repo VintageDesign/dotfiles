@@ -138,7 +138,7 @@ echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "Installing dev packages..."
     sudo apt install gcc g++ make clang shellcheck gdb pep8 libcppunit-dev astyle doxygen python3-setuptools
-    sudo easy_install pip
+    sudo easy_install3 pip
     sudo -H pip install --upgrade pip
 fi
 
@@ -162,8 +162,8 @@ read -p "Install python3 scipy stack? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
 	echo "Installing Python Packages..."
-	# sudo apt install python3-setuptools python3-pip python-pygments ipython3 python3-matplotlib python3-sympy python3-scipy python3-numpy python3-networkx python3-nmap python3-pandas python3-seaborn
-    sudo -H pip install pygments ipython matplotlib sympy scipy numpy networkx nmap pandas seaborn
+    sudo -H pip install --upgrade pycodestyle pylint
+    sudo -H pip install --upgrade pygments ipython matplotlib sympy scipy numpy networkx nmap pandas seaborn
 fi
 
 # Install Jupyter
