@@ -101,7 +101,11 @@ if ! shopt -oq posix; then
     fi
 fi
 
+# Enable fzf
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
 # Add ~/bin/ to path
 export PATH="$HOME/bin:$PATH"
 # Source my utility functions
 source "$HOME/bin/utils.sh"
+

@@ -40,6 +40,15 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 	cd -
 fi
 
+# Install fzf
+read -p "Install fzf? (y/N) " -n 1 -r
+echo
+if [[ $REPLY +~ ^[Yy]$ ]]; then
+    echo "Installing fzf"
+    $HOME/.fzf/install
+    echo "Done installing fzf"
+fi
+
 # Update dotfiles and vim plugins
 read -p "Update dotfiles and vim plugins? (y/N) " -n 1 -r
 echo
@@ -71,6 +80,8 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo
     echo "SSH public key:"
     cat ~/.ssh/github.pub
+    echo
+    echo "Add ~/.ssh/config entry?"
     echo
 fi
 

@@ -12,5 +12,6 @@
 !configure.sh
 
 # Everything but these directories
+!.fzf/
 !.vim/
 !bin/
