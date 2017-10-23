@@ -141,7 +141,8 @@ echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "Installing dev packages..."
     sudo apt install gcc g++ make clang shellcheck gdb pep8 libcppunit-dev astyle doxygen python3-setuptools pv
-    sudo easy_install3 pip
+    # TODO: this throws an exception relating to the setuptools version
+    # sudo easy_install3 pip
     sudo -H pip install --upgrade pip pylint pycodestyle
 fi
 
