@@ -226,3 +226,5 @@ fi
 
 # TODO: setup SDSMT VPN
 
+# TODO: Install, configure, and customize CSS for workspace-grid gnome extension
+
