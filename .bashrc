@@ -44,6 +44,30 @@ if [ -n "$force_color_prompt" ]; then
     fi
 fi
 
+# colored text variables.
+export UNDERLINE=$(tput sgr 0 1)
+export BOLD=$(tput bold)
+export BLACK=$(tput setaf 0)
+export RED=$(tput setaf 1)
+export GREEN=$(tput setaf 2)
+export YELLOW=$(tput setaf 3)
+export BLUE=$(tput setaf 4)
+export PURPLE=$(tput setaf 5)
+export CYAN=$(tput setaf 6)
+export WHITE=$(tput setaf 7)
+export RESET=$(tput sgr0)
+
+# Prints different escape codes to stdout indicating the exit code of the previous command
+decorate_exit_status()
+{
+    if [ $? -eq 0 ]; then
+        echo -e "${WHITE}"
+        # echo -e "${BOLD}${GREEN}"
+    else
+        echo -e "${BOLD}${RED}"
+    fi
+}
+
 # Determine if connected over ssh.
 SSH_FLAG=0
 if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
@@ -55,24 +79,27 @@ else
 fi
 
 if [ "$color_prompt" = yes ]; then
-    # If connected over ssh, say so.
+    # Set the base $PS1
+    PS1="\u@\h ${GREEN}\w"
+    # If connected over SSH, prepend a red (ssh) to the $PS1
     if [ $SSH_FLAG -eq 1 ]; then
-        PS1="\[\e[31m\](ssh)\[\e[0m\] \u@\h \[\e[0m\]\[\e[32m\]\w\[\e[0m\]\[\e[37m\] \\$ \[\e[0m\]"
-    else
-        PS1="\u@\h \[\e[0m\]\[\e[32m\]\w\[\e[0m\]\[\e[37m\] \\$ \[\e[0m\]"
+        PS1="${BOLD}${RED}(${RESET}${RED}ssh${BOLD}) ${RESET}${PS1}"
     fi
+    # Append a colored $ to the end of the $PS1 indicating the exit code
+    PS1="${PS1}\$(decorate_exit_status) \$ ${RESET}"
 else
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
 unset color_prompt force_color_prompt SSH_FLAG
 
-# If this is an xterm set the title to user@host:dir		
-case "$TERM" in		
-xterm*|rxvt*)		
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"		
-    ;;		
-*)		
-    ;;		
+# If this is an xterm set the title to user@host:dir
+case "$TERM" in
+xterm*|rxvt*)
+    # Prepends title thingy to $PS1
+    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+    ;;
+*)
+    ;;
 esac
 
 # Enable colored man pages
@@ -106,6 +133,7 @@ fi
 
 # Add ~/bin/ to path
 export PATH="$HOME/bin:$PATH"
+# Force Matlab to use Java 8 -- eliminates MEvent. CASE! spam
+export MATLAB_JAVA="/usr/lib/jvm/java-8-oracle/jre"
 # Source my utility functions
 source "$HOME/bin/utils.sh"
-
