@@ -6,6 +6,9 @@ colorscheme wargrey
 " Set default encoding to UTF-8
 set enc=utf-8
 
+" Set autowrite for use with :make
+set autowrite
+
 " Number of visual spaces per TAB
 set tabstop=4
 " Number of spaces in tab when editing
