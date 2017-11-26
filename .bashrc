@@ -80,13 +80,13 @@ fi
 
 if [ "$color_prompt" = yes ]; then
     # Set the base $PS1
-    PS1="\u@\h ${GREEN}\w"
+    PS1="\u@\h \[${GREEN}\]\w"
     # If connected over SSH, prepend a red (ssh) to the $PS1
     if [ $SSH_FLAG -eq 1 ]; then
-        PS1="${BOLD}${RED}(${RESET}${RED}ssh${BOLD}) ${RESET}${PS1}"
+        PS1="\[${BOLD}${RED}\](\[${RESET}${RED}\]ssh\[${BOLD}\]) \[${RESET}\]${PS1}"
     fi
     # Append a colored $ to the end of the $PS1 indicating the exit code
-    PS1="${PS1}\$(decorate_exit_status) \$ ${RESET}"
+    PS1="${PS1}\[\$(decorate_exit_status)\] \$ \[${RESET}\]"
 else
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
