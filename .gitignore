@@ -12,6 +12,7 @@
 !.vimrc
 !README.md
 !configure.sh
+!wake.sh
 
 # Everything but these directories
 !.fzf/
