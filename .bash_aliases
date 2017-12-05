@@ -14,7 +14,7 @@ alias la='ls -A'
 alias l='ls -CF'
 
 alias back="cd -"
-alias xo='xdg-open'
+alias xo='1>/dev/null 2>/dev/null xdg-open'
 
 alias upd='sudo apt update'
 alias upg='sudo apt upgrade'
