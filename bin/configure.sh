@@ -115,6 +115,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 	echo "Adding Repositories..."
 	sudo add-apt-repository ppa:webupd8team/atom
 	sudo add-apt-repository ppa:webupd8team/java
+    sudo apt update
 fi
 
 # After adding the repositories, install Atom and Java?
