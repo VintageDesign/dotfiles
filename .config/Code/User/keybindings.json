@@ -1,0 +1,7 @@
+// Place your key bindings in this file to overwrite the defaults
+[
+    { "key": "ctrl+shift+/", "command": "editor.action.insertCursorAtEndOfEachLineSelected", "when": "editorTextFocus" },
+    { "key": "ctrl+down", "command": "editor.action.moveLinesDownAction", "when": "editorTextFocus && !editorReadonly" },
+    { "key": "ctrl+up", "command": "editor.action.moveLinesUpAction", "when": "editorTextFocus && !editorReadonly" },
+    { "key": "ctrl+l", "command": "expandLineSelection", "when": "editorTextFocus" },
+]
