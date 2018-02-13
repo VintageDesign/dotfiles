@@ -80,18 +80,19 @@
         "-q"
     ],
     "latex-workshop.latex.toolchain": [
-    {
-        "command": "latexmk",
-        "args": [
-        "-synctex=1",
-        "-interaction=nonstopmode",
-        "-file-line-error",
-        "-shell-escape",
-        "-pdf",
-        "%DOC%"
-        ]
-    }
+        {
+            "command": "latexmk",
+            "args": [
+            "-synctex=1",
+            "-interaction=nonstopmode",
+            "-file-line-error",
+            "-shell-escape",
+            "-pdf",
+            "%DOC%"
+            ]
+        }
     ],
+    "latex-workshop.latex.autoBuild.onSave.enabled": false,
     "[markdown]": {
         "editor.wordWrap": "wordWrapColumn",
         "editor.quickSuggestions": false
@@ -106,15 +107,21 @@
         "conveniency",
         "coord",
         "eigensolver",
+        "eigenvectors",
+        "elementwise",
         "hashable",
+        "hermitian",
         "hexgrid",
         "jupyter",
         "matlab",
         "numpy",
+        "parallelization",
         "parallelized",
         "precomputed",
         "quadsect",
+        "quadsection",
         "recurse",
         "unvalidated"
     ],
+    "window.zoomLevel": -1,
 }
