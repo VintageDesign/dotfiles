@@ -4,4 +4,5 @@
     { "key": "ctrl+down", "command": "editor.action.moveLinesDownAction", "when": "editorTextFocus && !editorReadonly" },
     { "key": "ctrl+up", "command": "editor.action.moveLinesUpAction", "when": "editorTextFocus && !editorReadonly" },
     { "key": "ctrl+l", "command": "expandLineSelection", "when": "editorTextFocus" },
+    { "key": "ctrl+r", "command": "editor.action.goToDeclaration", "when": "editorHasDefinitionProvider && editorTextFocus && !isInEmbeddedEditor" },
 ]

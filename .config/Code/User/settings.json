@@ -10,6 +10,12 @@
     "editor.dragAndDrop": false,
     "editor.rulers": [100, 120],
     "editor.smoothScrolling": true,
+    "editor.quickSuggestions": {
+        "other": true,
+        "comments": false,
+        "strings": true
+    },
+    "editor.renderLineHighlight": "all",
     "explorer.openEditors.visible": 0,
     "files.insertFinalNewline": true,
     "files.trimFinalNewlines": true,
@@ -21,7 +27,7 @@
         "**/CVS": true,
         "**/.DS_Store": true,
         "**/__pycache__": true,
-        "**/.vscode": true,
+        "**/.vscode": false,
         "**/*.pyc": true,
         "**/*.aux": true,
         "**/*.bbl": true,
@@ -36,12 +42,21 @@
         "**/*.toc": true,
     },
     "search.useIgnoreFiles": false,
-    "debug.inlineValues": true,
+    "debug.inlineValues": false,
     "python.autoComplete.preloadModules": ["numpy", "sympy", "scipy", "keras"],
-    "python.pythonPath": "python3",
+    "python.pythonPath": "/usr/bin/env python3",
     "python.unitTest.unittestEnabled": true,
+    "python.unitTest.cwd": "${workspaceFolder}",
+    "python.unitTest.unittestArgs": [
+        "-v",
+        "-s",
+        "tests",
+        "-p",
+        "test*.py"
+      ],
     "python.linting.enabled": true,
     "python.linting.pylintEnabled": true,
+    "python.linting.pylintArgs": ["--rcfile", "~/.pylintrc"],
     "python.linting.pylintUseMinimalCheckers": false,
     "latex-workshop.chktex.enabled": true,
     "latex-workshop.chktex.args.active": [
@@ -87,13 +102,19 @@
     "editor.minimap.renderCharacters": false,
     "editor.minimap.showSlider": "always",
     "cSpell.userWords": [
+        "adjacents",
         "conveniency",
+        "coord",
         "eigensolver",
         "hashable",
+        "hexgrid",
+        "jupyter",
         "matlab",
         "numpy",
         "parallelized",
         "precomputed",
-        "quadsect"
+        "quadsect",
+        "recurse",
+        "unvalidated"
     ],
 }
