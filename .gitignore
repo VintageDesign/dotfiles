@@ -13,8 +13,6 @@
 !README.md
 !configure.sh
 !wake.sh
-!.config/Code/User/settings.json
-!.config/Code/User/keybindings.json
 
 # Everything but these directories
 !.fzf/
