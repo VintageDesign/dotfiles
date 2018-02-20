@@ -6,7 +6,9 @@ alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
 
-alias matlab='/usr/local/MATLAB/R2017a/bin/matlab'
+alias matlab='/opt/matlab/bin/matlab'
+
+alias gtop='watch -n 1 nvidia-smi' 
 
 alias ls='ls -h --color=auto'
 alias ll='ls -alF'

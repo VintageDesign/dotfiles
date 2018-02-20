@@ -136,7 +136,7 @@ export PATH="$HOME/bin:$PATH"
 # Force Matlab to use Java 8 -- eliminates MEvent. CASE! spam
 export MATLAB_JAVA="/usr/lib/jvm/java-8-oracle/jre"
 # For using XMing on WSL
-export DISPLAY=:0
+# export DISPLAY=:0
 export TERM=xterm-256color
 # Source my utility functions
 source "$HOME/bin/utils.sh"
