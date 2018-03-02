@@ -1,7 +1,7 @@
 execute pathogen#infect()
 
 " Found in ~/.vim/bundle/colorschemes/colors
-colorscheme wargrey
+colorscheme monokain
 
 " Set default encoding to UTF-8
 set enc=utf-8
@@ -123,7 +123,7 @@ vnoremap <C-_> :call ToggleComment()<CR>
 " Highlight current line
 set cursorline
 " Highlight current column
-set cursorcolumn
+" set cursorcolumn
 
 " Add file pane
 autocmd vimenter * NERDTree

@@ -32,4 +32,4 @@ Running `./configure.sh` will prompt for the following:
 * Add `~/.ssh/config`
 * Good way to generate/store ssh keys
 * Headless install (no pithos, texmaker, atom, etc)
-
+* Put repository in a hidden folder, then symlink to `bin/`, `.bashrc`, etc. This way everything in `~/` isn't in a repository. Doing this would require extensive changes to `configure.sh`

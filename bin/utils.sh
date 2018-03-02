@@ -36,7 +36,7 @@ uhist()
 # Lists your path one item per line
 path()
 {
-    echo $PATH | tr ':' '\n'
+    echo "$PATH" | tr ':' '\n'
 }
 
 # grabs the local IP
@@ -92,12 +92,12 @@ removals()
 # converts CRLF endings to LF endings
 dos2unix()
 {
-    sed -i 's/.$//' $1
+    sed -i 's/.$//' "$1"
 }
 
 # converts LF endings to CRLF endings
 unix2dos()
 {
     # requires GNU sed
-    sed -i 's/$/\r/' $1
+    sed -i 's/$/\r/' "$1"
 }
