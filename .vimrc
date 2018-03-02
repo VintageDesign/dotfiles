@@ -136,10 +136,10 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 hi statusline ctermfg=White ctermbg=DarkGrey
 
 " Formats the statusline
-set statusline=%f                           " file name
+set statusline=%f       " file name
 " set statusline+=[%{strlen(&fenc)?&fenc:'none'}, "file encoding
 " set statusline+=%{&ff}] "file format
-set statusline+=%y      "filetype
+set statusline+=\ %y      "filetype
 set statusline+=%h      "help file flag
 set statusline+=%m      "modified flag
 set statusline+=%r      "read only flag
@@ -152,7 +152,7 @@ set statusline+=\ %=                        " align left
 set statusline+=Line:%l/%L[%p%%]            " line X of Y [percent of file]
 set statusline+=\ Col:%c                    " current column
 set statusline+=\ Buf:%n                    " Buffer number
-" set statusline+=\ [%b][0x%B]\               " ASCII and byte code under cursor
+set statusline+=\ [%b][0x%B]\               " ASCII and byte code under cursor
 
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
