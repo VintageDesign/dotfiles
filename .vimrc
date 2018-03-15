@@ -162,7 +162,7 @@ let g:syntastic_check_on_wq = 0
 " Specify linters
 let g:syntastic_asm_checkers=['gcc']
 let g:syntastic_tex_checkers=['chktex']
-let g:syntastic_py_checkers=['pylint']
+let g:syntastic_python_checkers=['pylint']
 
 " Specify linter options
 let g:syntastic_asm_dialect='intel'
