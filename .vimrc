@@ -166,4 +166,3 @@ let g:syntastic_python_checkers=['pylint']
 
 " Specify linter options
 let g:syntastic_asm_dialect='intel'
-
