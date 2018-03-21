@@ -50,6 +50,17 @@ inoremap <C-k> <Esc>:m .-2<CR>==gi
 vnoremap <C-j> :m '>+1<CR>gv=gv
 vnoremap <C-k> :m '<-2<CR>gv=gv
 
+" Indentation key maps
+" These keymaps cause lots of problems when enabled. The insert keymap causes
+" problems with the arrow keys, and the normal keymap causes problems in
+" startup. Visual keymap seems to work normally.
+" inoremap <C-]> <C-T>
+" inoremap <C-[> <C-D>
+vnoremap <C-[> <
+vnoremap <C-]> >
+" nnoremap <C-[> <
+" nnoremap <C-]> >
+
 " enable code folding
 set foldenable
 set foldlevelstart=15
@@ -69,6 +80,7 @@ nnoremap E $
 nnoremap $ <nop>
 nnoremap ^ <nop>
 
+
 let s:comment_map = {
     \   "c": '\/\/',
     \   "cpp": '\/\/',
@@ -82,8 +94,8 @@ let s:comment_map = {
     \   "ruby": '#',
     \   "rust": '\/\/',
     \   "sh": '#',
-    \   "desktop": '#',
     \   "fstab": '#',
+    \   "desktop": '#',
     \   "conf": '#',
     \   "profile": '#',
     \   "bashrc": '#',
@@ -132,37 +144,17 @@ autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 map <C-n> :NERDTreeToggle<CR>
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
-" Syntastic settings
-hi statusline ctermfg=White ctermbg=DarkGrey
+let g:airline_theme='distinguished'
+let g:airline#extensions#ale#enabled = 1
+let g:airline#extensions#whitespace#enabled = 1
+let g:airline#extensions#vimtex#enabled = 1
 
-" Formats the statusline
-set statusline=%f       " file name
-" set statusline+=[%{strlen(&fenc)?&fenc:'none'}, "file encoding
-" set statusline+=%{&ff}] "file format
-set statusline+=\ %y      "filetype
-set statusline+=%h      "help file flag
-set statusline+=%m      "modified flag
-set statusline+=%r      "read only flag
+" Linter settings
+let g:ale_fixers = {
+\   'python': ['pylint'],
+\}
 
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-set statusline+=\ %=                        " align left
-set statusline+=Line:%l/%L[%p%%]            " line X of Y [percent of file]
-set statusline+=\ Col:%c                    " current column
-set statusline+=\ Buf:%n                    " Buffer number
-set statusline+=\ [%b][0x%B]\               " ASCII and byte code under cursor
-
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-
-" Specify linters
-let g:syntastic_asm_checkers=['gcc']
-let g:syntastic_tex_checkers=['chktex']
-let g:syntastic_python_checkers=['pylint']
-
-" Specify linter options
-let g:syntastic_asm_dialect='intel'
+let g:ale_completion_enabled = 1
+let g:ale_sign_column_always = 1
+let g:ale_c_gcc_options = '-std=c11 -Wall -Wextra -Wpedantic'
+let g:ale_cpp_gcc_options = '-std=c++17 -Wall -Wextra -Wpedantic'
