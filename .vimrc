@@ -56,8 +56,8 @@ vnoremap <C-k> :m '<-2<CR>gv=gv
 " startup. Visual keymap seems to work normally.
 " inoremap <C-]> <C-T>
 " inoremap <C-[> <C-D>
-vnoremap <C-[> <
-vnoremap <C-]> >
+" vnoremap <C-[> <
+" vnoremap <C-]> >
 " nnoremap <C-[> <
 " nnoremap <C-]> >
 
