@@ -25,12 +25,21 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     cd -
 fi
 
-# Add Atom and Oracle Java repositories
+# Install fzf, requires the fzf submodule to be initialized and updated
+read -p "Install fzf? (y/N) " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo "Installing fzf"
+    # TODO: pipe `yes` into install script?
+    $HOME/.fzf/install
+    echo "Done installing fzf"
+fi
+
+# Add Oracle Java repository
 read -p "Add Java repository? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
 	echo "Adding Repositories..."
-	# sudo add-apt-repository ppa:webupd8team/atom
 	sudo add-apt-repository ppa:webupd8team/java
     sudo apt update
 fi
