@@ -1,5 +1,7 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env bash
+set -o errexit
+set -o pipefail
+set -o nounset
 ##############################
 # TODO: Do not hard code paths
 ##############################
@@ -12,119 +14,34 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     sudo apt install git vim unp htop
 fi
 
-# Clone dotfiles repository if script is being ran from a flash drive
-read -p "Clone dotfiles repository to $HOME/dotfiles/? (y/N) " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "Cloning dotfiles repository..."
-    git clone https://github.com/Notgnoshi/dotfiles.git ~/dotfiles
-fi
-
-# Unpack dotfiles into $HOME. Will fail if $HOME is already a git repository.
-read -p "Unpack $HOME/dotfiles/ into $HOME? (y/N) " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-	echo "Unpacking dotfiles/ into $HOME..."
-    if [[ -d "$HOME/dotfiles" ]]; then
-        shopt -s dotglob
-        mv ~/dotfiles/* ~/
-        rm -rf ~/dotfiles/
-    fi
-
-	# Create ~/.vim/bundle/ if it doesn't already exist.
-    mkdir -p ~/.vim/bundle/
-
-	# Pull/update vim plugin repositories.
-	cd ~
-	git submodule update --remote --recursive --init
-	cd -
-fi
-
-# Install fzf, requires the fzf submodule to be initialized and updated
-read -p "Install fzf? (y/N) " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "Installing fzf"
-    # TODO: pipe `yes` into install script?
-    $HOME/.fzf/install
-    echo "Done installing fzf"
-fi
-
 # Update dotfiles and vim plugins
 read -p "Update dotfiles and vim plugins? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "Updating dotfiles and plugins..."
-    cd ~
+    # TODO: Avoid hardcoding this!
+    cd ~/.config/dotfiles
     git pull && git submodule update --remote --recursive --init
     cd -
 fi
 
-# Generate SSH key for GitHub
-read -p "Generate GitHub SSH key? (y/N) " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "Generating ssh key..."
-    ssh-keygen -t rsa -b 4096 -f ~/.ssh/github -C "Notgnoshi@gmail.com"
-
-    # Starts up a new instance of ssh-agent if one is already running...
-    echo "Adding key to ssh-agent..."
-    eval $(ssh-agent)
-    ssh-add ~/.ssh/github
-
-    # Creating an SSH key does nothing if it's not added to the account...
-    echo
-    echo "==============================================="
-    echo "Be sure to add SSH key to GitHub account       "
-    echo "https://github.com/settings/keys               "
-    echo "==============================================="
-    echo
-    echo "SSH public key:"
-    cat ~/.ssh/github.pub
-    echo
-    echo "Add ~/.ssh/config entry?"
-    echo
-fi
-
-# Dotfiles reposiroty was cloned with HTTPS, so convert to SSH after SSH keys have been generated
-read -p "Set git repository in $HOME to use SSH? (y/N) " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-	echo "Setting remote URL..."
-    cd ~
-    git remote set-url origin git@github.com:Notgnoshi/dotfiles.git
-    cd -
-fi
-
-# Install Google Chrome
-read -p "Install Google Chrome? (y/N) " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-	echo "Installing Google Chrome..."
-	wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-	sudo dpkg -i --force-depends google-chrome-stable_current_amd64.deb
-	sudo apt install -f
-
-	rm google-chrome-stable_current_amd64.deb
-fi
-
 # Add Atom and Oracle Java repositories
-read -p "Add Atom/Java repositories? (y/N) " -n 1 -r
+read -p "Add Java repository? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
 	echo "Adding Repositories..."
-	sudo add-apt-repository ppa:webupd8team/atom
+	# sudo add-apt-repository ppa:webupd8team/atom
 	sudo add-apt-repository ppa:webupd8team/java
     sudo apt update
 fi
 
-# After adding the repositories, install Atom and Java?
-read -p "Install Atom and Java? (y/N) " -n 1 -r
+# After adding the repositories, install Java?
+read -p "Install Java? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "Installing Atom and Java..."
+    echo "Installing Java..."
     # TODO: make minecraft work nicely with java9
-    sudo apt install atom oracle-java8-installer
+    sudo apt install oracle-java8-installer
 fi
 
 # Install LaTeX?
@@ -133,7 +50,7 @@ echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "Installing texlive, chktex..."
     # TODO: Don't install texmaker from repository -- out of date?
-    sudo apt install texlive-full chktex pdf2svg pandoc texmaker
+    sudo apt install texlive-full chktex pdf2svg pandoc
 fi
 
 # Install dev packages
@@ -144,7 +61,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     sudo apt install gcc g++ make clang shellcheck gdb pep8 libcppunit-dev astyle doxygen python3-setuptools pv
     # TODO: this throws an exception relating to the setuptools version
     # sudo easy_install3 pip
-    sudo -H pip install --upgrade pip pylint pycodestyle
+    sudo -H pip install --upgrade pip pylint
 fi
 
 # Install useful packages
@@ -176,7 +93,7 @@ read -p "Install Jupyter? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
 	echo "Installing Jupyter..."
-	sudo -H pip install --upgrade jupyter ipython
+	sudo -H pip install --upgrade jupyter ipython jupyterlab
 fi
 
 # Install Jekyll
@@ -186,15 +103,6 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "Installing Jekyll..."
     sudo apt install ruby ruby-dev gcc make
     sudo gem install jekyll bundler jekyll-sitemap
-fi
-
-# Atom packages
-read -p "Install Atom packages? (y/N) " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    # TODO: There are some redundant linters. Pick which one(s) to use. (clang vs gcc, pycodestyle vs pylint vs pep8 vs flake8)
-    # TODO: decide if file-watcher is still necessary with the new atom update that provides a file watcher API
-	apm install linter linter-chktex linter-gcc linter-pep8 linter-shellcheck intentions busy-signal linter-ui-default autoclose-html autocomplete-python highlight-selected language-latex language-liquid language-viml language-haskell markdown-preview-plus minimap minimap-cursorline minimap-find-and-replace minimap-git-diff minimap-highlight-selected tabs-to-spaces autocomplete-clang file-icons file-watcher highlight-selected gruvbox-plus-syntax pdf-view latex latexer python-autopep8 language-matlab linter-pylint
 fi
 
 # Update and upgrade system
@@ -228,4 +136,3 @@ fi
 # TODO: setup SDSMT VPN
 
 # TODO: Install, configure, and customize CSS for workspace-grid gnome extension
-
