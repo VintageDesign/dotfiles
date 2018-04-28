@@ -141,7 +141,3 @@ fi
 # TODO: setup /etc/hosts
 
 # TODO: setup ~/.ssh/config
-
-# TODO: setup SDSMT VPN
-
-# TODO: Install, configure, and customize CSS for workspace-grid gnome extension
