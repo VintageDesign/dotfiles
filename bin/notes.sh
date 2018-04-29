@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 notes_path="${HOME}/Documents/notes"
-
+# TODO: Add arguments for TODO, WEEK, MONTH, etc targets for more organized list-making.
 if [ $# -gt 0 ]; then
     while getopts ":s:h" opt; do
         case "$opt" in
