@@ -80,13 +80,7 @@ completely_remove_package()
 # Gives number of additions author has made in current git repo
 additions()
 {
-    git log --author="$*" --pretty=tformat: --numstat | cut -f 1 | sed '/^$/d' | paste -s -d+ | bc
-}
-
-# Gives number of removals author has made in current git repo
-removals()
-{
-    git log --author="$*" --pretty=tformat: --numstat | cut -f 2 | sed '/^$/d' | paste -s -d+ | bc
+    git log --author="$*" --pretty=tformat: --numstat | gawk '{ add += $1; subs += $2; loc += $1 - $2 } END { printf "added lines: %s removed lines: %s total lines: %s\n", add, subs, loc }' -
 }
 
 # converts CRLF endings to LF endings
