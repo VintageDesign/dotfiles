@@ -15,6 +15,12 @@ up()
     export OLDPWD=$TMP
 }
 
+# View a random man page
+randman()
+{
+    man "$(ls -1 /usr/share/man/man?/ | shuf -n1 | cut -d. -f1)"
+}
+
 # a convenience wrapper around window.py
 window()
 {
