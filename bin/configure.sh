@@ -39,8 +39,8 @@ fi
 read -p "Add Java repository? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-	echo "Adding Repositories..."
-	sudo add-apt-repository ppa:webupd8team/java
+    echo "Adding Repositories..."
+    sudo add-apt-repository ppa:webupd8team/java
     sudo apt update
 fi
 
@@ -77,8 +77,8 @@ fi
 read -p "Install useful utilities? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-	echo "Installing headless Packages...."
-	sudo apt install traceroute nmap htop screen screenfetch linux-tools-common linux-tools-generic openssh-server tree iperf
+    echo "Installing headless Packages...."
+    sudo apt install traceroute nmap htop screen screenfetch linux-tools-common linux-tools-generic openssh-server tree iperf
 fi
 
 # Install gui packages?
@@ -93,7 +93,7 @@ fi
 read -p "Install python3 scipy stack? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-	echo "Installing Python Packages..."
+    echo "Installing Python Packages..."
     sudo -H pip install --upgrade pygments ipython matplotlib sympy scipy numpy networkx nmap pandas seaborn
 fi
 
@@ -101,8 +101,8 @@ fi
 read -p "Install Jupyter? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-	echo "Installing Jupyter..."
-	sudo -H pip install --upgrade jupyter ipython jupyterlab
+    echo "Installing Jupyter..."
+    sudo -H pip install --upgrade jupyter ipython jupyterlab
 fi
 
 # Install Jekyll
@@ -118,9 +118,9 @@ fi
 read -p "Update and upgrade? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-	echo "Installing System Upgrades..."
-	sudo apt update && sudo apt upgrade
-	sudo apt autoremove && sudo apt autoclean
+    echo "Installing System Upgrades..."
+    sudo apt update && sudo apt upgrade
+    sudo apt autoremove && sudo apt autoclean
 fi
 
 # TODO: setup [s]ftp server on limbo to serve assets?
