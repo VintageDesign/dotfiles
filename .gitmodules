@@ -32,3 +32,6 @@
 [submodule ".vim/bundle/vim-fugitive"]
 	path = .vim/bundle/vim-fugitive
 	url = git@github.com:tpope/vim-fugitive.git
+[submodule "torrent_cleaner"]
+	path = torrent_cleaner
+	url = ssh://git@git.agill.xyz:22000/nots/torrent_cleaner.git
