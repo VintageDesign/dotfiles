@@ -14,7 +14,7 @@ fi
 
 TARGET_DIR=$1
 
-if [ ! -d ${TARGET_DIR} ]; then
+if [ ! -d "${TARGET_DIR}" ]; then
     echo "Target directory ${TARGET_DIR} doesn't exist."
     exit 0
 fi
@@ -22,7 +22,7 @@ fi
 SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
 
 # The list of things to symlink:
-declare -a TARGETS=("bin" ".vim" ".fzf" ".gitconfig" ".pylintrc" ".bashrc" ".bash_aliases")
+declare -a TARGETS=("bin" ".vim" ".fzf" ".gitconfig" ".pylintrc" ".bashrc" ".bash_aliases" ".gdbinit")
 
 for t in "${TARGETS[@]}"; do
     SOURCE="${SCRIPTPATH}/${t}"
