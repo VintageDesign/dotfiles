@@ -19,7 +19,7 @@ read -p "Update dotfiles and vim plugins? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "Updating dotfiles and plugins..."
-    # TODO: Avoid hardcoding this!
+    # TODO: Avoid hardcoding this path!
     cd ~/.config/dotfiles
     git pull && git submodule update --remote --recursive --init
     cd -
@@ -30,8 +30,7 @@ read -p "Install fzf? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "Installing fzf"
-    # TODO: pipe `yes` into install script?
-    $HOME/.fzf/install
+    ~/.fzf/install
     echo "Done installing fzf"
 fi
 
@@ -49,7 +48,6 @@ read -p "Install Java? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "Installing Java..."
-    # TODO: make minecraft work nicely with java9
     sudo apt install oracle-java8-installer
 fi
 
@@ -58,7 +56,7 @@ read -p "Install LaTeX and related? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "Installing texlive, chktex..."
-    # TODO: Don't install texmaker from repository -- out of date?
+    # TODO: Don't install texmaker from repository -- out of date
     sudo apt install texlive-full chktex pdf2svg pandoc
 fi
 
@@ -67,10 +65,8 @@ read -p "Install dev packages? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "Installing dev packages..."
-    sudo apt install gcc g++ make clang shellcheck gdb pep8 libcppunit-dev astyle doxygen python3-setuptools pv
-    # TODO: this throws an exception relating to the setuptools version
-    # sudo easy_install3 pip
-    sudo -H pip install --upgrade pip pylint
+    sudo apt install gcc g++ clang gdb make shellcheck libcppunit-dev astyle doxygen python3-setuptools python3-pip python3-dev
+    sudo -H pip3 install --upgrade pip pylint pycodestyle nose
 fi
 
 # Install useful packages
@@ -78,7 +74,7 @@ read -p "Install useful utilities? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "Installing headless Packages...."
-    sudo apt install traceroute nmap htop screen screenfetch linux-tools-common linux-tools-generic openssh-server tree iperf
+    sudo apt install traceroute nmap htop screen screenfetch linux-tools-common linux-tools-generic openssh-server tree iperf net-tools nfs-common pv
 fi
 
 # Install gui packages?
@@ -86,7 +82,7 @@ read -p "Install GUI packages? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     # printer-driver-escpr isn't a GUI package, but you only use it on a non-headless system
-    sudo apt install pithos printer-driver-escpr gnome-tweak-tool
+    sudo apt install pithos printer-driver-escpr gnome-tweak-tool chrome-gnome-shell unetbootin
 fi
 
 # Install useful Python 3 packages
@@ -94,7 +90,7 @@ read -p "Install python3 scipy stack? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "Installing Python Packages..."
-    sudo -H pip install --upgrade pygments ipython matplotlib sympy scipy numpy networkx nmap pandas seaborn
+    sudo -H pip install --upgrade pygments matplotlib sympy scipy numpy networkx nmap pandas seaborn
 fi
 
 # Install Jupyter
@@ -102,16 +98,7 @@ read -p "Install Jupyter? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "Installing Jupyter..."
-    sudo -H pip install --upgrade jupyter ipython jupyterlab
-fi
-
-# Install Jekyll
-read -p "Install Jekyll? (y/N) " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "Installing Jekyll..."
-    sudo apt install ruby ruby-dev gcc make
-    sudo gem install jekyll bundler jekyll-sitemap
+    sudo -H pip install --upgrade ipython jupyter jupyterlab
 fi
 
 # Update and upgrade system
