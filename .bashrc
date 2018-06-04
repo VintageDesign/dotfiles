@@ -131,6 +131,10 @@ fi
 # Enable fzf
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
+# fzf settings
+export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200'"
+export FZF_CTRL_T_OPTS="--preview 'tree -C {} | head -200'"
+
 # Add ~/bin/ to path
 export PATH="$HOME/bin:$PATH"
 # Force Matlab to use Java 8 -- eliminates MEvent. CASE! spam
