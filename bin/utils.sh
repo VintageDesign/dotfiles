@@ -33,11 +33,12 @@ rhyme()
     { cat /usr/share/dict/words; printf %s\\n "$1"; } | rev | sort | rev | grep -FxC15 -e "${1?}" | grep -Fxve "$1" | shuf -n1;
 }
 
-# Give list of unique commands in history and count their usage.
-uhist()
-{
-    sed 's/|/\n/g' ~/.bash_history | awk '{CMD[$1]++;count++;}END { for (a in CMD)print CMD[a] " " CMD[a]/count*100 "% " a;}' | grep -v "./" | column -c3 -s " " -t | sort -nr | nl |  head -n10
-}
+# A better Python version has been added.
+# # Give list of unique commands in history and count their usage.
+# uhist()
+# {
+#     sed 's/|/\n/g' ~/.bash_history | awk '{CMD[$1]++;count++;}END { for (a in CMD)print CMD[a] " " CMD[a]/count*100 "% " a;}' | grep -v "./" | column -c3 -s " " -t | sort -nr | nl |  head -n10
+# }
 
 # Lists your path one item per line
 path()
