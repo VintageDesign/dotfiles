@@ -10,7 +10,12 @@ from pathlib import Path
 # Commands like 'git' where 'git add' and 'git rebase' should be treated as
 # distinctly different.
 MULTI_COMMAND_COMMANDS = [
-   'git'
+   'git',
+   'ip',
+   'route',
+   'apt'
+   'service',
+   'systemctl',
 ]
 
 BASH_HISTORY = expanduser('~/.bash_history')
