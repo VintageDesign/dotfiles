@@ -128,6 +128,13 @@ if ! shopt -oq posix; then
     fi
 fi
 
+# If tab complete is abimguous, show completions on first <TAB>, not second.
+bind 'set show-all-if-ambiguous on'
+# Cycle through completions with <TAB>. TODO: Color completions?
+bind 'TAB:menu-complete'
+# Wait till second <TAB> to complete, list completions on first <TAB>.
+bind 'set menu-complete-display-prefix on'
+
 # Enable fzf
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
