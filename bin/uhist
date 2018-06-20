@@ -5,43 +5,43 @@ Analyze and print statistics about ~/.bash_history
 import argparse
 from collections import Counter
 from os.path import expanduser
-from pathlib import Path
 
 # Commands like 'git' where 'git add' and 'git rebase' should be treated as
 # distinctly different.
 MULTI_COMMAND_COMMANDS = [
-   'git',
-   'ip',
-   'route',
-   'apt'
-   'service',
-   'systemctl',
+    'git',
+    'ip',
+    'route',
+    'apt'
+    'service',
+    'sudo',
+    'systemctl',
 ]
 
 BASH_HISTORY = expanduser('~/.bash_history')
 
 def get_subcommands(command):
-   """Takes the root, or root + subcommand if indicated by MULTI_COMMAND_COMMANDS."""
-   if not command:
-      return ''
-   root = command[0]
-   if root in MULTI_COMMAND_COMMANDS and len(command) >= 2:
-      root = root + ' ' + command[1]
-   return root
+    """Takes the root, or root + subcommand if indicated by MULTI_COMMAND_COMMANDS."""
+    if not command:
+        return ''
+    root = command[0]
+    if root in MULTI_COMMAND_COMMANDS and len(command) >= 2:
+        root = root + ' ' + command[1]
+    return root
 
 def main(n):
-   with open(BASH_HISTORY, 'r') as history:
-      history = Counter(get_subcommands(c.split()) for c in history)
-      total = sum(history.values())
+    with open(BASH_HISTORY, 'r') as history:
+        history = Counter(get_subcommands(c.split()) for c in history)
+        total = sum(history.values())
 
-      for command, count in history.most_common(n):
-         print('\t{}\t{:05.2f}%\t{}'.format(count, (count / total) * 100, command))
+        for command, count in history.most_common(n):
+            print('\t{}\t{:05.2f}%\t{}'.format(count, (count / total) * 100, command))
 
 
 if __name__ == '__main__':
-   parser = argparse.ArgumentParser()
-   parser.add_argument('-n', '--number', default=10, type=int, help='The number of most-common items to show')
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-n', '--number', default=10, type=int, help='The number of most-common items to show')
 
-   args = parser.parse_args()
+    args = parser.parse_args()
 
-   main(args.number)
+    main(args.number)
