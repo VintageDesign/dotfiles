@@ -35,3 +35,9 @@
 [submodule "torrent_cleaner"]
 	path = torrent_cleaner
 	url = ssh://git@git.agill.xyz/nots/torrent_cleaner.git
+[submodule ".vim/bundle/vim-gitgutter"]
+	path = .vim/bundle/vim-gitgutter
+	url = git@github.com:airblade/vim-gitgutter.git
+[submodule ".vim/bundle/gruvbox"]
+	path = .vim/bundle/gruvbox
+	url = git@github.com:morhetz/gruvbox.git

@@ -1,7 +1,13 @@
 execute pathogen#infect()
 
-" Found in ~/.vim/bundle/colorschemes/colors
-colorscheme monokain
+let g:gruvbox_italic=1
+set bg=dark
+set termguicolors
+colorscheme gruvbox
+
+" Custom GitGutter commands
+command Stage  GitGutterStageHunk
+command Revert GitGutterUndoHunk
 
 " Set default encoding to UTF-8
 set enc=utf-8
@@ -147,7 +153,7 @@ autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 map <C-n> :NERDTreeToggle<CR>
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
-let g:airline_theme='distinguished'
+let g:airline_theme='gruvbox'
 let g:airline#extensions#ale#enabled = 1
 let g:airline#extensions#whitespace#enabled = 1
 let g:airline#extensions#vimtex#enabled = 1
