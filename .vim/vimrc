@@ -2,7 +2,8 @@ execute pathogen#infect()
 
 let g:gruvbox_italic=1
 set bg=dark
-set termguicolors
+" Wonky in SSH sessions
+"set termguicolors
 colorscheme gruvbox
 
 " Custom GitGutter commands
