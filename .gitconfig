@@ -12,8 +12,10 @@
 [push]
     default = simple
 [alias]
-    lg    = log --color --graph --pretty=format:'%C(red)%h%C(reset) -%C(yellow)%d%C(reset) %s %C(green)(%cr) %C(bold blue)<%an>%C(reset)' --abbrev-commit --decorate
+    gl    = !bash -c 'source ~/bin/utils.sh && gl'
+    lg    = log --color --graph --pretty=format:'%C(auto)%h%d %s %C(black)%C(bold)%an, %cr' --abbrev-commit --decorate
     ll    = log --pretty=format:'%C(red)%h%C(reset) -%C(yellow)%d%C(reset) %s %C(bold blue) <%an>' --decorate --numstat --abbrev-commit
+    rf    = reflog --pretty=format:'%C(auto)%h %gd %gs%C(black)%C(bold), %cr'
     co    = checkout
     amend = commit --amend --no-edit
     st    = status
