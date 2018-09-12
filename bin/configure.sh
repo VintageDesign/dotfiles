@@ -4,6 +4,7 @@ set -o pipefail
 set -o nounset
 ##############################
 # TODO: Do not hard code paths
+# TODO: List out programs to install instead of descriptions
 ##############################
 
 # Install essential commands - no system is complete without them.
