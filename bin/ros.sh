@@ -8,3 +8,4 @@ source "$HOME/Documents/school/workspace/install/setup.bash"
 
 # I'm not entirly sure if this is necessary
 export RMW_IMPLEMENTATION=rmw_opensplice_cpp
+alias veranda='ros2 run veranda veranda'
