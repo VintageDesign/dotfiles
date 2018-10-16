@@ -144,7 +144,7 @@ export FZF_CTRL_T_OPTS="--preview 'tree -C {} | head -200'"
 
 # Add ~/bin/ to path
 export PATH="$HOME/bin:$PATH"
-export PATH="$PATH:~/.local/bin"
+export PATH="$HOME/.local/bin:$PATH"
 # Force Matlab to use Java 8 -- eliminates MEvent. CASE! spam
 export MATLAB_JAVA="/usr/lib/jvm/java-8-oracle/jre"
 # For using XMing on WSL
