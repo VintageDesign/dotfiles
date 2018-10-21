@@ -142,24 +142,36 @@ bind 'set menu-complete-display-prefix on'
 export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200'"
 export FZF_CTRL_T_OPTS="--preview 'tree -C {} | head -200'"
 
-# Add ~/bin/ to path
+##################################################################################################
+# Path settings
+##################################################################################################
+# TODO: Make CUDA path work on laptop?
 # TODO: Prefer ~/.local/bin/ over ~/bin/
+
+# Add ~/bin/ to path
 export PATH="$HOME/bin:$PATH"
 # Add locally-installed binaries to path
 export PATH="$HOME/.local/bin:$PATH"
-# Add local libraries to path
-export LD_LIBRARY_PATH="$HOME/.local/lib:$LD_LIBRARY_PATH"
-# Add local header files to gcc path
-export CPATH="/.local/include:$CPATH"
-# Add CUDA libraries to path for use one Opp Lab machines.
-export LD_LIBRARY_PATH="/usr/local/cuda/lib64:$LD_LIBRARY_PATH"
 # Add CUDA nvcc et al to path on Opp Lab machines.
-# TODO: Make work on laptop?
 export PATH="/usr/local/cuda/bin:$PATH"
+
+# Add local header files to gcc path
+export CPATH="$HOME/.local/include:$CPATH"
+
+# Add local libraries to path
+export LIBRARY_PATH="$LIBRARY_PATH:$HOME/.local/lib"
+# Add CUDA libraries to path for use one Opp Lab machines.
+export LIBRARY_PATH="$LIBRARY_PATH:/usr/local/cuda/lib64"
+
+# Setting LIBRARY_PATH is for linking, setting LD_LIBRARY_PATH is for running
+export LD_LIBRARY_PATH="$LIBRARY_PATH"
+
 # Force Matlab to use Java 8 -- eliminates MEvent. CASE! spam
 export MATLAB_JAVA="/usr/lib/jvm/java-8-oracle/jre"
+
 # For using XMing on WSL
 # export DISPLAY=:0
 export TERM=xterm-256color
+
 # Source my utility functions
 source "$HOME/bin/utils.sh"
