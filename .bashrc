@@ -143,8 +143,19 @@ export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200'"
 export FZF_CTRL_T_OPTS="--preview 'tree -C {} | head -200'"
 
 # Add ~/bin/ to path
+# TODO: Prefer ~/.local/bin/ over ~/bin/
 export PATH="$HOME/bin:$PATH"
+# Add locally-installed binaries to path
 export PATH="$HOME/.local/bin:$PATH"
+# Add local libraries to path
+export LD_LIBRARY_PATH="$HOME/.local/lib:$LD_LIBRARY_PATH"
+# Add local header files to gcc path
+export CPATH="/.local/include:$CPATH"
+# Add CUDA libraries to path for use one Opp Lab machines.
+export LD_LIBRARY_PATH="/usr/local/cuda/lib64:$LD_LIBRARY_PATH"
+# Add CUDA nvcc et al to path on Opp Lab machines.
+# TODO: Make work on laptop?
+export PATH="/usr/local/cuda/bin:$PATH"
 # Force Matlab to use Java 8 -- eliminates MEvent. CASE! spam
 export MATLAB_JAVA="/usr/lib/jvm/java-8-oracle/jre"
 # For using XMing on WSL
