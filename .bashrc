@@ -169,6 +169,9 @@ export LD_LIBRARY_PATH="$LIBRARY_PATH"
 # Force Matlab to use Java 8 -- eliminates MEvent. CASE! spam
 export MATLAB_JAVA="/usr/lib/jvm/java-8-oracle/jre"
 
+# Use parallel make by default
+export MAKEFLAGS="-j=$(grep -c ^processor /proc/cpuinfo)"
+
 # For using XMing on WSL
 # export DISPLAY=:0
 export TERM=xterm-256color
