@@ -170,7 +170,7 @@ export LD_LIBRARY_PATH="$LIBRARY_PATH"
 export MATLAB_JAVA="/usr/lib/jvm/java-8-oracle/jre"
 
 # Use parallel make by default
-export MAKEFLAGS="-j=$(grep -c ^processor /proc/cpuinfo)"
+export MAKEFLAGS="-j $(grep -c ^processor /proc/cpuinfo)"
 
 # For using XMing on WSL
 # export DISPLAY=:0
