@@ -3,7 +3,7 @@
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
-      *) return;;
+    *) return;;
 esac
 
 # don't put duplicate lines or lines starting with space in the history.
@@ -35,12 +35,12 @@ force_color_prompt=yes
 
 if [ -n "$force_color_prompt" ]; then
     if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-    	# We have color support; assume it's compliant with Ecma-48
-    	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-    	# a case would tend to support setf rather than setaf.)
-    	color_prompt=yes
+        # We have color support; assume it's compliant with Ecma-48
+        # (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+        # a case would tend to support setf rather than setaf.)
+        color_prompt=yes
     else
-    	color_prompt=h
+        color_prompt=h
     fi
 fi
 
@@ -94,25 +94,25 @@ unset color_prompt force_color_prompt SSH_FLAG
 
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
-xterm*|rxvt*)
-    # Prepends title thingy to $PS1
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-    ;;
-*)
-    ;;
+    xterm*|rxvt*)
+        # Prepends title thingy to $PS1
+        PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+        ;;
+    *)
+        ;;
 esac
 
 # Enable colored man pages
 man() {
-	env \
-		LESS_TERMCAP_mb="$(printf "\e[1;31m")"    \
-		LESS_TERMCAP_md="$(printf "\e[1;31m")"    \
-		LESS_TERMCAP_me="$(printf "\e[0m")"       \
-		LESS_TERMCAP_se="$(printf "\e[0m")"       \
-		LESS_TERMCAP_so="$(printf "\e[1;44;33m")" \
-		LESS_TERMCAP_ue="$(printf "\e[0m")"       \
-		LESS_TERMCAP_us="$(printf "\e[1;32m")"    \
-			man "$@"
+    env \
+        LESS_TERMCAP_mb="$(printf "\e[1;31m")"    \
+        LESS_TERMCAP_md="$(printf "\e[1;31m")"    \
+        LESS_TERMCAP_me="$(printf "\e[0m")"       \
+        LESS_TERMCAP_se="$(printf "\e[0m")"       \
+        LESS_TERMCAP_so="$(printf "\e[1;44;33m")" \
+        LESS_TERMCAP_ue="$(printf "\e[0m")"       \
+        LESS_TERMCAP_us="$(printf "\e[1;32m")"    \
+        man "$@"
 }
 
 if [ -f ~/.bash_aliases ]; then
