@@ -7,15 +7,7 @@ set -o nounset
 # TODO: List out programs to install instead of descriptions
 ##############################
 
-# Install essential commands - no system is complete without them.
-read -p "Install git, vim, and unp? (y/N) " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "Installing Essentials..."
-    sudo apt install git vim unp htop
-fi
 
-# Update dotfiles and vim plugins
 read -p "Update dotfiles and vim plugins? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -26,7 +18,6 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     cd -
 fi
 
-# Install fzf, requires the fzf submodule to be initialized and updated
 read -p "Install fzf? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -35,74 +26,83 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "Done installing fzf"
 fi
 
-# Add Oracle Java repository
-read -p "Add Java repository? (y/N) " -n 1 -r
+read -p "Install git, vim, and curl? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "Adding Repositories..."
-    sudo add-apt-repository ppa:webupd8team/java
-    sudo apt update
+    echo "Installing Essentials..."
+    sudo apt install git vim curl
 fi
 
-# After adding the repositories, install Java?
 read -p "Install Java? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "Installing Java..."
+    echo "Adding Repositories..."
+    sudo add-apt-repository ppa:webupd8team/java -y
+    sudo apt update
     sudo apt install oracle-java8-installer
 fi
 
-# Install LaTeX?
-read -p "Install LaTeX and related? (y/N) " -n 1 -r
+read -p "Install LaTeX? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "Installing texlive, chktex..."
-    # TODO: Don't install texmaker from repository -- out of date
     sudo apt install texlive-full chktex pdf2svg pandoc
 fi
 
-# Install dev packages
 read -p "Install dev packages? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "Installing dev packages..."
-    sudo apt install gcc g++ clang gdb make shellcheck libcppunit-dev astyle doxygen python3-setuptools python3-pip python3-dev
-    sudo -H pip3 install --upgrade pip pylint pycodestyle nose
+    sudo apt install gcc g++ clang clang-format clang-tidy gdb make shellcheck doxygen graphviz texlive-full chktex pdf2svg pandoc python3-dev
 fi
 
-# Install useful packages
 read -p "Install useful utilities? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "Installing headless Packages...."
-    sudo apt install traceroute nmap htop screen screenfetch linux-tools-common linux-tools-generic openssh-server tree iperf net-tools nfs-common pv
+    echo "Installing utilities...."
+    sudo apt install htop nmap traceroute screen screenfetch linux-tools-common linux-tools-generic openssh-server tree iperf net-tools nfs-common pv
 fi
 
-# Install gui packages?
-read -p "Install GUI packages? (y/N) " -n 1 -r
+read -p "Install customizations? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    # printer-driver-escpr isn't a GUI package, but you only use it on a non-headless system
-    sudo apt install pithos printer-driver-escpr gnome-tweak-tool chrome-gnome-shell unetbootin
+    sudo add-apt-repository ppa:numix/ppa -y
+    sudo add-apt-repository ppa:mikhailnov/pulseeffects -y
+    sudo apt install gnome-tweak-tool chrome-gnome-shell numix-gtk-theme numix-icon-theme-circle pulseeffects
 fi
 
-# Install useful Python 3 packages
-read -p "Install python3 scipy stack? (y/N) " -n 1 -r
+read -p "Install VS Code? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "Installing Python Packages..."
-    sudo -H pip install --upgrade pygments matplotlib sympy scipy numpy networkx nmap pandas seaborn
+    echo "Installing VS Code and setting-sync"
+    curl -L https://go.microsoft.com/fwlink/?LinkID=760868 -o code.deb
+    sudo apt install ./code.deb
+    code --install-extension shan.code-settings-sync
+    echo "See: https://marketplace.visualstudio.com/items?itemName=Shan.code-settings-sync"
 fi
 
-# Install Jupyter
-read -p "Install Jupyter? (y/N) " -n 1 -r
+read -p "Install python3 dev tools and libraries? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "Installing Jupyter..."
-    sudo -H pip install --upgrade ipython jupyter jupyterlab
+    echo "Checking for pip..."
+    if [ ! -f "$(which pip)" ]; then
+        echo "Pip not installed. Installing Pip."
+        curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+        read -p "Install Pip as user? (y/N) " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            python3 get-pip.py --user
+        else
+            sudo -H python3 get-pip.py
+        fi
+    else
+        echo "Found Pip $(pip --version)"
+    fi
+
+    echo "Installing commonly used packages as user."
+    pip install --upgrade --user pylint pycodestyle pydocstyle nose black virtualenv pygments matplotlib sympy scipy numpy pandas seaborn ipython jupyter jupyterlab parsedatetime nbstripout
 fi
 
-# Update and upgrade system
 read -p "Update and upgrade? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -110,22 +110,3 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     sudo apt update && sudo apt upgrade
     sudo apt autoremove && sudo apt autoclean
 fi
-
-# TODO: setup [s]ftp server on limbo to serve assets?
-#       * what to do when updating/configuring limbo?
-
-# TODO: configure fonts
-# sudo cp assets/Fonts/Meslo/MesloLGSDZ-Regular.ttf /usr/share/fonts/
-# sudo cp assets/Fonts/Apple\ San\ Fransisco/SystemSanFranciscoDisplayBold.ttf assets/Fonts/Apple\ San\ Fransisco/SystemSanFranciscoDisplayRegular.ttf /usr/share/fonts/
-#
-# sudo fc-cache -fv
-
-# TODO: setup minecraft.desktop and startup script(s)
-
-# TODO: setup terminal profile(s)?
-
-# TODO: setup system preferences
-
-# TODO: setup /etc/hosts
-
-# TODO: setup ~/.ssh/config
