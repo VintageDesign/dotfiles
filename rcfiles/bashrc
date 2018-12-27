@@ -7,7 +7,7 @@ case $- in
 esac
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=5000
+HISTSIZE=-1
 # Save all history
 HISTFILESIZE=-1
 
