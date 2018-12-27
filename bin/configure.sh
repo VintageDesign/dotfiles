@@ -100,7 +100,11 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     fi
 
     echo "Installing commonly used packages as user."
-    pip install --upgrade --user pylint pycodestyle pydocstyle nose black virtualenv pygments matplotlib sympy scipy numpy pandas seaborn ipython jupyter jupyterlab parsedatetime nbstripout
+    pip install --upgrade --user pylint pycodestyle pydocstyle nose black virtualenv pygments matplotlib sympy scipy numpy pandas seaborn ipython jupyter jupyterlab parsedatetime nbstripout nb_pdf_template
+    python3 -m np_pdf_template.install --minted
+    mkdir -p ~/.jupyter
+    echo "c.PDFExporter.latex_command = ['xelatex', '-8bit', '-shell-escape','{filename}']" > ~/.jupyter
+    echo "c.LatexExporter.template_file = 'classicm'" >> ~/.jupyter
 fi
 
 read -p "Update and upgrade? (y/N) " -n 1 -r
