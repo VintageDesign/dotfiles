@@ -50,7 +50,7 @@ read -p "Install dev packages? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "Installing dev packages..."
-    sudo apt install gcc g++ clang clang-format clang-tidy gdb make cmake shellcheck doxygen graphviz python3-dev optipng
+    sudo apt install gcc g++ clang clang-format clang-tidy gdb valgrind make cmake shellcheck doxygen graphviz python3-dev optipng
 fi
 
 read -p "Install useful utilities? (y/N) " -n 1 -r
