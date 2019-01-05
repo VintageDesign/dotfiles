@@ -40,15 +40,25 @@ def main(args):
         return
 
     for src, dest in MAPPINGS.items():
-        src = Path(src).resolve()
+        # Prepend the basepath of this script to the src.
+        src = Path(__file__).parent.joinpath(Path(src))
         dest = Path(args.target).joinpath(dest)
 
         if args.verbose or args.dry_run:
             print("symlinking", dest, "->", src)
 
         if not args.dry_run:
-            if dest.exists():
-                print(dest, "exists! Not symlinking.")
+            if dest.exists() and dest.is_symlink():
+                print(dest, "exists and is a symlink! Unlinking...")
+                dest.unlink()
+                dest.symlink_to(src)
+            elif dest.exists() and dest.is_file():
+                print(dest, "exists and is a file! Unlinking...")
+                dest.unlink()
+                dest.symlink_to(src)
+            elif dest.exists() and dest.is_dir():
+                # TODO: Decide if removing the directory ourselves is okay to do.
+                print(dest, "exists and is a directory! Not symlinking!")
             else:
                 dest.symlink_to(src)
 
