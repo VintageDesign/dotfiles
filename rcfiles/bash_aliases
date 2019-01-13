@@ -1,16 +1,10 @@
 #!/bin/bash
 
-alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
-
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
 
 alias tree='tree -C'
-
-alias matlab='/opt/matlab/bin/matlab'
-
-alias gtop='watch -n 1 nvidia-smi'
 
 alias ls='ls -h --color=auto'
 alias ll='ls -alF'
@@ -25,4 +19,5 @@ alias upg='sudo apt upgrade'
 alias acl='sudo apt-get autoclean'
 alias arem='sudo apt-get autoremove'
 
+# :D
 alias git-yolo='git commit -am "$(curl -s http://whatthecommit.com/index.txt)"'

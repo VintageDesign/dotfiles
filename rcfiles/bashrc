@@ -142,29 +142,44 @@ export FZF_CTRL_T_OPTS="--preview 'tree -C {} | head -200'"
 ##################################################################################################
 # Path settings
 ##################################################################################################
-# TODO: Make CUDA path work on laptop?
-# TODO: Prefer ~/.local/bin/ over ~/bin/
+# TODO: Only add a directory to a search path if it exists.
+# TODO: My default ~/.profile already adds ~/bin and ~/.local/bin to $PATH if they exist and are
+#       directories. But ~/bin/ is a symlink, so it isn't added. So then ~/.local/bin/ gets added
+#       twice.
 
-# Add ~/bin/ to path
-export PATH="$HOME/bin:$PATH"
-# Add locally-installed binaries to path
-export PATH="$HOME/.local/bin:$PATH"
-# Add CUDA nvcc et al to path on Opp Lab machines.
-export PATH="/usr/local/cuda/bin:$PATH"
 
-# Add local header files to gcc path
-export CPATH="$HOME/.local/include:$CPATH"
+# With my current dotfiles repository, it is not possible to simply symlink $GIT_DIR/bin to ~/.local/bin
+# because ~/.local/bin/ contains items that should not be version controlled. There might be a simple
+# solution, but I haven't found one yet. So until then, I have two local bin/ directories.
 
-# Add local libraries to path
-export LIBRARY_PATH="$LIBRARY_PATH:$HOME/.local/lib"
-# Add CUDA libraries to path for use one Opp Lab machines.
-export LIBRARY_PATH="$LIBRARY_PATH:/usr/local/cuda/lib64"
+# Add ~/bin/ and ~/.local/bin/ to PATH
+PATH="$HOME/bin${PATH:+:${PATH}}"
+PATH="$HOME/.local/bin${PATH:+:${PATH}}"
+
+# Add local installation of CUDA 9.0 for tensorflow-gpu 1.12.0
+# There are two options. First, /usr/local/cuda, which is usually symlinked to /usr/local/cuda-x.y.
+# This is what the Opp Lab uses, but the CUDA version depends on the machine and are typically too
+# new for tensorflow (some have CUDA 10.0). So, prefer a local installation.
+# TODO: Add ~/.local/cuda/ to search paths and symlink to ~/.local/cuda-x.y/?
+
+# PATH="/usr/local/cuda/bin:${PATH:+:${PATH}}"
+# LIBRARY_PATH="/usr/local/cuda/lib64${LIBRARY_PATH:+:${LIBRARY_PATH}}"
+PATH="/home/nots/.local/cuda-9.0/bin${PATH:+:${PATH}}"
+LIBRARY_PATH="/home/nots/.local/cuda-9.0/lib64${LIBRARY_PATH:+:${LIBRARY_PATH}}"
+
+# Add local header files to gcc include path
+CPATH="$HOME/.local/include${CPATH:+:${CPATH}}"
+
+# Add local libraries to library path.
+LIBRARY_PATH="$HOME/.local/lib${LIBRARY_PATH:+:${LIBRARY_PATH}}"
 
 # Setting LIBRARY_PATH is for linking, setting LD_LIBRARY_PATH is for running
-export LD_LIBRARY_PATH="$LIBRARY_PATH"
+LD_LIBRARY_PATH="$LIBRARY_PATH"
 
-# Force Matlab to use Java 8 -- eliminates MEvent. CASE! spam
-export MATLAB_JAVA="/usr/lib/jvm/java-8-oracle/jre"
+export PATH
+export CPATH
+export LIBRARY_PATH
+export LD_LIBRARY_PATH
 
 # Use parallel make by default
 export MAKEFLAGS="-j$(nproc)"
