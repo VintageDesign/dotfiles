@@ -156,6 +156,11 @@ export FZF_CTRL_T_OPTS="--preview 'tree -C {} | head -200'"
 PATH="$HOME/bin${PATH:+:${PATH}}"
 PATH="$HOME/.local/bin${PATH:+:${PATH}}"
 
+# Add local manpages, but be sure to not overwrite the defaults
+MANPATH="$(manpath)"
+MANPATH="$HOME/.local/man${MANPATH:+:${MANPATH}}"
+MANPATH="$HOME/.local/share/man${MANPATH:+:${MANPATH}}"
+
 # Add local installation of CUDA 9.0 for tensorflow-gpu 1.12.0
 # There are two options. First, /usr/local/cuda, which is usually symlinked to /usr/local/cuda-x.y.
 # This is what the Opp Lab uses, but the CUDA version depends on the machine and are typically too
@@ -180,6 +185,7 @@ export PATH
 export CPATH
 export LIBRARY_PATH
 export LD_LIBRARY_PATH
+export MANPATH
 
 # Use parallel make by default
 export MAKEFLAGS="-j$(nproc)"
