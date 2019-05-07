@@ -25,9 +25,6 @@ def parse_args():
         help='Open the note from a relative time. E.g. "yesterday" or "3 days ago"',
     )
 
-    # TODO: Add argument to sync notes with server?
-    # parser.add_argument('--sync', action='store_true', help='Sync notes with master copies')
-
     return parser.parse_args()
 
 
