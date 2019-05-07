@@ -41,7 +41,7 @@ def main(args):
 
     for src, dest in MAPPINGS.items():
         # Prepend the basepath of this script to the src.
-        src = Path(__file__).parent.joinpath(Path(src))
+        src = Path(__file__).parent.joinpath(Path(src)).resolve()
         dest = Path(args.target).joinpath(dest)
 
         if args.verbose or args.dry_run:
