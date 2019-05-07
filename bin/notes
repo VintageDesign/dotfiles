@@ -5,7 +5,11 @@ from datetime import datetime
 from pathlib import Path
 from subprocess import call
 
-import parsedatetime
+try:
+    import parsedatetime
+    STDLIBONLY = False
+except ImportError:
+    STDLIBONLY = True
 
 
 def parse_args():
@@ -18,12 +22,13 @@ def parse_args():
 
     parser.add_argument("--version", action="version", version=VERSION)
     group.add_argument("--todo", action="store_true", default=False, help="Open the TODO list.")
-    group.add_argument(
-        "-r",
-        "--relative",
-        nargs="+",
-        help='Open the note from a relative time. E.g. "yesterday" or "3 days ago"',
-    )
+    if not STDLIBONLY:
+        group.add_argument(
+            "-r",
+            "--relative",
+            nargs="+",
+            help='Open the note from a relative time. E.g. "yesterday" or "3 days ago"',
+        )
 
     return parser.parse_args()
 
@@ -41,8 +46,7 @@ def main():
 
     if args.todo:
         FILENAME = "todo.md"
-    # TODO: If the relative file does not exist, prompt for creation?
-    elif args.relative:
+    elif args.relative and not STDLIBONLY:
         args.relative = " ".join(args.relative)
         cal = parsedatetime.Calendar()
         time, status = cal.parse(args.relative)
