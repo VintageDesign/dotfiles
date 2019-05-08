@@ -2,16 +2,24 @@
 set -o errexit
 set -o pipefail
 set -o nounset
-##############################
-# TODO: Do not hard code paths
-##############################
+
+SOURCE="${BASH_SOURCE[0]}"
+# resolve $SOURCE until the file is no longer a symlink
+while [ -h "$SOURCE" ]; do
+    DIR="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)"
+    SOURCE="$(readlink "$SOURCE")"
+    # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+    [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+CONFIG_DIR="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)/.."
+CONFIG_DIR="$(readlink --canonicalize --no-newline "${CONFIG_DIR}")"
+echo "Found configuration directory: ${CONFIG_DIR}"
 
 read -p "Update dotfiles and vim plugins? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "Updating dotfiles and plugins..."
-    # TODO: Avoid hardcoding this path!
-    (cd ~/.config/dotfiles && git pull && git submodule update --remote --recursive --init)
+    (cd "${CONFIG_DIR}" && git pull && git submodule update --remote --recursive --init)
 fi
 
 read -p "Install fzf? (y/N) " -n 1 -r
@@ -28,7 +36,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "Installing shellcheck..."
     export scversion="latest"
     curl -L "https://storage.googleapis.com/shellcheck/shellcheck-${scversion}.linux.x86_64.tar.xz" -o ~/Downloads/shellcheck.tar.xz
-    tar -xJf ~/Downloads/shellcheck.tar.xz --directory $HOME/Downloads
+    tar -xJf ~/Downloads/shellcheck.tar.xz --directory "$HOME"/Downloads
     cp ~/Downloads/shellcheck-"${scversion}"/shellcheck ~/.local/bin
     chmod +x ~/.local/bin/shellcheck
     echo "Installed shellcheck version:"
@@ -208,7 +216,7 @@ ${NAS_STATIC_IP}:/volume1/ASSETS       /mnt/assets      nfs defaults 0 0
 ${NAS_STATIC_IP}:/volume1/DOCUMENTS    /mnt/documents   nfs defaults 0 0
 ${NAS_STATIC_IP}:/volume1/IMAGES       /mnt/images      nfs defaults 0 0
 ${NAS_STATIC_IP}:/volume1/PLEX         /mnt/plex        nfs defaults 0 0
-${NAS_STATIC_IP}:/volume1/PROJECTS     /mnt/projects    nfs defaults 0 0" | sudo tee -a /etc/fstab > /dev/null
+${NAS_STATIC_IP}:/volume1/PROJECTS     /mnt/projects    nfs defaults 0 0" | sudo tee -a /etc/fstab >/dev/null
     else
         echo "Adding noauto settings to /etc/fstab..."
         echo "# Synology NAS NFS shares. Note that this is a laptop, and these are local
@@ -217,12 +225,12 @@ ${NAS_STATIC_IP}:/volume1/ASSETS       /mnt/assets      nfs user,noauto 0 0
 ${NAS_STATIC_IP}:/volume1/DOCUMENTS    /mnt/documents   nfs user,noauto 0 0
 ${NAS_STATIC_IP}:/volume1/IMAGES       /mnt/images      nfs user,noauto 0 0
 ${NAS_STATIC_IP}:/volume1/PLEX         /mnt/plex        nfs user,noauto 0 0
-${NAS_STATIC_IP}:/volume1/PROJECTS     /mnt/projects    nfs user,noauto 0 0" | sudo tee -a /etc/fstab > /dev/null
+${NAS_STATIC_IP}:/volume1/PROJECTS     /mnt/projects    nfs user,noauto 0 0" | sudo tee -a /etc/fstab >/dev/null
     fi
 fi
 
 read -p "Insult on bad sudo password? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "Defaults    insults" | sudo tee -a /etc/sudoers > /dev/null
+    echo "Defaults    insults" | sudo tee -a /etc/sudoers >/dev/null
 fi
