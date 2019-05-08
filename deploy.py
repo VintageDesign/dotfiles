@@ -4,7 +4,6 @@ import os
 from pathlib import Path
 
 DESCRIPTION = "Deploy this repository to the given directory."
-VERSION = "0.1"
 
 MAPPINGS = {
     ".vim/": ".vim/",
@@ -20,7 +19,6 @@ MAPPINGS = {
 def parse_args():
     """Parse the commandline arguments."""
     parser = argparse.ArgumentParser(description=DESCRIPTION)
-    parser.add_argument("--version", action="version", version=VERSION)
     parser.add_argument(
         "--verbose", "-v", action="store_true", default=False, help="Increase output verbosity"
     )
