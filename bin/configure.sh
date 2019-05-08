@@ -154,7 +154,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         echo "Installing development packages without a virtualenv..."
-        # These packages are required by e.g., ~/bin/notes and VS Code Python config.
+        # These packages are required by e.g., ~/.local/bin/notes and VS Code Python config.
         pip install --upgrade --user virtualenv pygments ipython parsedatetime pylint pydocstyle black
         echo "Install all other packages in a virtualenv!"
     fi

@@ -154,8 +154,7 @@ export FZF_CTRL_T_OPTS="--preview 'tree -C {} | head -200'"
 # because ~/.local/bin/ contains items that should not be version controlled. There might be a simple
 # solution, but I haven't found one yet. So until then, I have two local bin/ directories.
 
-# Add ~/bin/ and ~/.local/bin/ to PATH
-PATH="$HOME/bin${PATH:+:${PATH}}"
+# Add ~/.local/bin/ to PATH
 PATH="$HOME/.local/bin${PATH:+:${PATH}}"
 
 # Add local manpages, but be sure to not overwrite the defaults
@@ -201,4 +200,4 @@ export TERM=xterm-256color
 # Prevent games from minimizing when focus is lost.
 export SDL_VIDEO_MINIMIZE_ON_FOCUS_LOSS=0
 # Source my utility functions
-source "$HOME/bin/utils.sh"
+source "$HOME/.local/bin/utils.sh"

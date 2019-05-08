@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 import argparse
+import os
 from pathlib import Path
 
 DESCRIPTION = "Deploy this repository to the given directory."
 VERSION = "0.1"
 
 MAPPINGS = {
-    # TODO: Can't symlink bin/ directly to .local/bin/ because it will contain
-    # items not version controlled in this repository.
-    "bin/": "bin/",
     ".vim/": ".vim/",
     ".fzf/": ".fzf/",
     "rcfiles/bash_aliases": ".bash_aliases",
@@ -35,14 +33,25 @@ def parse_args():
 
 def main(args):
     """Deploy this repository to the given directory."""
-    if not Path(args.target).exists():
+    TARGET = Path(args.target)
+    if not TARGET.exists():
         print(args.target, "does not exist! Cannot deploy.")
         return
 
+    DOTFILES_DIR = Path(__file__).parent.resolve()
+    TARGET_BIN_DIR = TARGET.joinpath(".local/bin").resolve()
+    if not TARGET_BIN_DIR.exists():
+        print(TARGET_BIN_DIR, "not present, making.")
+        if not args.dry_run:
+            TARGET_BIN_DIR.mkdir(parents=True, exist_ok=True)
+
+    for file in os.listdir(DOTFILES_DIR.joinpath("bin")):
+        MAPPINGS[os.path.join("bin", file)] = TARGET_BIN_DIR.joinpath(file)
+
     for src, dest in MAPPINGS.items():
         # Prepend the basepath of this script to the src.
-        src = Path(__file__).parent.joinpath(Path(src)).resolve()
-        dest = Path(args.target).joinpath(dest)
+        src = DOTFILES_DIR.joinpath(src).resolve()
+        dest = TARGET.joinpath(dest)
 
         if args.verbose or args.dry_run:
             print("symlinking", dest, "->", src)

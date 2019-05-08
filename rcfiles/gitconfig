@@ -2,7 +2,7 @@
     name = Austin Gill
     email = notgnoshi@gmail.com
 [core]
-    editor = vim 
+    editor = vim
     fileMode = false
     eol = lf
     autocrlf = input
@@ -12,7 +12,7 @@
 [push]
     default = simple
 [alias]
-    gl    = !bash -c 'source ~/bin/utils.sh && gl'
+    gl    = !bash -c 'source ~/.local/bin/utils.sh && gl'
     lg    = log --color --graph --pretty=format:'%C(auto)%h%d %s %C(black)%C(bold)%an, %cr' --abbrev-commit --decorate
     ll    = log --pretty=format:'%C(red)%h%C(reset) -%C(yellow)%d%C(reset) %s %C(bold blue) <%an>' --decorate --numstat --abbrev-commit
     rf    = reflog --pretty=format:'%C(auto)%h %gd %gs%C(black)%C(bold), %cr'
