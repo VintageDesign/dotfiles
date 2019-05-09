@@ -170,11 +170,17 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         echo "${YELLOW}Installing Python development packages without a virtualenv...${RESET}"
         # These packages are required by e.g., ~/.local/bin/notes and VS Code Python config.
-        pip install --upgrade --user virtualenv pygments ipython parsedatetime pylint pydocstyle black
+        pip install --upgrade --user virtualenv pygments ipython parsedatetime pylint pydocstyle black jupyter jupyterlab nb-pdf-template nbstripout
+        python3 -m nb_pdf_template.install
+        mkdir -p ~/.jupyter
+        echo "c.LatexExporter.template_file = 'classicm'" >> ~/.jupyter/jupyter_nbconvert_config.py
+        echo "c.LatexExporter.template_file = 'classicm'" >> ~/.jupyter/jupyter_notebook_config.py
+        # https://github.com/t-makaro/nb_pdf_template
+        # https://github.com/ryantam626/jupyterlab_code_formatter
         echo "${BOLD}${RED}Install all other packages in a virtualenv!${RESET}"
+        echo "${BOLD}${RED}Use 'python3 -m ipykernel install --user --name=<kernel name>' to install the current venv as a Jupyter kernel."
         echo "${GREEN}Installed Python development packages.${RESET}"
     fi
-    # TODO: Figure out how jupyter and nb-pdf-template work in a virtualenv.
 fi
 
 read -p "${BOLD}${UNDERLINE}Install Gnome Shell extensions? (y/N)${RESET} " -n 1 -r
