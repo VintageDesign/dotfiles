@@ -158,7 +158,7 @@ export FZF_CTRL_T_OPTS="--preview 'tree -C {} | head -200'"
 PATH="$HOME/.local/bin${PATH:+:${PATH}}"
 
 # Add local manpages, but be sure to not overwrite the defaults
-MANPATH="$(manpath)"
+MANPATH="$(manpath --quiet)"
 MANPATH="$HOME/.local/man${MANPATH:+:${MANPATH}}"
 MANPATH="$HOME/.local/share/man${MANPATH:+:${MANPATH}}"
 
