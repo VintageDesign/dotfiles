@@ -65,6 +65,13 @@ decorate_exit_status()
     fi
 }
 
+parse_git_branch()
+{
+    TEMP=$?
+    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+    exit $TEMP
+}
+
 # Determine if connected over ssh.
 SSH_FLAG=0
 if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
@@ -83,7 +90,7 @@ if [ "$color_prompt" = yes ]; then
         PS1="\[${BOLD}${RED}\](\[${RESET}${RED}\]ssh\[${BOLD}\]) \[${RESET}\]${PS1}"
     fi
     # Append a colored $ to the end of the $PS1 indicating the exit code
-    PS1="${PS1}\[\$(decorate_exit_status)\] \$ \[${RESET}\]"
+    PS1="${PS1}${WHITE}\$(parse_git_branch)\[\$(decorate_exit_status)\] \$ \[${RESET}\]"
 else
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
