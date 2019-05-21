@@ -258,9 +258,9 @@ fi
 read -p "${BOLD}${UNDERLINE}Insult on bad sudo password? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "${YELLOW}Adding ${WHITE}Defaults    insults${YELLOW} to /etc/fstab...${RESET}"
+    echo "${YELLOW}Adding ${WHITE}Defaults    insults${YELLOW} to /etc/sudoers...${RESET}"
     echo "Defaults    insults" | sudo tee -a /etc/sudoers >/dev/null
-    echo "${GREEN}Added to /etc/fstab.${RESET}"
+    echo "${GREEN}Added to /etc/sudoers${RESET}"
 fi
 
 echo "${GREEN}Done configuring system.${RESET}"
