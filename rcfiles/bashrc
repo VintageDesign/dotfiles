@@ -58,17 +58,20 @@ export RESET=$(tput sgr0)
 decorate_exit_status()
 {
     if [ $? -eq 0 ]; then
-        echo -e "${WHITE}"
+        echo -en "${WHITE}"
         # echo -e "${BOLD}${GREEN}"
     else
-        echo -e "${BOLD}${RED}"
+        echo -en "${BOLD}${RED}"
     fi
 }
 
+# This function cannot print the color codes because it will screw up the cursor placement.
+# That is, it cannot add the \[...\] symbols to the PS1 because you can't return strings from Bash
+# functions.
 parse_git_branch()
 {
     TEMP=$?
-    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1) /'
     exit $TEMP
 }
 
@@ -89,8 +92,11 @@ if [ "$color_prompt" = yes ]; then
     if [ $SSH_FLAG -eq 1 ]; then
         PS1="\[${BOLD}${RED}\](\[${RESET}${RED}\]ssh\[${BOLD}\]) \[${RESET}\]${PS1}"
     fi
+    # Add the Git branch to the $PS1 if present.
+    # A space is only added to the end if a branch is present.
+    PS1="${PS1}\[${BLUE}\]\$(parse_git_branch)\[${RESET}\]"
     # Append a colored $ to the end of the $PS1 indicating the exit code
-    PS1="${PS1}${WHITE}\$(parse_git_branch)\[\$(decorate_exit_status)\] \$ \[${RESET}\]"
+    PS1="${PS1}\[${WHITE}\]\[\$(decorate_exit_status)\]\$\[${RESET}\] "
 else
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
