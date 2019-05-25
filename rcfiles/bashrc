@@ -71,7 +71,7 @@ decorate_exit_status()
 parse_git_branch()
 {
     TEMP=$?
-    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1) /'
+    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
     exit $TEMP
 }
 
@@ -96,7 +96,7 @@ if [ "$color_prompt" = yes ]; then
     # A space is only added to the end if a branch is present.
     PS1="${PS1}\[${BLUE}\]\$(parse_git_branch)\[${RESET}\]"
     # Append a colored $ to the end of the $PS1 indicating the exit code
-    PS1="${PS1}\[${WHITE}\]\[\$(decorate_exit_status)\]\$\[${RESET}\] "
+    PS1="${PS1} \[${WHITE}\]\[\$(decorate_exit_status)\]\$\[${RESET}\] "
 else
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
