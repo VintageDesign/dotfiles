@@ -94,4 +94,8 @@ gl() {
                 xargs -I % sh -c 'git show --color=always % | less -R') << 'FZF-EOF'
                 {}
 FZF-EOF"
+    # Do not register a user exit of fzf as an error.
+    if [ $? -eq 130 ]; then
+        true
+    fi
 }
