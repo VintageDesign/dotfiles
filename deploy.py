@@ -10,6 +10,7 @@ MAPPINGS = {
     "rcfiles/.bashrc": ".bashrc",
     "rcfiles/.gdbinit": ".gdbinit",
     "rcfiles/.gitconfig": ".gitconfig",
+    "rcfiles/.gitconfig-work": ".gitconfig-work",
     "rcfiles/.pylintrc": ".pylintrc",
     "rcfiles/.profile": ".profile",
 }

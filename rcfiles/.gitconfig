@@ -1,6 +1,6 @@
 [user]
     name = Austin Gill
-    email = notgnoshi@gmail.com
+    email = Notgnoshi@gmail.com
 [core]
     editor = vim
     fileMode = false
@@ -10,8 +10,6 @@
 [credential]
     helper = cache
     help = cache --timeout=60000
-[push]
-    default = simple
 [alias]
     gl    = !bash -c 'source $DOTFILES_DIR/lib/fzf.sh && fzf-git-browse'
     lg    = log --color --graph --pretty=format:'%C(auto)%h%d %s %C(black)%C(bold)%an, %cr' --abbrev-commit --decorate
@@ -27,7 +25,12 @@
     chp   = cherry-pick
     cor   = checkout --recurse-submodules
     yolo  = !git commit -am \"$(curl -s http://whatthecommit.com/index.txt)\"
+[push]
+    default = simple
 [pull]
     rebase = true
 [submodule]
     recurse = true
+
+[includeIf "gitdir:~/swdev/"]
+    path = .gitconfig-work

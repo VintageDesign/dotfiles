@@ -1,0 +1,10 @@
+[user]
+    name = Austin Gill
+    email = Austin.Gill@ravenind.com
+
+[push]
+    default = current
+
+[submodule]
+    # Not really a good idea on a projects with many submodules that appear/disappear
+    recurse = false
