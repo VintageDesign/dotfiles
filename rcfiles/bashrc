@@ -65,16 +65,6 @@ decorate_exit_status()
     fi
 }
 
-# This function cannot print the color codes because it will screw up the cursor placement.
-# That is, it cannot add the \[...\] symbols to the PS1 because you can't return strings from Bash
-# functions.
-parse_git_branch()
-{
-    TEMP=$?
-    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
-    exit $TEMP
-}
-
 # Determine if connected over ssh.
 SSH_FLAG=0
 if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
@@ -94,7 +84,7 @@ if [ "$color_prompt" = yes ]; then
     fi
     # Add the Git branch to the $PS1 if present.
     # A space is only added to the end if a branch is present.
-    PS1="${PS1}\[${BLUE}\]\$(parse_git_branch)\[${RESET}\]"
+    PS1="${PS1}\[${BLUE}\]\$(__git_ps1)\[${RESET}\]"
     # Append a colored $ to the end of the $PS1 indicating the exit code
     PS1="${PS1} \[${WHITE}\]\[\$(decorate_exit_status)\]\$\[${RESET}\] "
 else
