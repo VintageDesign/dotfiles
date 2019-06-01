@@ -188,7 +188,8 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Opening Gnome Shell extensions in the default browser...${RESET}"
     xdg-open https://extensions.gnome.org/extension/1319/gsconnect/
     xdg-open https://extensions.gnome.org/extension/1485/workspace-matrix/
-    echo "${BOLD}${RED}Install the ${WHITE}gsconnect${RED} and ${WHITE}workspace-matrix${RED} extensions before proceeding.${RESET}"
+    xdg-open https://extensions.gnome.org/extension/921/multi-monitors-add-on/
+    echo "${BOLD}${RED}Install the ${WHITE}gsconnect${RED}, ${WHITE}workspace-matrix${RED}, and ${WHITE}multi-monitors-add-on${RED} extensions before proceeding.${RESET}"
 fi
 
 read -p "${BOLD}${UNDERLINE}Configure system settings? (y/N)${RESET} " -n 1 -r
