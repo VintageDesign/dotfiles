@@ -21,3 +21,5 @@
     st    = status
     b     = branch
     rb    = rebase
+[pull]
+    rebase = true
