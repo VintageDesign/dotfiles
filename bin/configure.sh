@@ -96,8 +96,7 @@ echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Installing tweaks...${RESET}"
     sudo add-apt-repository ppa:numix/ppa -y
-    sudo add-apt-repository ppa:mikhailnov/pulseeffects -y
-    sudo apt install gnome-tweak-tool chrome-gnome-shell numix-gtk-theme numix-icon-theme-circle pulseeffects
+    sudo apt install gnome-tweak-tool chrome-gnome-shell numix-gtk-theme numix-icon-theme-circle
     echo "${GREEN}Installed tweaks.${RESET}"
 fi
 
@@ -219,13 +218,6 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     gsettings set org.gnome.shell.extensions.desktop-icons show-home false
     gsettings set org.gnome.mutter workspaces-only-on-primary false
     echo "${GREEN}Configured Gnome tweaks.${RESET}"
-
-    echo "${YELLOW}Configuring PulseEffects...${RESET}"
-    gsettings set com.github.wwmm.pulseeffects.sinkinputs plugins "['autogain', 'bass_enhancer', 'limiter', 'gate', 'multiband_gate', 'compressor', 'multiband_compressor', 'convolver', 'exciter', 'crystalizer', 'stereo_tools', 'reverb', 'equalizer', 'deesser', 'crossfeed', 'loudness', 'maximizer', 'filter']"
-    gsettings set com.github.wwmm.pulseeffects.sinkinputs.bassenhancer amount 10.0
-    gsettings set com.github.wwmm.pulseeffects.sinkinputs.bassenhancer state true
-    gsettings set com.github.wwmm.pulseeffects use-dark-theme true
-    echo "${GREEN}Configured PulseEffects.${RESET}"
 fi
 
 read -p "${BOLD}${UNDERLINE}Configure /etc/fstab for NAS? (y/N)${RESET} " -n 1 -r
