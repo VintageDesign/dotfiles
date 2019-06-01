@@ -208,6 +208,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
     gsettings set org.gnome.settings-daemon.plugins.power ambient-enabled true
     gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 48
+    gsettings set org.gnome.shell.extensions.dash-to-dock isolate-workspaces true
     echo "${GREEN}Configured system settings.${RESET}"
 
     echo "${YELLOW}Configuring Gnome tweaks...${RESET}"
