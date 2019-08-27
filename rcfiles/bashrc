@@ -153,15 +153,6 @@ export FZF_CTRL_T_OPTS="--preview 'tree -C {} | head -200'"
 ##################################################################################################
 # Path settings
 ##################################################################################################
-# TODO: Only add a directory to a search path if it exists.
-# TODO: My default ~/.profile already adds ~/bin and ~/.local/bin to $PATH if they exist and are
-#       directories. But ~/bin/ is a symlink, so it isn't added. So then ~/.local/bin/ gets added
-#       twice.
-
-
-# With my current dotfiles repository, it is not possible to simply symlink $GIT_DIR/bin to ~/.local/bin
-# because ~/.local/bin/ contains items that should not be version controlled. There might be a simple
-# solution, but I haven't found one yet. So until then, I have two local bin/ directories.
 
 # Add ~/.local/bin/ to PATH
 PATH="$HOME/.local/bin${PATH:+:${PATH}}"
@@ -172,14 +163,9 @@ MANPATH="$(manpath --quiet)"
 MANPATH="$HOME/.local/man${MANPATH:+:${MANPATH}}"
 MANPATH="$HOME/.local/share/man${MANPATH:+:${MANPATH}}"
 
-# Add local installation of CUDA 9.0 for tensorflow-gpu 1.12.0
-# There are two options. First, /usr/local/cuda, which is usually symlinked to /usr/local/cuda-x.y.
-# This is what the Opp Lab uses, but the CUDA version depends on the machine and are typically too
-# new for tensorflow (some have CUDA 10.0). So, prefer a local installation.
-# TODO: Add ~/.local/cuda/ to search paths and symlink to ~/.local/cuda-x.y/?
-
-# PATH="/usr/local/cuda/bin:${PATH:+:${PATH}}"
-# LIBRARY_PATH="/usr/local/cuda/lib64${LIBRARY_PATH:+:${LIBRARY_PATH}}"
+# A the user-defined CUDA installation to paths.
+# The default CUDA installation directory is /usr/local/cuda-xx.y/. But if there are multiple installations
+# available, symlink the desired installation to ~/.local/cuda/.
 PATH="$HOME/.local/cuda/bin${PATH:+:${PATH}}"
 LIBRARY_PATH="$HOME/.local/cuda/lib64${LIBRARY_PATH:+:${LIBRARY_PATH}}"
 
@@ -210,4 +196,4 @@ export TERM=xterm-256color
 # Prevent games from minimizing when focus is lost.
 export SDL_VIDEO_MINIMIZE_ON_FOCUS_LOSS=0
 # Source my utility functions
-source "$HOME/.local/bin/utils.sh"
+source ~/.local/bin/utils.sh
