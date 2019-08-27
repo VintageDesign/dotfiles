@@ -159,6 +159,7 @@ export FZF_CTRL_T_OPTS="--preview 'tree -C {} | head -200'"
 
 # Add ~/.local/bin/ to PATH
 PATH="$HOME/.local/bin${PATH:+:${PATH}}"
+PATH="$HOME/.poetry/bin${PATH:+:${PATH}}"
 
 # Add local manpages, but be sure to not overwrite the defaults
 MANPATH="$(manpath --quiet)"
