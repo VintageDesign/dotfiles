@@ -24,3 +24,5 @@
     chp   = cherry-pick
 [pull]
     rebase = true
+[submodule]
+    recurse = true
