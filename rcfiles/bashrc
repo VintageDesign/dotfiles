@@ -185,6 +185,8 @@ export CPATH
 export LIBRARY_PATH
 export LD_LIBRARY_PATH
 export MANPATH
+# Fix less not rendering control characters with git-log on the Opp lab machines.
+export LESS=FRX
 
 # Use parallel make by default
 export MAKEFLAGS="-j$(nproc)"
