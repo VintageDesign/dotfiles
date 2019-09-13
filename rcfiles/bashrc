@@ -10,6 +10,8 @@ esac
 HISTSIZE=-1
 # Save all history
 HISTFILESIZE=-1
+HISTTIMEFORMAT="%h %d %H:%M:%S "
+shopt -s histappend
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
