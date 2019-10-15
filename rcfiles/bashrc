@@ -129,6 +129,9 @@ if ! shopt -oq posix; then
         . /etc/bash_completion
     fi
 fi
+if [ -f /usr/lib/llvm-8/share/clang/bash-autocomplete.sh ]; then
+    . /usr/lib/llvm-8/share/clang/bash-autocomplete.sh
+fi
 
 # Enable user completion features.
 # Does not assume ~/.bash_completion.d/ exists, does not attempt to make it if it doesn't.
