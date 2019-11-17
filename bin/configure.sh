@@ -31,6 +31,14 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${GREEN}Updated dotfiles and plugins.${RESET}"
 fi
 
+read -p "${BOLD}${UNDERLINE}Install git, vim, and curl? (y/N)${RESET} " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo "${YELLOW}Installing git, vim, and curl...${RESET}"
+    sudo apt install git vim curl
+    echo "${GREEN}Installed git, vim, and curl.${RESET}"
+fi
+
 read -p "${BOLD}${UNDERLINE}Install fzf? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -59,14 +67,6 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${GREEN}Installed shellcheck version: $(shfmt --version)${RESET}"
 fi
 
-read -p "${BOLD}${UNDERLINE}Install git, vim, and curl? (y/N)${RESET} " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "${YELLOW}Installing git, vim, and curl...${RESET}"
-    sudo apt install git vim curl
-    echo "${GREEN}Installed git, vim, and curl.${RESET}"
-fi
-
 read -p "${BOLD}${UNDERLINE}Install LaTeX? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -87,7 +87,7 @@ read -p "${BOLD}${UNDERLINE}Install useful utilities? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Installing utilities....${RESET}"
-    sudo apt install htop nmap traceroute screen screenfetch linux-tools-common linux-tools-generic openssh-server tree iperf net-tools nfs-common pv
+    sudo apt install htop nmap traceroute screen screenfetch linux-tools-common linux-tools-generic openssh-server tree iperf net-tools nfs-common pv network-manager-vpnc-gnome
     echo "${GREEN}Installed utilities.${RESET}"
 fi
 
@@ -119,10 +119,8 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     sudo apt install ~/Downloads/discord.deb
     echo "${GREEN}Installed Discord.${RESET}"
     echo "${YELLOW}Installing Spotify...${RESET}"
-    sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 931FF8E79F0876134EDDBDCCA87FF9DF48BF1C90
-    echo deb http://repository.spotify.com stable non-free | sudo tee /etc/apt/sources.list.d/spotify.list
-    sudo apt-get update
-    sudo apt-get install spotify-client
+    # I kept having to reinstall the debian package to fix some issues.
+    sudo snap install spotify
     echo "${GREEN}Installed Spotify.${RESET}"
 fi
 
@@ -169,13 +167,18 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         echo "${YELLOW}Installing Python development packages without a virtualenv...${RESET}"
         # These packages are required by e.g., ~/.local/bin/notes and VS Code Python config.
-        pip install --upgrade --user virtualenv pygments ipython parsedatetime pylint pydocstyle black jupyter jupyterlab nb-pdf-template nbstripout
+        pip install --upgrade --user virtualenv pygments ipython parsedatetime pylint pydocstyle black jupyter jupyterlab nb-pdf-template jupytext jupyterlab_code_formatter
         python3 -m nb_pdf_template.install
         mkdir -p ~/.jupyter
-        echo "c.LatexExporter.template_file = 'classicm'" >> ~/.jupyter/jupyter_nbconvert_config.py
-        echo "c.LatexExporter.template_file = 'classicm'" >> ~/.jupyter/jupyter_notebook_config.py
+        echo "c.LatexExporter.template_file = 'classicm'" >>~/.jupyter/jupyter_nbconvert_config.py
+        echo "c.LatexExporter.template_file = 'classicm'" >>~/.jupyter/jupyter_notebook_config.py
+        echo "c.NotebookApp.contents_manager_class = 'jupytext.TextFileContentsManager'" >>~/.jupyter/jupyter_notebook_config.py
         # https://github.com/t-makaro/nb_pdf_template
         # https://github.com/ryantam626/jupyterlab_code_formatter
+        # https://github.com/mwouts/jupytext
+        jupyter serverextension enable --py jupyterlab_code_formatter
+        jupyter serverextension enable jupytext
+        # `jupyter lab build` requires node.js
         echo "${BOLD}${RED}Install all other packages in a virtualenv!${RESET}"
         echo "${BOLD}${RED}Use 'python3 -m ipykernel install --user --name=<kernel name>' to install the current venv as a Jupyter kernel."
         echo "${GREEN}Installed Python development packages.${RESET}"
@@ -189,7 +192,8 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     xdg-open https://extensions.gnome.org/extension/1319/gsconnect/
     xdg-open https://extensions.gnome.org/extension/1485/workspace-matrix/
     xdg-open https://extensions.gnome.org/extension/921/multi-monitors-add-on/
-    echo "${BOLD}${RED}Install the ${WHITE}gsconnect${RED}, ${WHITE}workspace-matrix${RED}, and ${WHITE}multi-monitors-add-on${RED} extensions before proceeding.${RESET}"
+    xdg-open https://extensions.gnome.org/extension/104/netspeed/
+    echo "${BOLD}${RED}Install the ${WHITE}gsconnect${RED}, ${WHITE}workspace-matrix${RED}, ${WHITE}netspeed${RED}, and ${WHITE}multi-monitors-add-on${RED} extensions before proceeding.${RESET}"
 fi
 
 read -p "${BOLD}${UNDERLINE}Configure system settings? (y/N)${RESET} " -n 1 -r
@@ -225,7 +229,7 @@ fi
 read -p "${BOLD}${UNDERLINE}Configure /etc/fstab for NAS? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    NAS_STATIC_IP=192.168.1.112
+    NAS_STATIC_IP=192.168.0.123
     sudo mkdir -p /mnt/{assets,documents,images,plex,projects}
     read -p "${BOLD}${UNDERLINE}Attempt to automount NAS? (y/N)${RESET} " -n 1 -r
     echo
