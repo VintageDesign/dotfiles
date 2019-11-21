@@ -21,7 +21,11 @@
     st    = status
     b     = branch -vv
     rb    = rebase
+    rba   = rebase --autosquash
+    rbs   = rba
     chp   = cherry-pick
+    cor   = checkout --recurse-submodules
+    core  = cor
 [pull]
     rebase = true
 [submodule]
