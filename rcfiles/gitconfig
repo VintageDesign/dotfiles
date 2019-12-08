@@ -6,6 +6,7 @@
     fileMode = false
     eol = lf
     autocrlf = input
+    pager = perl /usr/share/doc/git/contrib/diff-highlight/diff-highlight | less
 [credential]
     helper = cache
     help = cache --timeout=60000
