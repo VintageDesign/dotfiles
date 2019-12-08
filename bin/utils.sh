@@ -98,7 +98,7 @@ gl() {
             --preview "echo {} | grep -o '[a-f0-9]\{7\}' | head -1 | xargs -I % sh -c 'git show --color=always %' | perl /usr/share/doc/git/contrib/diff-highlight/diff-highlight" \
             --bind "enter:execute:
                 (grep -o '[a-f0-9]\{7\}' | head -1 |
-                xargs -I % sh -c 'git show --color=always % | perl /usr/share/doc/git/contrib/diff-highlight/diff-highlight | less -R') << 'FZF-EOF'
+                xargs -I % sh -c 'git show --color=always % | perl /usr/share/doc/git/contrib/diff-highlight/diff-highlight | LESS=RX less') << 'FZF-EOF'
                 {}
 FZF-EOF"
     # Do not register a user exit of fzf as an error.
