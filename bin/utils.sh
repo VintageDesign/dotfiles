@@ -28,11 +28,6 @@ randpass() {
     echo
 }
 
-# a convenience wrapper around window.py
-window() {
-    python3 ~/bin/window.py "$@"
-}
-
 # attempt to rhyme the given word
 rhyme() {
     {
