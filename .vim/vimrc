@@ -81,15 +81,50 @@ set cursorline
 " Command separated list of columns to highlight
 set colorcolumn=100
 
-" Open NERDTree automatically when vim starts up.
-" autocmd vimenter * NERDTree
-" Open NERDTree automatically when vim starts up empty.
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-" Toggle NERDTree with Ctrl+n
-map <C-n> :NERDTreeToggle<CR>
-" Close vim if the only window open is a NERDTree.
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+" Open netrw if no files were given to vim.
+augroup ProjectDrawer
+    autocmd!
+    autocmd VimEnter * if argc() == 0 | Explore! | endif
+augroup END
+
+" Close netrw if last window open.
+augroup netrw_close
+    autocmd!
+    autocmd WinEnter * if winnr("$") == 1 && getbufvar(winbufnr(winnr()), "&filetype") == "netrw" | q | endif
+augroup END
+
+" Script to toggle netrw with <Ctrl-n>
+function! ToggleNetrw()
+    let i = bufnr("$")
+    let wasOpen = 0
+    while (i >= 1)
+        if(getbufvar(i, "&filetype") == "netrw")
+            silent exe "bwipeout " . i
+            let wasOpen = 1
+        endif
+        let i-=1
+    endwhile
+    if !wasOpen
+        silent Vexplore
+    endif
+endfunction
+noremap <silent> <C-n> :call ToggleNetrw()<CR>
+
+" Use a tree display
+let g:netrw_liststyle = 3
+" Don't display to banner at the top
+let g:netrw_banner = 0
+" Open selected files in the previous window
+let g:netrw_browse_split = 4
+let g:netrw_altv = 1
+" Set netrw width percentage
+let g:netrw_winsize = 18
+" Enable the following hide patterns.
+let g:netrw_hide = 1
+" Hidden patterns. Repect gitignores and dotfiles.
+let g:netrw_list_hide = netrw_gitignore#Hide()
+let g:netrw_list_hide .= ',\(^\|\s\s\)\zs\.\S\+'
+let g:netrw_list_hide .= ',.*\.swp$'
 
 let g:airline_theme='gruvbox'
 let g:airline#extensions#ale#enabled = 1
@@ -98,6 +133,10 @@ let g:airline#extensions#vimtex#enabled = 1
 " Show opened buffers at the top of the screen.
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#fnamemod = ':t'
+" Do not show the default mode indicator, because airline's is better.
+" BUG: If the default indicator is left, I can leave INSERT mode with a single
+" <C-c>, but I need to press it twice to make the indicator change.
+set noshowmode
 
 " Open a new empty buffer. Current buffer must be written.
 nmap <C-t> :enew<CR>
