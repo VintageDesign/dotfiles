@@ -81,7 +81,7 @@ unix2dos() {
 }
 
 # Browse git log
-gl() {
+fzf-git-browse() {
     git log \
         --graph \
         --exclude='save/*' \
@@ -101,6 +101,28 @@ gl() {
                 xargs -I % sh -c 'git show --color=always % | perl /usr/share/doc/git/contrib/diff-highlight/diff-highlight | LESS=RX less') << 'FZF-EOF'
                 {}
 FZF-EOF"
+    # Do not register a user exit of fzf as an error.
+    if [ $? -eq 130 ]; then
+        true
+    fi
+}
+
+fzf-git-checkout() {
+    git log \
+        --graph \
+        --exclude='save/*' \
+        --exclude='trash/*' \
+        --color=always \
+        --format="%C(auto)%h%d %s %C(black)%C(bold)%an, %cr" \
+        --decorate=short \
+        --decorate-refs-exclude='refs/tags/*' \
+        "$@" |
+        fzf \
+            --ansi \
+            --no-sort \
+            --reverse \
+            --preview "echo {} | grep -o '[a-f0-9]\{7\}' | head -1 | xargs -I % sh -c 'git show --color=always %' | perl /usr/share/doc/git/contrib/diff-highlight/diff-highlight" \
+            --bind "enter:execute(echo {} | grep -o '[a-f0-9]\{7\}' | head -1 | xargs -I % sh -c 'git checkout %')+abort"
     # Do not register a user exit of fzf as an error.
     if [ $? -eq 130 ]; then
         true
