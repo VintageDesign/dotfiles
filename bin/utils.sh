@@ -129,6 +129,11 @@ fzf-git-browse() {
                     | head -1 \
                     | tr -d '\n' \
                     | xclip -selection clipboard \
+                )+abort" \
+            --bind "ctrl-r:execute(
+                echo {} \
+                    | cut -d ' ' -f2 \
+                    | xargs -oI % git rebase --interactive --autosquash %~ \
                 )+abort"
     # Do not register a user exit of fzf as an error.
     if [ $? -eq 130 ]; then
