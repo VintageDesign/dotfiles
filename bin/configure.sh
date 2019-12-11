@@ -79,7 +79,7 @@ read -p "${BOLD}${UNDERLINE}Install dev packages? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Installing dev packages...${RESET}"
-    sudo apt install gcc g++ clang clang-format clang-tidy gdb valgrind make cmake doxygen graphviz python3-dev optipng
+    sudo apt install gcc g++ clang clang-format clang-tidy gdb valgrind make cmake doxygen graphviz python3-dev optipng xclip
     echo "${GREEN}Installed dev packages.${RESET}"
 fi
 
