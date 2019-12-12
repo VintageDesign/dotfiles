@@ -96,13 +96,13 @@ fzf-git-browse() {
             --no-sort \
             --reverse \
             --preview "echo {} \
-                | grep -o '[a-f0-9]\{7\}' \
+                | grep -o '[a-f0-9]\{7,\}' \
                 | head -1 \
                 | xargs -I % sh -c 'git show --color=always %' \
                 | perl /usr/share/doc/git/contrib/diff-highlight/diff-highlight" \
             --bind "enter:execute: \
                 (echo {} \
-                    | grep -o '[a-f0-9]\{7\}' \
+                    | grep -o '[a-f0-9]\{7,\}' \
                     | head -1 \
                     | xargs -I % sh -c \
                         'git show --color=always % \
@@ -111,28 +111,30 @@ fzf-git-browse() {
                 )" \
             --bind "ctrl-y:execute(
                 echo {} \
-                    | grep -o '[a-f0-9]\{7\}' \
+                    | grep -o '[a-f0-9]\{7,\}' \
                     | head -1 \
                     | xargs -I % sh -c \
                         'git checkout %' \
                 )+abort" \
             --bind "ctrl-h:execute(
                 echo {} \
-                    | grep -o '[a-f0-9]\{7\}' \
-                    | head -1
+                    | grep -o '[a-f0-9]\{7,\}' \
+                    | head -1 \
                     | tr -d '\n' \
                     | xclip -selection clipboard \
                 )+abort" \
             --bind "double-click:execute(
                 echo {} \
-                    | grep -o '[a-f0-9]\{7\}' \
+                    | grep -o '[a-f0-9]\{7,\}' \
                     | head -1 \
                     | tr -d '\n' \
                     | xclip -selection clipboard \
                 )+abort" \
             --bind "ctrl-r:execute(
                 echo {} \
-                    | cut -d ' ' -f2 \
+                    | grep -o '[a-f0-9]\{7,\}' \
+                    | head -1 \
+                    | tr -d '\n' \
                     | xargs -oI % git rebase --interactive --autosquash %~ \
                 )+abort"
     # Do not register a user exit of fzf as an error.
