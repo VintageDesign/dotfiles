@@ -92,6 +92,7 @@ fzf-git-browse() {
         --decorate-refs-exclude='refs/tags/*' \
         "$@" |
         fzf \
+            --no-mouse \
             --ansi \
             --no-sort \
             --reverse \
@@ -117,13 +118,6 @@ fzf-git-browse() {
                         'git checkout %' \
                 )+abort" \
             --bind "ctrl-h:execute(
-                echo {} \
-                    | grep -o '[a-f0-9]\{7,\}' \
-                    | head -1 \
-                    | tr -d '\n' \
-                    | xclip -selection clipboard \
-                )+abort" \
-            --bind "double-click:execute(
                 echo {} \
                     | grep -o '[a-f0-9]\{7,\}' \
                     | head -1 \
