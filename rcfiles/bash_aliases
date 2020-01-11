@@ -22,9 +22,9 @@ alias arem='sudo apt-get autoremove'
 # :D
 alias git-yolo='git commit -am "$(curl -s http://whatthecommit.com/index.txt)"'
 
-alias wiki='vim ~/Documents/notes/index.wiki'
-alias todo='vim ~/Documents/notes/todo.wiki'
-alias journal='vim ~/Documents/notes/diary/diary.wiki'
+alias wiki='vim $VIMWIKI_PATH/index.wiki'
+alias todo='vim $VIMWIKI_PATH/todo.wiki'
+alias journal='vim $VIMWIKI_PATH/diary/diary.wiki'
 alias today='vim -c VimwikiMakeDiaryNote'
 alias tomorrow='vim -c VimwikiMakeTomorrowDiaryNote'
 alias yesterday='vim -c VimwikiMakeYesterdayDiaryNote'

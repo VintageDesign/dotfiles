@@ -48,6 +48,9 @@ let wiki.path = '~/Documents/notes'
 let wiki.path_html = '~/Documents/notes/.vimwiki_html'
 let wiki.syntax = 'markdown'
 let wiki.ext = '.wiki'
+let wiki.auto_tags = 1
+let wiki.automatic_nested_syntaxes = 1
+let wiki.nested_syntaxes = {'bash':'sh', 'shell':'sh', 'terminal':'sh', 'latex': 'tex'}
 let g:vimwiki_list = [wiki]
 
 " Allow fuzzy menu
@@ -87,6 +90,11 @@ nnoremap k gk
 " have the filetype properly set in /usr/share/vim/vim74/filetype.vim
 " (Looking at you $COMPANY dev servers)
 autocmd BufNewFile,BufRead *.md set filetype=markdown
+" Set Nginx conf filetype
+au BufRead,BufNewFile *.nginx set ft=nginx
+au BufRead,BufNewFile */etc/nginx/* set ft=nginx
+au BufRead,BufNewFile */usr/local/nginx/conf/* set ft=nginx
+au BufRead,BufNewFile nginx.conf set ft=nginx
 
 " Highlight current line
 set cursorline

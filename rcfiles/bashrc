@@ -191,6 +191,9 @@ export CPATH
 export LIBRARY_PATH
 export LD_LIBRARY_PATH
 export MANPATH
+
+# Path to my vimwiki clone
+export VIMWIKI_PATH="$HOME/Documents/notes/"
 # Fix less not rendering control characters with git-log on the Opp lab machines.
 export LESS=FRX
 
@@ -202,6 +205,7 @@ export MAKEFLAGS="-j$(nproc)"
 export TERM=xterm-256color
 
 # Prevent games from minimizing when focus is lost.
+# Steam doesn't read your bashrc. This variable needs to be set through the game options.
 export SDL_VIDEO_MINIMIZE_ON_FOCUS_LOSS=0
 # Source my utility functions
 source ~/.local/bin/utils.sh

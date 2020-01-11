@@ -40,12 +40,12 @@ def main():
     # Try to use the default editor, or just insist on Vim.
     EDITOR = os.environ.get("EDITOR", "vim")
     # Save the notes in a reasonable directory.
-    NOTES_PATH = f"{Path.home()}/Documents/notes/"
+    NOTES_PATH = f"{Path.home()}/Documents/notes/diary/"
     # E.g., '# Friday May 04 at 14:35:52', with an important newline.
     HEADER = f'# {datetime.now().strftime("%A %B %d at %X")}\n'
 
     if args.todo:
-        FILENAME = "todo.md"
+        FILENAME = "todo.wiki"
     elif args.relative and not STDLIBONLY:
         args.relative = " ".join(args.relative)
         cal = parsedatetime.Calendar()
@@ -55,10 +55,10 @@ def main():
             print("Failed to parse relative time:", args.relative)
             exit(1)
 
-        FILENAME = f'{datetime(*time[:6]).strftime("%Y-%m-%d")}.md'
+        FILENAME = f'{datetime(*time[:6]).strftime("%Y-%m-%d")}.wiki'
     else:
         # E.g., '2018-05-04.md'.
-        FILENAME = f'{datetime.now().strftime("%Y-%m-%d")}.md'
+        FILENAME = f'{datetime.now().strftime("%Y-%m-%d")}.wiki'
 
     path = Path(NOTES_PATH)
     if not path.exists():

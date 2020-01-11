@@ -46,3 +46,11 @@
 	path = .vim/bundle/vimwiki
 	url = git@github.com:vimwiki/vimwiki.git
 	branch = master
+[submodule ".vim/bundle/vim-markdown"]
+	path = .vim/bundle/vim-markdown
+	url = git@github.com:tpope/vim-markdown.git
+	branch = master
+[submodule ".vim/bundle/vim-systemd-syntax"]
+	path = .vim/bundle/vim-systemd-syntax
+	url = git@github.com:Matt-Deacalion/vim-systemd-syntax.git
+	branch = master
