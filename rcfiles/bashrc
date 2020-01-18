@@ -134,8 +134,10 @@ if [ -f /usr/lib/llvm-8/share/clang/bash-autocomplete.sh ]; then
 fi
 
 # Enable user completion features.
-# Does not assume ~/.bash_completion.d/ exists, does not attempt to make it if it doesn't.
-for completion_file in ~/.bash_completion.d/*; do
+if [ ! -d ~/.bash-completion.d ]; then
+    mkdir -p ~/.bash-completion.d
+fi
+for completion_file in ~/.bash-completion.d/*; do
     [ -f "$completion_file" ] && source "$completion_file"
 done
 
