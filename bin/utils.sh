@@ -96,19 +96,19 @@ fzf-git-browse() {
             --ansi \
             --no-sort \
             --reverse \
+            --exit-0 \
             --preview "echo {} \
                 | grep -o '[a-f0-9]\{7,\}' \
                 | head -1 \
                 | xargs -I % sh -c 'git show --color=always %' \
                 | perl /usr/share/doc/git/contrib/diff-highlight/diff-highlight" \
-            --bind "enter:execute: \
-                (echo {} \
+            --bind "enter:execute(
+                echo {} \
                     | grep -o '[a-f0-9]\{7,\}' \
                     | head -1 \
-                    | xargs -I % sh -c \
-                        'git show --color=always % \
-                        | perl /usr/share/doc/git/contrib/diff-highlight/diff-highlight \
-                        | LESS=RX less' \
+                    | xargs -I % sh -c 'git show --color=always %' \
+                    | perl /usr/share/doc/git/contrib/diff-highlight/diff-highlight \
+                    | LESS=RX less \
                 )" \
             --bind "ctrl-y:execute(
                 echo {} \
