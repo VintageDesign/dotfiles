@@ -24,6 +24,7 @@
     rb    = rebase --autosquash
     chp   = cherry-pick
     cor   = checkout --recurse-submodules
+    yolo  = !git commit -am \"$(curl -s http://whatthecommit.com/index.txt)\"
 [pull]
     rebase = true
 [submodule]
