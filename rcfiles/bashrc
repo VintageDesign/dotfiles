@@ -194,6 +194,8 @@ export LIBRARY_PATH
 export LD_LIBRARY_PATH
 export MANPATH
 
+# I don't know how I've managed this long without doing this?
+export EDITOR=vim
 # Path to my vimwiki clone
 export VIMWIKI_PATH="$HOME/Documents/notes/"
 # Fix less not rendering control characters with git-log on the Opp lab machines.
