@@ -11,7 +11,7 @@
     url = https://github.com/tpope/vim-commentary.git
     branch = master
 [submodule ".fzf"]
-    path = .fzf
+	path = .vim/bundle/fzf
     url = https://github.com/junegunn/fzf.git
     branch = master
 [submodule ".vim/bundle/syntastic"]
@@ -38,19 +38,15 @@
     path = .vim/bundle/vim-gitgutter
     url = git@github.com:airblade/vim-gitgutter.git
     branch = master
-[submodule ".vim/bundle/gruvbox"]
-    path = .vim/bundle/gruvbox
-    url = git@github.com:morhetz/gruvbox.git
-    branch = master
 [submodule ".vim/bundle/vimwiki"]
-	path = .vim/bundle/vimwiki
-	url = git@github.com:vimwiki/vimwiki.git
-	branch = master
-[submodule ".vim/bundle/vim-markdown"]
-	path = .vim/bundle/vim-markdown
-	url = git@github.com:tpope/vim-markdown.git
-	branch = master
+    path = .vim/bundle/vimwiki
+    url = git@github.com:vimwiki/vimwiki.git
+    branch = master
 [submodule ".vim/bundle/vim-systemd-syntax"]
-	path = .vim/bundle/vim-systemd-syntax
-	url = git@github.com:Matt-Deacalion/vim-systemd-syntax.git
+    path = .vim/bundle/vim-systemd-syntax
+    url = git@github.com:Matt-Deacalion/vim-systemd-syntax.git
+    branch = master
+[submodule ".vim/bundle/fzf.vim"]
+	path = .vim/bundle/fzf.vim
+	url = git@github.com:junegunn/fzf.vim.git
 	branch = master

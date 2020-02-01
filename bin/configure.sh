@@ -43,7 +43,7 @@ read -p "${BOLD}${UNDERLINE}Install fzf? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Installing fzf...${RESET}"
-    ~/.fzf/install --all
+    "${CONFIG_DIR}/.vim/bundle/fzf/install" --all
     echo "${GREEN}Installed fzf.${RESET}"
 fi
 
