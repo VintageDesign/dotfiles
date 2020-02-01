@@ -1,15 +1,30 @@
+" NOTE: Must be set *before* ALE is loaded to take effect.
+let g:ale_completion_enabled = 1
 execute pathogen#infect()
 
-let g:gruvbox_italic=1
-set bg=dark
-" Wonky in SSH sessions
-"set termguicolors
-colorscheme gruvbox
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Theming.
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+syntax on
+colorscheme blaquemagick
+" Only takes effect if added *after* 'syntax on'.
+highlight Comment cterm=italic
 
-" Custom GitGutter commands
-command Stage  GitGutterStageHunk
-command Revert GitGutterUndoHunk
+let g:airline_theme='minimalist'
+" Show opened buffers at the top of the screen.
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#fnamemod = ':t'
+" Do not show the default mode indicator, because airline's is better.
+" BUG: If the default indicator is left, I can leave INSERT mode with a single
+" <C-c>, but I need to press it twice to make the indicator change.
+set noshowmode
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Settings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+filetype plugin on
+set nocompatible
 " Set default encoding to UTF-8
 set enc=utf-8
 
@@ -33,26 +48,6 @@ set titlestring=%F
 set number
 " Keep the cursor 6 lines from bottom of screen.
 set scrolloff=6
-" Toggle paste mode with f3
-set pastetoggle=<F3>
-
-set nocompatible
-filetype plugin on
-syntax on
-
-" Vimwiki settings
-" If :help vimwiki doesn't work, run :Helptags
-set runtimepath+=~/Documents/notes/.vimwiki_rtp
-let wiki = {}
-let wiki.path = '~/Documents/notes'
-let wiki.path_html = '~/Documents/notes/.vimwiki_html'
-let wiki.syntax = 'markdown'
-let wiki.ext = '.wiki'
-let wiki.auto_tags = 1
-let wiki.automatic_nested_syntaxes = 1
-let wiki.nested_syntaxes = {'bash':'sh', 'shell':'sh', 'terminal':'sh', 'latex': 'tex'}
-let g:vimwiki_list = [wiki]
-let g:vimwiki_folding = 'expr'
 
 " Allow fuzzy menu
 set wildmenu
@@ -64,16 +59,6 @@ set showmatch
 set incsearch
 " Must be turned off manually
 set hlsearch
-" Turn off search highlighting with enter
-nnoremap <CR> :nohl<CR><CR>
-
-" Use ctrl+[jk] to move lines up and down in normal, insert, and visual mode.
-nnoremap <C-j> :m .+1<CR>==
-nnoremap <C-k> :m .-2<CR>==
-inoremap <C-j> <Esc>:m .+1<CR>==gi
-inoremap <C-k> <Esc>:m .-2<CR>==gi
-vnoremap <C-j> :m '>+1<CR>gv=gv
-vnoremap <C-k> :m '<-2<CR>gv=gv
 
 " enable code folding
 set foldenable
@@ -81,11 +66,16 @@ set foldlevelstart=15
 set foldnestmax=10
 set foldmethod=syntax
 
-nnoremap <space> za
+" Highlight current line
+set cursorline
+" Highlight current column
+"set cursorcolumn
+" Comma separated list of columns to highlight
+set colorcolumn=100,140
 
-" Visual movement
-nnoremap j gj
-nnoremap k gk
+" When creating a new window, make it equal sized to any currently open
+" windows. E.g., when using vsplit multiple times.
+set equalalways
 
 " Force vim to think .md are markdown files on older systems that don't
 " have the filetype properly set in /usr/share/vim/vim74/filetype.vim
@@ -97,14 +87,78 @@ au BufRead,BufNewFile */etc/nginx/* set ft=nginx
 au BufRead,BufNewFile */usr/local/nginx/conf/* set ft=nginx
 au BufRead,BufNewFile nginx.conf set ft=nginx
 
-" Highlight current line
-set cursorline
-" Highlight current column
-" set cursorcolumn
-" Command separated list of columns to highlight
-set colorcolumn=100
+" Vim natively knows about Doxygen.
+let g:load_doxygen_syntax = 1
 
+" TODO: Integrate spellchecking with ALE.
+set spell spell spelllang=en_us
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Keybinds
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Toggle paste mode with f3
+set pastetoggle=<F3>
+" Turn off search highlighting with enter
+nnoremap <CR> :nohl<CR><CR>
+
+" Use ctrl+[jk] to move lines up and down in normal, insert, and visual mode.
+nnoremap <C-j> :m .+1<CR>==
+nnoremap <C-k> :m .-2<CR>==
+inoremap <C-j> <Esc>:m .+1<CR>==gi
+inoremap <C-k> <Esc>:m .-2<CR>==gi
+vnoremap <C-j> :m '>+1<CR>gv=gv
+vnoremap <C-k> :m '<-2<CR>gv=gv
+
+" Map <space> to fold.
+nnoremap <space> za
+
+" Visual movement. Act as the arrow keys do when lines wrap.
+nnoremap j gj
+nnoremap k gk
+
+" Open a new empty buffer. Current buffer must be written.
+nmap <C-t> :enew<CR>
+" Move to the next buffer.
+nmap <C-l> :bnext<CR>
+" Move to the previous buffer.
+nmap <C-h> :bprevious<CR>
+
+" Open netrw to the side.
+noremap <silent> <C-n> :call ToggleNetrw()<CR>
+
+" TODO: Map these to things that make sense.
+"<Plug>(ale_find_references)
+"<Plug>(ale_go_to_definition)
+"<Plug>(ale_go_to_type_definition)
+" Display whatever info the LSP gives.
+"<Plug>(ale_hover)
+":ALERename
+":ALESymbolSearch <query>
+"<Plug>(ale_previous_wrap)
+"<Plug>(ale_next_wrap)
+
+" BUG: This appears to be very broken?
+"imap <C-Space> <Plug>(ale_complete)
+" NOTE: Vim can't distinguish <ctrl-shift-I> from <ctrl-I>
+nmap <C-I> <Plug>(ale_fix)
+"imap <C-I> <Plug>(ale_fix)
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Custom Commands
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+command Stage  GitGutterStageHunk
+command Revert GitGutterUndoHunk
+" TODO: Figure out how to diff/show a hunk's changes.
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Netrw
+" NERDTree replacement that's baked into Vim.
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Open netrw if no files were given to vim.
+" BUG: When you open one of the listed files, the netrw window moves to the bottom of the screen.
 augroup ProjectDrawer
     autocmd!
     autocmd VimEnter * if argc() == 0 | Explore! | endif
@@ -131,7 +185,6 @@ function! ToggleNetrw()
         silent Vexplore
     endif
 endfunction
-noremap <silent> <C-n> :call ToggleNetrw()<CR>
 
 " Use a tree display
 let g:netrw_liststyle = 3
@@ -143,41 +196,80 @@ let g:netrw_altv = 1
 " Set netrw width percentage
 let g:netrw_winsize = 18
 " Enable the following hide patterns.
+" NOTE: Some vim versions I use don't support hiding files.
 let g:netrw_hide = 1
-" Hidden patterns. Repect gitignores and dotfiles.
+" Hidden patterns. Respect gitignores and dotfiles.
 let g:netrw_list_hide = netrw_gitignore#Hide()
 let g:netrw_list_hide .= ',\(^\|\s\s\)\zs\.\S\+'
 let g:netrw_list_hide .= ',.*\.swp$'
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-let g:airline_theme='gruvbox'
-let g:airline#extensions#ale#enabled = 1
-let g:airline#extensions#whitespace#enabled = 1
-let g:airline#extensions#vimtex#enabled = 1
-" Show opened buffers at the top of the screen.
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#fnamemod = ':t'
-" Do not show the default mode indicator, because airline's is better.
-" BUG: If the default indicator is left, I can leave INSERT mode with a single
-" <C-c>, but I need to press it twice to make the indicator change.
-set noshowmode
-
-" Open a new empty buffer. Current buffer must be written.
-nmap <C-t> :enew<CR>
-" Move to the next buffer.
-nmap <C-l> :bnext<CR>
-" Move to the previous buffer.
-nmap <C-h> :bprevious<CR>
-
-" When creating a new window, make it equal sized to any currently open
-" windows. E.g., when using vsplit multiple times.
-set equalalways
-
-" Linter settings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Ale
+" Provides asynchronous Language Server Protocol support.
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Default fixers
+" TODO: Add json and HTML formatters?
 let g:ale_fixers = {
-\   'python': ['pylint'],
+\   '*':        ['remove_trailing_lines', 'trim_whitespace'],
+\   'python':   ['isort', 'black'],
+\   'cpp':      ['clang-format'],
+\   'c':        ['clang-format'],
+\   'sh':       ['shfmt'],
+\   'tex':      ['latexindent'],
 \}
 
-let g:ale_completion_enabled = 1
+" Default linters
+" TODO: Add plaintext and markdown linters.
+" TODO: Add Dockerfile linter?
+let g:ale_linters = {
+\   'python':   ['pydocstyle'],
+\   'tex':      ['chktex'],
+\}
+
 let g:ale_sign_column_always = 1
-let g:ale_c_gcc_options = '-std=c11 -Wall -Wextra -Wpedantic'
+" Allow ALE to trigger manual completion with <C-X><C-O>
+set omnifunc=ale#completion#OmniFunc
+
+" TODO: ???
+let g:ale_set_balloons = 1
+
+" Show 5 lines of errors (default: 10)
+let g:ale_list_window_size = 5
+
+let g:ale_echo_msg_error_str = 'E'
+let g:ale_echo_msg_warning_str = 'W'
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+
+let g:ale_c_clang_options = '-std=c11 -Wall -Wextra -Wpedantic'
+" TODO: Use gcc *or* clang, not both.
+" TODO: Use clangd?
 let g:ale_cpp_gcc_options = '-std=c++17 -Wall -Wextra -Wpedantic'
+let g:ale_cpp_clang_options = '-std=c++17 -Wall -Wextra -Wpedantic'
+" TODO: Provide list of clangtidy checks
+" TODO: Learn how to configure these options per-project.
+let g:ale_cpp_clangtidy_options = '-std=c++17 -Wall -Wextra -Wpedantic'
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Vimwiki settings
+" If :help vimwiki doesn't work, run :Helptags
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let wiki = {}
+let wiki.path = '~/Documents/notes'
+let wiki.path_html = '~/Documents/notes/.vimwiki_html'
+let wiki.syntax = 'markdown'
+let wiki.ext = '.wiki'
+let wiki.auto_tags = 1
+let wiki.automatic_nested_syntaxes = 1
+let wiki.nested_syntaxes = {'bash':'sh', 'shell':'sh', 'terminal':'sh', 'latex': 'tex'}
+let g:vimwiki_list = [wiki]
+let g:vimwiki_folding = 'expr'
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Load all plugins now.
+" Plugins need to be added to runtimepath before helptags can be generated.
+packloadall
+" Load all of the helptags now, after plugins have been loaded.
+" All messages and errors will be ignored.
+silent! helptags ALL
