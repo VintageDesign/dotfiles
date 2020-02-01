@@ -170,19 +170,29 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         echo "${YELLOW}Installing Python development packages without a virtualenv...${RESET}"
-        # These packages are required by e.g., ~/.local/bin/notes and VS Code Python config.
-        pip install --upgrade --user virtualenv pygments ipython parsedatetime pylint pydocstyle black jupyter jupyterlab nb-pdf-template jupytext jupyterlab_code_formatter parse-torrent-name
+        # These packages are necessary to be installed system-wide.
+        pip install --upgrade --user --requirement "${CONFIG_DIR}/requirements.txt"
         python3 -m nb_pdf_template.install
         mkdir -p ~/.jupyter
         echo "c.LatexExporter.template_file = 'classicm'" >>~/.jupyter/jupyter_nbconvert_config.py
-        echo "c.LatexExporter.template_file = 'classicm'" >>~/.jupyter/jupyter_notebook_config.py
-        echo "c.NotebookApp.contents_manager_class = 'jupytext.TextFileContentsManager'" >>~/.jupyter/jupyter_notebook_config.py
+        {
+            echo "c.LatexExporter.template_file = 'classicm'"
+            echo "c.NotebookApp.contents_manager_class = 'jupytext.TextFileContentsManager'"
+            echo 'c.ContentsManager.default_jupytext_formats = "ipynb,md"'
+        } >>~/.jupyter/jupyter_notebook_config.py
+
         # https://github.com/t-makaro/nb_pdf_template
         # https://github.com/ryantam626/jupyterlab_code_formatter
         # https://github.com/mwouts/jupytext
-        jupyter serverextension enable --py jupyterlab_code_formatter
-        jupyter serverextension enable jupytext
-        # `jupyter lab build` requires node.js
+
+        jupyter nbextension install --user --py jupytext
+        jupyter nbextension enable jupytext --user --py
+        # TODO: Configure <ctrl-shift-I> to format cells
+        # TODO: Configure 100-column limit
+        jupyter labextension install @ryantam626/jupyterlab_code_formatter
+        jupyter serverextension enable --user --py jupyterlab_code_formatter
+        # TODO: This requires nodejs and npm
+        # jupyter lab build
         echo "${BOLD}${RED}Install all other packages in a virtualenv!${RESET}"
         echo "${BOLD}${RED}Use 'python3 -m ipykernel install --user --name=<kernel name>' to install the current venv as a Jupyter kernel."
         echo "${GREEN}Installed Python development packages.${RESET}"
