@@ -70,7 +70,7 @@ read -p "${BOLD}${UNDERLINE}Install LaTeX? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Installing texlive, chktex, pdf2svg, and pandoc...${RESET}"
-    sudo apt install texlive-full chktex pdf2svg pandoc
+    sudo apt install texlive-full chktex pdf2svg pandoc inkscape
     echo "${GREEN}Installed texlive, chktex, pdf2svg, and pandoc.${RESET}"
 fi
 
@@ -78,7 +78,7 @@ read -p "${BOLD}${UNDERLINE}Install dev packages? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Installing dev packages...${RESET}"
-    sudo apt install gcc g++ clang clang-format clang-tidy gdb valgrind make cmake doxygen graphviz python3-dev optipng xclip
+    sudo apt install gcc g++ clang clang-format clang-tidy gdb valgrind make cmake doxygen graphviz python3-dev python3-distutils optipng xclip
     echo "${GREEN}Installed dev packages.${RESET}"
 fi
 
@@ -123,16 +123,21 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${GREEN}Installed Spotify.${RESET}"
 fi
 
+read -p "${BOLD}${UNDERLINE}Install Minecraft? (y/N)${RESET} " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo "${YELLOW}Installing Minecraft...${RESET}"
+    curl -L https://launcher.mojang.com/download/Minecraft.deb -o /tmp/minecraft.deb
+    sudo apt install /tmp/minecraft.deb
+    echo "${GREEN}Installed Minecraft.${RESET}"
+fi
+
 read -p "${BOLD}${UNDERLINE}Install Steam, Minecraft, and Lutris? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Installing Steam...${RESET}"
     sudo apt install steam
     echo "${GREEN}Installed Steam.${RESET}"
-    echo "${YELLOW}Installing Minecraft...${RESET}"
-    curl -L https://launcher.mojang.com/download/Minecraft.deb -o /tmp/minecraft.deb
-    sudo apt install /tmp/minecraft.deb
-    echo "${GREEN}Installed Minecraft.${RESET}"
     echo "${YELLOW}Installing Lutris...${RESET}"
     sudo add-apt-repository ppa:lutris-team/lutris -y
     sudo apt install lutris
@@ -166,7 +171,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         echo "${YELLOW}Installing Python development packages without a virtualenv...${RESET}"
         # These packages are required by e.g., ~/.local/bin/notes and VS Code Python config.
-        pip install --upgrade --user virtualenv pygments ipython parsedatetime pylint pydocstyle black jupyter jupyterlab nb-pdf-template jupytext jupyterlab_code_formatter
+        pip install --upgrade --user virtualenv pygments ipython parsedatetime pylint pydocstyle black jupyter jupyterlab nb-pdf-template jupytext jupyterlab_code_formatter parse-torrent-name
         python3 -m nb_pdf_template.install
         mkdir -p ~/.jupyter
         echo "c.LatexExporter.template_file = 'classicm'" >>~/.jupyter/jupyter_nbconvert_config.py
@@ -230,26 +235,22 @@ read -p "${BOLD}${UNDERLINE}Configure /etc/fstab for NAS? (y/N)${RESET} " -n 1 -
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     NAS_STATIC_IP=192.168.0.123
-    sudo mkdir -p /mnt/{assets,documents,images,plex,projects}
+    # Nautilus integrates better with stuff here.
+    MOUNT_ROOT="/media/$USER"
+    sudo mkdir -p "$MOUNT_ROOT/"{documents,plex}
     read -p "${BOLD}${UNDERLINE}Attempt to automount NAS? (y/N)${RESET} " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         echo "${GREEN}Adding automount settings to /etc/fstab...${RESET}"
         echo "# Synology NAS NFS shares
-${NAS_STATIC_IP}:/volume1/ASSETS       /mnt/assets      nfs defaults 0 0
-${NAS_STATIC_IP}:/volume1/DOCUMENTS    /mnt/documents   nfs defaults 0 0
-${NAS_STATIC_IP}:/volume1/IMAGES       /mnt/images      nfs defaults 0 0
-${NAS_STATIC_IP}:/volume1/PLEX         /mnt/plex        nfs defaults 0 0
-${NAS_STATIC_IP}:/volume1/PROJECTS     /mnt/projects    nfs defaults 0 0" | sudo tee -a /etc/fstab
+${NAS_STATIC_IP}:/volume1/DOCUMENTS    ${MOUNT_ROOT}/documents   nfs users,defaults 0 0
+${NAS_STATIC_IP}:/volume1/PLEX         ${MOUNT_ROOT}/plex        nfs users,defaults 0 0" | sudo tee -a /etc/fstab
     else
         echo "${GREEN}Adding noauto settings to /etc/fstab...${RESET}"
         echo "# Synology NAS NFS shares. Note that this is a laptop, and these are local
 # IPs. Also note that noauto means they won't be mounted on startup.
-${NAS_STATIC_IP}:/volume1/ASSETS       /mnt/assets      nfs user,noauto 0 0
-${NAS_STATIC_IP}:/volume1/DOCUMENTS    /mnt/documents   nfs user,noauto 0 0
-${NAS_STATIC_IP}:/volume1/IMAGES       /mnt/images      nfs user,noauto 0 0
-${NAS_STATIC_IP}:/volume1/PLEX         /mnt/plex        nfs user,noauto 0 0
-${NAS_STATIC_IP}:/volume1/PROJECTS     /mnt/projects    nfs user,noauto 0 0" | sudo tee -a /etc/fstab
+${NAS_STATIC_IP}:/volume1/DOCUMENTS    ${MOUNT_ROOT}/documents   nfs users,noauto 0 0
+${NAS_STATIC_IP}:/volume1/PLEX         ${MOUNT_ROOT}/plex        nfs users,noauto 0 0" | sudo tee -a /etc/fstab
     fi
 fi
 
@@ -257,6 +258,7 @@ read -p "${BOLD}${UNDERLINE}Insult on bad sudo password? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Adding ${WHITE}Defaults    insults${YELLOW} to /etc/sudoers...${RESET}"
+    # NOTE: Bad things happen if you fuck up this line.
     echo "Defaults    insults" | sudo tee -a /etc/sudoers >/dev/null
     echo "${GREEN}Added to /etc/sudoers${RESET}"
 fi
