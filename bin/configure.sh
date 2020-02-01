@@ -52,17 +52,16 @@ echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Installing shellcheck...${RESET}"
     export scversion="latest"
-    curl -L "https://storage.googleapis.com/shellcheck/shellcheck-${scversion}.linux.x86_64.tar.xz" -o ~/Downloads/shellcheck.tar.xz
-    tar -xJf ~/Downloads/shellcheck.tar.xz --directory "$HOME"/Downloads
-    cp ~/Downloads/shellcheck-"${scversion}"/shellcheck ~/.local/bin
+    curl -L "https://storage.googleapis.com/shellcheck/shellcheck-${scversion}.linux.x86_64.tar.xz" -o /tmp/shellcheck.tar.xz
+    tar -xJf /tmp/shellcheck.tar.xz --directory /tmp/
+    cp /tmp/shellcheck-"${scversion}"/shellcheck ~/.local/bin/
     chmod +x ~/.local/bin/shellcheck
     echo "${GREEN}Installed shellcheck version:${RESET}"
     shellcheck --version
     echo
     echo "${YELLOW}Installing shmft...${RESET}"
-    # NOTE: There is a newer release, but no prebuilt binaries.
-    curl -L https://github.com/mvdan/sh/releases/download/v2.6.4/shfmt_v2.6.4_linux_amd64 -o ~/Downloads/shfmt
-    cp ~/Downloads/shfmt ~/.local/bin
+    curl -L https://github.com/mvdan/sh/releases/download/v3.0.1/shfmt_v3.0.1_linux_amd64 -o /tmp/shfmt
+    cp /tmp/shfmt ~/.local/bin/
     chmod +x ~/.local/bin/shfmt
     echo "${GREEN}Installed shellcheck version: $(shfmt --version)${RESET}"
 fi
@@ -104,8 +103,8 @@ read -p "${BOLD}${UNDERLINE}Install VS Code? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Installing VS Code and setting-sync...${RESET}"
-    curl -L https://go.microsoft.com/fwlink/?LinkID=760868 -o ~/Downloads/code.deb
-    sudo apt install ~/Downloads/code.deb
+    curl -L https://go.microsoft.com/fwlink/?LinkID=760868 -o /tmp/code.deb
+    sudo apt install /tmp/code.deb
     code --install-extension shan.code-settings-sync
     echo "${BOLD}${RED}See: https://marketplace.visualstudio.com/items?itemName=Shan.code-settings-sync${RESET}"
     echo "${GREEN}Installed VS Code and settings-sync.${RESET}"
@@ -115,8 +114,8 @@ read -p "${BOLD}${UNDERLINE}Install Discord and Spotify? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Installing Discord...${RESET}"
-    curl -L "https://discordapp.com/api/download?platform=linux&format=deb" -o ~/Downloads/discord.deb
-    sudo apt install ~/Downloads/discord.deb
+    curl -L "https://discordapp.com/api/download?platform=linux&format=deb" -o /tmp/discord.deb
+    sudo apt install /tmp/discord.deb
     echo "${GREEN}Installed Discord.${RESET}"
     echo "${YELLOW}Installing Spotify...${RESET}"
     # I kept having to reinstall the debian package to fix some issues.
@@ -131,8 +130,8 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     sudo apt install steam
     echo "${GREEN}Installed Steam.${RESET}"
     echo "${YELLOW}Installing Minecraft...${RESET}"
-    curl -L https://launcher.mojang.com/download/Minecraft.deb -o ~/Downloads/minecraft.deb
-    sudo apt install ~/Downloads/minecraft.deb
+    curl -L https://launcher.mojang.com/download/Minecraft.deb -o /tmp/minecraft.deb
+    sudo apt install /tmp/minecraft.deb
     echo "${GREEN}Installed Minecraft.${RESET}"
     echo "${YELLOW}Installing Lutris...${RESET}"
     sudo add-apt-repository ppa:lutris-team/lutris -y
@@ -147,15 +146,15 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "Checking for pip...${RESET}"
     if [ ! -f "$(command -v pip)" ]; then
         echo "Pip not installed. Installing Pip..."
-        curl https://bootstrap.pypa.io/get-pip.py -o ~/Downloads/get-pip.py
+        curl https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py
         read -p "${BOLD}${UNDERLINE}Install Pip as user? (y/N)${RESET} " -n 1 -r
         echo
 
         # The get-pip.py script requires python3-distutils.
         if [[ $REPLY =~ ^[Yy]$ ]]; then
-            python3 ~/Downloads/get-pip.py --user
+            python3 /tmp/get-pip.py --user
         else
-            sudo -H python3 ~/Downloads/get-pip.py
+            sudo -H python3 /tmp/get-pip.py
         fi
         echo "${GREEN}Installed Pip $(pip --version)${RESET}"
     else
