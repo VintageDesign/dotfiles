@@ -97,6 +97,7 @@ augroup spellingFiletypes
     autocmd!
     autocmd FileType vimwiki,markdown,text setlocal spell
 augroup END
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -131,23 +132,6 @@ nmap <C-h> :bprevious<CR>
 
 " Open netrw to the side.
 noremap <silent> <C-n> :call ToggleNetrw()<CR>
-
-" TODO: Map these to things that make sense.
-"<Plug>(ale_find_references)
-"<Plug>(ale_go_to_definition)
-"<Plug>(ale_go_to_type_definition)
-" Display whatever info the LSP gives.
-"<Plug>(ale_hover)
-":ALERename
-":ALESymbolSearch <query>
-"<Plug>(ale_previous_wrap)
-"<Plug>(ale_next_wrap)
-
-" BUG: This appears to be very broken?
-"imap <C-Space> <Plug>(ale_complete)
-" NOTE: Vim can't distinguish <ctrl-shift-I> from <ctrl-I>
-nmap <C-I> <Plug>(ale_fix)
-"imap <C-I> <Plug>(ale_fix)
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -229,16 +213,36 @@ let g:ale_fixers = {
 " TODO: Add plaintext and markdown linters.
 " TODO: Add Dockerfile linter?
 let g:ale_linters = {
-\   'python':   ['pydocstyle'],
+\   'python':   ['pydocstyle', 'pylint', 'pyls'],
 \   'tex':      ['chktex'],
+\   'cpp':      ['clangd', 'clangtidy'],
 \}
 
 let g:ale_sign_column_always = 1
 " Allow ALE to trigger manual completion with <C-X><C-O>
-set omnifunc=ale#completion#OmniFunc
+" set omnifunc=ale#completion#OmniFunc
 
 " TODO: ???
 let g:ale_set_balloons = 1
+"set completeopt=menu,menuone,preview,noselect,noinsert
+
+" TODO: Map these to things that make sense.
+"<Plug>(ale_find_references)
+"<Plug>(ale_go_to_definition)
+"<Plug>(ale_go_to_type_definition)
+" Display whatever info the LSP gives.
+"<Plug>(ale_hover)
+":ALERename
+":ALESymbolSearch <query>
+"<Plug>(ale_previous_wrap)
+"<Plug>(ale_next_wrap)
+
+" BUG: This appears to be very broken?
+inoremap <silent> <C-Space> <Plug>(ale_complete)
+inoremap <silent> <C-@> <C-Space>
+" NOTE: Vim can't distinguish <ctrl-shift-I> from <ctrl-I>
+nmap <C-I> <Plug>(ale_fix)
+"imap <C-I> <Plug>(ale_fix)
 
 " Show 5 lines of errors (default: 10)
 let g:ale_list_window_size = 5
@@ -248,10 +252,7 @@ let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 
 let g:ale_c_clang_options = '-std=c11 -Wall -Wextra -Wpedantic'
-" TODO: Use gcc *or* clang, not both.
-" TODO: Use clangd?
-let g:ale_cpp_gcc_options = '-std=c++17 -Wall -Wextra -Wpedantic'
-let g:ale_cpp_clang_options = '-std=c++17 -Wall -Wextra -Wpedantic'
+let g:ale_cpp_clangd_options = '-std=c++17 -Wall -Wextra -Wpedantic'
 " TODO: Provide list of clangtidy checks
 " TODO: Learn how to configure these options per-project.
 let g:ale_cpp_clangtidy_options = '-std=c++17 -Wall -Wextra -Wpedantic'

@@ -11,4 +11,5 @@ parsedatetime
 pydocstyle
 pygments
 pylint
+python-language-server[pydocstyle]
 virtualenv
