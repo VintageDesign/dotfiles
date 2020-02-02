@@ -14,10 +14,6 @@ let g:airline_theme='minimalist'
 " Show opened buffers at the top of the screen.
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#fnamemod = ':t'
-" Do not show the default mode indicator, because airline's is better.
-" BUG: If the default indicator is left, I can leave INSERT mode with a single
-" <C-c>, but I need to press it twice to make the indicator change.
-set noshowmode
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -273,3 +269,8 @@ packloadall
 " Load all of the helptags now, after plugins have been loaded.
 " All messages and errors will be ignored.
 silent! helptags ALL
+" Do not show the default mode indicator, because airline's is better.
+" BUG: If the default indicator is left, I can leave INSERT mode with a single
+" <C-c>, but I need to press it twice to make the indicator change.
+" BUG: Something above is settings this back, so turn it off at the end.
+set noshowmode
