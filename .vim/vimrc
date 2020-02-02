@@ -9,6 +9,9 @@ syntax on
 colorscheme blaquemagick
 " Only takes effect if added *after* 'syntax on'.
 highlight Comment cterm=italic
+" Need to distringuish Keyword from Normal enough so that gitcommitSummary is
+" distinguishable.
+highlight Keyword cterm=bold ctermfg=66
 
 let g:airline_theme='minimalist'
 " Show opened buffers at the top of the screen.
@@ -19,7 +22,7 @@ let g:airline#extensions#tabline#fnamemod = ':t'
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Settings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-filetype plugin on
+filetype indent plugin on
 set nocompatible
 " Set default encoding to UTF-8
 set enc=utf-8
