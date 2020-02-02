@@ -3,14 +3,6 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
-UNDERLINE=$(tput sgr 0 1)
-BOLD=$(tput bold)
-RED=$(tput setaf 1)
-GREEN=$(tput setaf 2)
-YELLOW=$(tput setaf 3)
-WHITE=$(tput setaf 7)
-RESET=$(tput sgr0)
-
 SOURCE="${BASH_SOURCE[0]}"
 # resolve $SOURCE until the file is no longer a symlink
 while [ -h "$SOURCE" ]; do
@@ -19,15 +11,17 @@ while [ -h "$SOURCE" ]; do
     # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
     [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
 done
-CONFIG_DIR="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)/.."
-CONFIG_DIR="$(readlink --canonicalize --no-newline "${CONFIG_DIR}")"
-echo "Found configuration directory: ${CONFIG_DIR}"
+DOTFILES_DIR="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)/.."
+DOTFILES_DIR="$(readlink --canonicalize --no-newline "${DOTFILES_DIR}")"
+echo "Found configuration directory: ${DOTFILES_DIR}"
+
+source "${DOTFILES_DIR}/lib/colors.sh"
 
 read -p "${BOLD}${UNDERLINE}Update dotfiles and vim plugins? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Updating dotfiles and plugins...${RESET}"
-    (cd "${CONFIG_DIR}" && git pull && git submodule update --remote --recursive --init)
+    (cd "${DOTFILES_DIR}" && git pull && git submodule update --remote --recursive --init)
     echo "${GREEN}Updated dotfiles and plugins.${RESET}"
 fi
 
@@ -43,7 +37,7 @@ read -p "${BOLD}${UNDERLINE}Install fzf? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Installing fzf...${RESET}"
-    "${CONFIG_DIR}/.vim/bundle/fzf/install" --all
+    "${DOTFILES_DIR}/.vim/bundle/fzf/install" --all
     echo "${GREEN}Installed fzf.${RESET}"
 fi
 
@@ -171,7 +165,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         echo "${YELLOW}Installing Python development packages without a virtualenv...${RESET}"
         # These packages are necessary to be installed system-wide.
-        pip install --upgrade --user --requirement "${CONFIG_DIR}/requirements.txt"
+        pip install --upgrade --user --requirement "${DOTFILES_DIR}/requirements.txt"
         python3 -m nb_pdf_template.install
         mkdir -p ~/.jupyter
         echo "c.LatexExporter.template_file = 'classicm'" >>~/.jupyter/jupyter_nbconvert_config.py

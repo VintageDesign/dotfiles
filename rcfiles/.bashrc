@@ -2,8 +2,8 @@
 
 # If not running interactively, don't do anything
 case $- in
-    *i*) ;;
-    *) return;;
+*i*) ;;
+*) return ;;
 esac
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
@@ -20,45 +20,25 @@ shopt -s checkwinsize
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
-# set variable identifying the chroot you work in (used in the prompt below)
-if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
-    debian_chroot=$(cat /etc/debian_chroot)
-fi
+# Get the dotfile repository direction by resolving the symlink to ~/.bashrc
+SOURCE="${BASH_SOURCE[0]}"
+# resolve $SOURCE until the file is no longer a symlink
+while [ -h "$SOURCE" ]; do
+    DIR="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)"
+    SOURCE="$(readlink "$SOURCE")"
+    # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+    [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+DOTFILES_DIR="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)/.."
+DOTFILES_DIR="$(readlink --canonicalize --no-newline "${DOTFILES_DIR}")"
 
-# set a fancy prompt (non-color, unless we know we "want" color)
-case "$TERM" in
-    xterm-color) color_prompt=yes;;
-esac
-
-force_color_prompt=yes
-
-if [ -n "$force_color_prompt" ]; then
-    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-        # We have color support; assume it's compliant with Ecma-48
-        # (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-        # a case would tend to support setf rather than setaf.)
-        color_prompt=yes
-    else
-        color_prompt=h
-    fi
-fi
-
-# colored text variables.
-export UNDERLINE=$(tput sgr 0 1)
-export BOLD=$(tput bold)
-export BLACK=$(tput setaf 0)
-export RED=$(tput setaf 1)
-export GREEN=$(tput setaf 2)
-export YELLOW=$(tput setaf 3)
-export BLUE=$(tput setaf 4)
-export PURPLE=$(tput setaf 5)
-export CYAN=$(tput setaf 6)
-export WHITE=$(tput setaf 7)
-export RESET=$(tput sgr0)
+for lib in "${DOTFILES_DIR}/lib/"*.sh; do
+    [ -f "$lib" ] && source "$lib"
+done
 
 # Prints different escape codes to stdout indicating the exit code of the previous command
-decorate_exit_status()
-{
+# Colors are provided by $DOTFILES_DIR/lib/colors.sh
+function __decorate_exit_status() {
     if [ $? -eq 0 ]; then
         echo -en "${WHITE}"
         # echo -e "${BOLD}${GREEN}"
@@ -67,59 +47,42 @@ decorate_exit_status()
     fi
 }
 
+# set variable identifying the chroot you work in (used in the prompt below)
+if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+    debian_chroot=$(cat /etc/debian_chroot)
+fi
+
 # Determine if connected over ssh.
-SSH_FLAG=0
+__ssh_flag=0
 if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
-    SSH_FLAG=1
+    __ssh_flag=1
 else
     case $(ps -o comm= -p $PPID) in
-        sshd|*/sshd) SSH_FLAG=1;;
+    sshd | */sshd) __ssh_flag=1 ;;
     esac
 fi
 
-if [ "$color_prompt" = yes ]; then
-    # Set the base $PS1
-    PS1="\u@\h \[${GREEN}\]\w"
-    # If connected over SSH, prepend a red (ssh) to the $PS1
-    if [ $SSH_FLAG -eq 1 ]; then
-        PS1="\[${BOLD}${RED}\](\[${RESET}${RED}\]ssh\[${BOLD}\]) \[${RESET}\]${PS1}"
-    fi
-    # Add the Git branch to the $PS1 if present.
-    # A space is only added to the end if a branch is present.
-    PS1="${PS1}\[${BLUE}\]\$(__git_ps1)\[${RESET}\]"
-    # Append a colored $ to the end of the $PS1 indicating the exit code
-    PS1="${PS1} \[${WHITE}\]\[\$(decorate_exit_status)\]\$\[${RESET}\] "
-else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+# Set the base $PS1
+PS1="\u@\h \[${GREEN}\]\w"
+# If connected over SSH, prepend a red (ssh) to the $PS1
+if [ $__ssh_flag -eq 1 ]; then
+    PS1="\[${BOLD}${RED}\](\[${RESET}${RED}\]ssh\[${BOLD}\]) \[${RESET}\]${PS1}"
 fi
-unset color_prompt force_color_prompt SSH_FLAG
+# Add the Git branch to the $PS1 if present.
+# A space is only added to the end if a branch is present.
+PS1="${PS1}\[${BLUE}\]\$(__git_ps1)\[${RESET}\]"
+# Append a colored $ to the end of the $PS1 indicating the exit code
+PS1="${PS1} \[${WHITE}\]\[\$(__decorate_exit_status)\]\$\[${RESET}\] "
+unset __ssh_flag
 
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
-    xterm*|rxvt*)
-        # Prepends title thingy to $PS1
-        PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-        ;;
-    *)
-        ;;
+xterm* | rxvt*)
+    # Prepends title thingy to $PS1
+    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+    ;;
+*) ;;
 esac
-
-# Enable colored man pages
-man() {
-    env \
-        LESS_TERMCAP_mb="$(printf "\e[1;31m")"    \
-        LESS_TERMCAP_md="$(printf "\e[1;31m")"    \
-        LESS_TERMCAP_me="$(printf "\e[0m")"       \
-        LESS_TERMCAP_se="$(printf "\e[0m")"       \
-        LESS_TERMCAP_so="$(printf "\e[1;44;33m")" \
-        LESS_TERMCAP_ue="$(printf "\e[0m")"       \
-        LESS_TERMCAP_us="$(printf "\e[1;32m")"    \
-        man "$@"
-}
-
-if [ -f ~/.bash_aliases ]; then
-    source ~/.bash_aliases
-fi
 
 # enable programmable completion features
 if ! shopt -oq posix; then
@@ -128,18 +91,20 @@ if ! shopt -oq posix; then
     elif [ -f /etc/bash_completion ]; then
         . /etc/bash_completion
     fi
+    if [ ! -d ~/.bash-completion.d ]; then
+        mkdir -p ~/.bash-completion.d
+    fi
+    for completion_file in ~/.bash-completion.d/*; do
+        [ -f "$completion_file" ] && source $completion_file
+    done
+    # TODO: Find the right way to do this.
+    if [ -f /usr/lib/llvm-8/share/clang/bash-autocomplete.sh ]; then
+        . /usr/lib/llvm-8/share/clang/bash-autocomplete.sh
+    fi
+    if [ -f /usr/lib/llvm-9/share/clang/bash-autocomplete.sh ]; then
+        . /usr/lib/llvm-9/share/clang/bash-autocomplete.sh
+    fi
 fi
-if [ -f /usr/lib/llvm-8/share/clang/bash-autocomplete.sh ]; then
-    . /usr/lib/llvm-8/share/clang/bash-autocomplete.sh
-fi
-
-# Enable user completion features.
-if [ ! -d ~/.bash-completion.d ]; then
-    mkdir -p ~/.bash-completion.d
-fi
-for completion_file in ~/.bash-completion.d/*; do
-    [ -f "$completion_file" ] && source "$completion_file"
-done
 
 # If tab complete is abimguous, show completions on first <TAB>, not second.
 bind 'set show-all-if-ambiguous on'
@@ -193,6 +158,7 @@ export CPATH
 export LIBRARY_PATH
 export LD_LIBRARY_PATH
 export MANPATH
+export DOTFILES_DIR
 
 # I don't know how I've managed this long without doing this?
 export EDITOR=vim
@@ -211,5 +177,3 @@ export TERM=xterm-256color
 # Prevent games from minimizing when focus is lost.
 # Steam doesn't read your bashrc. This variable needs to be set through the game options.
 export SDL_VIDEO_MINIMIZE_ON_FOCUS_LOSS=0
-# Source my utility functions
-source ~/.local/bin/utils.sh

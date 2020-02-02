@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
+"""Disapproves with ever-increasing fervor."""
 import argparse
 
 
 def parse_args():
     """Disapprovingly parse arguments."""
-    DESCRIPTION = "Disapproves with ever-increasing fervor."
     VERSION = "0.2"
 
-    parser = argparse.ArgumentParser(description=DESCRIPTION)
+    parser = argparse.ArgumentParser(description=__doc__)
 
     parser.add_argument("--version", action="version", version=VERSION)
     parser.add_argument("-v", "--verbose", action="count", help="Increase verbosity e.g.: -vvvv")

@@ -3,7 +3,7 @@
 # A comma-separated list of package or module names from where C extensions may
 # be loaded. Extensions are loading into the active Python interpreter and may
 # run arbitrary code
-extension-pkg-whitelist=numpy, gmpy2
+extension-pkg-whitelist=numpy
 
 # Add files or directories to the blacklist. They should be base names, not
 # paths.
@@ -210,7 +210,7 @@ ignored-classes=optparse.Values,thread._local,_thread._local, numpy, gmpy2
 # (useful for modules/projects where namespaces are manipulated during runtime
 # and thus existing member attributes cannot be deduced by static analysis. It
 # supports qualified module names, as well as Unix pattern matching.
-ignored-modules=numpy, gmpy2
+ignored-modules=numpy
 
 # Show a hint with possible names when a member name was not found. The aspect
 # of finding the hint is based on edit distance.

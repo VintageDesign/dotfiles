@@ -1,8 +1,9 @@
 #!/usr/bin/python3
-from datetime import datetime
-import socket
 import os
+import socket
+from datetime import datetime
 from urllib.request import urlopen
+
 import yagmail
 
 
@@ -38,15 +39,13 @@ def gen_email(previous_ip, current_ip):
 
 
 def test_ip():
-    with open("ip", "r") as f1:
+    with open(".ip", "r") as f1:
         ip1 = f1.read()
-    f1.close()
     ip2 = urlopen("http://ipecho.net/plain").read().decode("utf-8")
     if ip1 != ip2:
         gen_email(ip1, ip2)
-        with open("ip", "w") as f2:
+        with open(".ip", "w") as f2:
             f2.write(ip2)
-        f2.close()
     else:
         print("Your IP Address ({}) hasn't changed".format(ip1))
 

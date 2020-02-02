@@ -1,24 +1,22 @@
 #!/usr/bin/env python3
+"""Deploy this dotfiles repository to the given directory."""
 import argparse
 import os
 from pathlib import Path
 
-DESCRIPTION = "Deploy this repository to the given directory."
-
 MAPPINGS = {
     ".vim/": ".vim/",
-    ".fzf/": ".fzf/",
-    "rcfiles/bash_aliases": ".bash_aliases",
-    "rcfiles/bashrc": ".bashrc",
-    "rcfiles/gdbinit": ".gdbinit",
-    "rcfiles/gitconfig": ".gitconfig",
-    "rcfiles/pylintrc": ".pylintrc",
+    "rcfiles/.bashrc": ".bashrc",
+    "rcfiles/.gdbinit": ".gdbinit",
+    "rcfiles/.gitconfig": ".gitconfig",
+    "rcfiles/.pylintrc": ".pylintrc",
+    "rcfiles/.profile": ".profile",
 }
 
 
 def parse_args():
     """Parse the commandline arguments."""
-    parser = argparse.ArgumentParser(description=DESCRIPTION)
+    parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--verbose", "-v", action="store_true", default=False, help="Increase output verbosity"
     )

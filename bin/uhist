@@ -42,11 +42,7 @@ def main(n):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "-n",
-        "--number",
-        default=10,
-        type=int,
-        help="The number of most-common items to show",
+        "-n", "--number", default=10, type=int, help="The number of most-common items to show",
     )
 
     args = parser.parse_args()
