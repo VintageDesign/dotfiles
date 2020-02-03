@@ -36,6 +36,22 @@ for lib in "${DOTFILES_DIR}/lib/"*.sh; do
     [ -f "$lib" ] && source "$lib"
 done
 
+# I keep having problems with my ~/.bash_history getting wiped, so make daily backups.
+# Unfortunately, I don't know of a nice way to find new commands and append them to a canonical backup.
+# So just make daily backups, and warn if something has gone wrong.
+#
+# TODO: Consider using logrotate --force, and make a backup any time a new interactive shell is started?
+if [ -f ~/.histlogs/logrotate.conf ]; then
+    logrotate --state ~/.histlogs/logrotate.status ~/.histlogs/logrotate.conf
+
+    # Complain loudly if $HISTFILE is smaller than the latest backup.
+    latest=$(find ~/.histlogs/ -name "${HISTFILE##*/}.*" | sort | tail -1)
+    if [ ! -f "$latest" ] || [ ! -f "$HISTFILE" ] || [ "$(wc -l <"$HISTFILE")" -lt "$(wc -l <"$latest")" ]; then
+        echo "${RED}${BOLD}Something horrible has happened to ${WHITE}${HISTFILE}${RED}...${RESET}"
+        wc -l "$HISTFILE" "$latest"
+    fi
+fi
+
 # Prints different escape codes to stdout indicating the exit code of the previous command
 # Colors are provided by $DOTFILES_DIR/lib/colors.sh
 function __decorate_exit_status() {
@@ -95,7 +111,7 @@ if ! shopt -oq posix; then
         mkdir -p ~/.bash-completion.d
     fi
     for completion_file in ~/.bash-completion.d/*; do
-        [ -f "$completion_file" ] && source $completion_file
+        [ -f "$completion_file" ] && source "$completion_file"
     done
     # TODO: Find the right way to do this.
     if [ -f /usr/lib/llvm-8/share/clang/bash-autocomplete.sh ]; then

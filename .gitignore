@@ -1,5 +1,7 @@
 *.swp
 .netrwhist
+.histlogs/logrotate.status
+.histlogs/.bash_history.*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
