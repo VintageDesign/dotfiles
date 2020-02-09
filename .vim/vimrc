@@ -210,8 +210,6 @@ let g:ale_fixers = {
 \}
 
 " Default linters
-" TODO: Add plaintext and markdown linters.
-" TODO: Add Dockerfile linter?
 let g:ale_linters = {
 \   'python':   ['pydocstyle', 'pylint', 'pyls'],
 \   'tex':      ['chktex'],
@@ -220,9 +218,9 @@ let g:ale_linters = {
 
 let g:ale_sign_column_always = 1
 " Allow ALE to trigger manual completion with <C-X><C-O>
-" set omnifunc=ale#completion#OmniFunc
+set omnifunc=ale#completion#OmniFunc
 
-" TODO: ???
+" TODO: Something to do with the mouse?
 let g:ale_set_balloons = 1
 "set completeopt=menu,menuone,preview,noselect,noinsert
 
@@ -237,12 +235,13 @@ let g:ale_set_balloons = 1
 "<Plug>(ale_previous_wrap)
 "<Plug>(ale_next_wrap)
 
-" BUG: This appears to be very broken?
-inoremap <silent> <C-Space> <Plug>(ale_complete)
-inoremap <silent> <C-@> <C-Space>
-" NOTE: Vim can't distinguish <ctrl-shift-I> from <ctrl-I>
+" BUG: <C-Space> is broken, even with the <C-@> hack from stackoverflow.
+inoremap <C-Space> <C-\><C-O>:ALEComplete<CR>
+inoremap <C-@> <C-Space>
+inoremap <C-P> <C-\><C-O>:ALEComplete<CR>
+" BUG: Vim can't distinguish <ctrl-shift-I> from <ctrl-I>
 nmap <C-I> <Plug>(ale_fix)
-"imap <C-I> <Plug>(ale_fix)
+imap <C-I> <C-\><C-O>:ALEFix<CR>
 
 " Show 5 lines of errors (default: 10)
 let g:ale_list_window_size = 5
@@ -251,11 +250,13 @@ let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 
-let g:ale_c_clang_options = '-std=c11 -Wall -Wextra -Wpedantic'
-let g:ale_cpp_clangd_options = '-std=c++17 -Wall -Wextra -Wpedantic'
-" TODO: Provide list of clangtidy checks
+let g:ale_cpp_clangd_options = '--background-index --completion-style=bundled --header-insertion=iwyu --suggest-missing-includes -j=4'
+let g:ale_cpp_clang_options = '-std=c++17 -Wall -Wextra -Wpedantic -x c++'
+" TODO: Provide list of default clangtidy checks. Fallback to looking at .clang-tidy
+" TODO: Provide default clang-tidy and clang-format configuration in $HOME
+" TODO: Learn how to generate compile_commands.json
 " TODO: Learn how to configure these options per-project.
-let g:ale_cpp_clangtidy_options = '-std=c++17 -Wall -Wextra -Wpedantic'
+let g:ale_cpp_clangtidy_options = '-std=c++17 -Wall -Wextra -Wpedantic -x c++'
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
