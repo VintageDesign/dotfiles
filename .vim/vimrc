@@ -240,6 +240,8 @@ inoremap <C-Space> <C-\><C-O>:ALEComplete<CR>
 inoremap <C-@> <C-Space>
 inoremap <C-P> <C-\><C-O>:ALEComplete<CR>
 " BUG: Vim can't distinguish <ctrl-shift-I> from <ctrl-I>
+" BUG: Even worse, running :verbose map <Tab> seems to indicate that this
+" exact line somehow sets the <Tab> keybind to <Plug>(ale_fix)??
 nmap <C-I> <Plug>(ale_fix)
 imap <C-I> <C-\><C-O>:ALEFix<CR>
 
