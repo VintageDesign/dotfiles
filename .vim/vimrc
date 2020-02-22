@@ -120,6 +120,9 @@ inoremap <C-k> <Esc>:m .-2<CR>==gi
 vnoremap <C-j> :m '>+1<CR>gv=gv
 vnoremap <C-k> :m '<-2<CR>gv=gv
 
+" Copy visual selection to clipboard. Works for <ctrl-c> not <ctrl-shift-c>
+vnoremap <C-y> :'<,'>:w !xclip -selection clipboard<CR><CR>
+
 " Map <space> to fold.
 nnoremap <space> za
 
