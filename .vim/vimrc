@@ -55,10 +55,16 @@ set wildmenu
 set lazyredraw
 "Matching brackets highlighted
 set showmatch
+" Show typed command in statusbar
+set showcmd
 " Highlight as characters are entered
 set incsearch
+" Case insensitive search, unless the search query contains capital letters.
+set smartcase
 " Must be turned off manually
 set hlsearch
+" Use mouse interaction in every mode
+set mouse=a
 
 " enable code folding
 set foldenable
@@ -102,6 +108,8 @@ augroup spellingFiletypes
     autocmd FileType vimwiki,markdown,text setlocal spell
 augroup END
 
+" Jump to last position when opening file.
+au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -119,6 +127,19 @@ inoremap <C-j> <Esc>:m .+1<CR>==gi
 inoremap <C-k> <Esc>:m .-2<CR>==gi
 vnoremap <C-j> :m '>+1<CR>gv=gv
 vnoremap <C-k> :m '<-2<CR>gv=gv
+
+" Combined with adding the following to ~/.Xresources
+" XTerm*vt100.translations: #override \n\
+"    Ctrl ~Meta Shift <Key>a: string(0x1b) string("[65;5u") \n\
+"    Ctrl ~Meta Shift <Key>i: string(0x1b) string("[73;5u") \n\
+" This will map <C-S-a> and <C-a> differently.
+" Unfortunately, this only works in XTerm terminals, which I don't use.
+" map <ESC>[65;5u <C-S-a>
+" map <ESC>[73;5u <C-S-i>
+" map <C-S-a> :echo "ctrl shift a"<CR>
+" map <C-a>   :echo "ctrl a"<CR>
+" map <C-S-i> :echo "ctrl shift i"<CR>
+" map <C-i>   :echo "ctrl i"<CR>
 
 " Copy visual selection to clipboard. Works for <ctrl-c> not <ctrl-shift-c>
 vnoremap <C-y> :'<,'>:w !xclip -selection clipboard<CR><CR>
