@@ -188,7 +188,7 @@ export MAKEFLAGS="-j$(nproc)"
 
 # For using XMing on WSL
 # export DISPLAY=:0
-export TERM=xterm-256color
+# export TERM=xterm-256color
 
 # Prevent games from minimizing when focus is lost.
 # Steam doesn't read your bashrc. This variable needs to be set through the game options.

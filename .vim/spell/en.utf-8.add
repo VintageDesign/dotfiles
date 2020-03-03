@@ -85,3 +85,4 @@ Watchpoints
 PGN
 PDU
 lookahead
+bool
