@@ -45,7 +45,7 @@ if [ -f ~/.histlogs/logrotate.conf ]; then
     logrotate --state ~/.histlogs/logrotate.status ~/.histlogs/logrotate.conf
 
     # Complain loudly if $HISTFILE is smaller than the latest backup.
-    latest=$(find ~/.histlogs/ -name "${HISTFILE##*/}.*" | sort | tail -1)
+    latest=$(find ~/.histlogs/ -name "${HISTFILE##*/}.*" | sort -n -t . -k 3 | head -1)
     if [ ! -f "$latest" ] || [ ! -f "$HISTFILE" ] || [ "$(wc -l <"$HISTFILE")" -lt "$(wc -l <"$latest")" ]; then
         echo "${RED}${BOLD}Something horrible has happened to ${WHITE}${HISTFILE}${RED}...${RESET}"
         wc -l "$HISTFILE" "$latest"
