@@ -77,7 +77,7 @@ set cursorline
 " Highlight current column
 "set cursorcolumn
 " Comma separated list of columns to highlight
-set colorcolumn=100,140
+set colorcolumn=100
 
 " When creating a new window, make it equal sized to any currently open
 " windows. E.g., when using vsplit multiple times.
