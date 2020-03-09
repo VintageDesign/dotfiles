@@ -17,3 +17,17 @@ set target-async on
 # Load local .gdbinit files.
 add-auto-load-safe-path /
 set auto-load local-gdbinit on
+
+# Save command history
+set history save on
+set history size unlimited
+# Remove duplicates in the last 20 entries.
+set history remove-duplicates 20
+
+# Add STL pretty-printers
+python
+import sys
+sys.path.insert(0, '/usr/share/gcc-8/python')
+from libstdcxx.v6.printers import register_libstdcxx_printers
+register_libstdcxx_printers(None)
+end
