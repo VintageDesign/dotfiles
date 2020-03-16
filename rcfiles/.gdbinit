@@ -28,8 +28,13 @@ set history remove-duplicates 20
 
 # Add STL pretty-printers
 python
+import glob
 import sys
-sys.path.insert(0, '/usr/share/gcc-8/python')
+
+gcc = glob.glob("/usr/share/gcc-*")
+# TODO: Do something better than grabbing the first match.
+sys.path.insert(0, gcc[0] + "/python")
+
 from libstdcxx.v6.printers import register_libstdcxx_printers
 register_libstdcxx_printers(None)
 end
