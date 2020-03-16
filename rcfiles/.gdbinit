@@ -1,4 +1,6 @@
-set prompt \033[32m(gdb) \033[0m
+# See https://stackoverflow.com/questions/30998499/why-my-gdb-prompt-shows-wrong-after-i-change-its-color
+# It's necessary to add the \001 and \002 escapes around all non-width characters. This is akin to the \[\] bash escapes.
+set prompt \001\033[32m\002(gdb) \001\033[0m\002
 set print pretty on
 set print array on
 set print symbol on
