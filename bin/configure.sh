@@ -76,21 +76,69 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${GREEN}Installed dev packages.${RESET}"
 fi
 
+# Note that this installs pip for python3 under `pip` instead of `pip3`.
+read -p "${BOLD}${UNDERLINE}Install Pip and Python3 development tools? (y/N)${RESET} " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo "Checking for pip...${RESET}"
+    if [ ! -f "$(command -v pip)" ]; then
+        echo "Pip not installed. Installing Pip..."
+        curl https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py
+        read -p "${BOLD}${UNDERLINE}Install Pip as user? (y/N)${RESET} " -n 1 -r
+        echo
+
+        # The get-pip.py script requires python3-distutils.
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            python3 /tmp/get-pip.py --user
+        else
+            sudo -H python3 /tmp/get-pip.py
+        fi
+        echo "${GREEN}Installed Pip $(pip --version)${RESET}"
+    else
+        echo "${GREEN}Found Pip $(pip --version)${RESET}"
+    fi
+
+    read -p "${BOLD}${UNDERLINE}Install Python development packages for $(pip --version | grep -o '(.*)')? (y/N)${RESET} " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        echo "${YELLOW}Installing Python development packages without a virtualenv...${RESET}"
+        # These packages are necessary to be installed system-wide.
+        pip install --upgrade --user --requirement "${DOTFILES_DIR}/requirements.txt"
+        python3 -m nb_pdf_template.install
+        mkdir -p ~/.jupyter
+
+        # TODO: Don't add these lines if they already exist.
+        echo "c.LatexExporter.template_file = 'classicm'" >>~/.jupyter/jupyter_nbconvert_config.py
+        {
+            echo "c.LatexExporter.template_file = 'classicm'"
+            echo "c.NotebookApp.contents_manager_class = 'jupytext.TextFileContentsManager'"
+            echo 'c.ContentsManager.default_jupytext_formats = "ipynb,md"'
+        } >>~/.jupyter/jupyter_notebook_config.py
+
+        # https://github.com/t-makaro/nb_pdf_template
+        # https://github.com/ryantam626/jupyterlab_code_formatter
+        # https://github.com/mwouts/jupytext
+
+        jupyter nbextension install --user --py jupytext
+        jupyter nbextension enable jupytext --user --py
+        # TODO: Configure <ctrl-shift-I> to format cells
+        # TODO: Configure 100-column limit
+        jupyter labextension install @ryantam626/jupyterlab_code_formatter
+        jupyter serverextension enable --user --py jupyterlab_code_formatter
+        # TODO: This requires nodejs and npm
+        # jupyter lab build
+        echo "${BOLD}${RED}Install all other packages in a virtualenv!${RESET}"
+        echo "${BOLD}${RED}Use 'python3 -m ipykernel install --user --name=<kernel name>' to install the current venv as a Jupyter kernel."
+        echo "${GREEN}Installed Python development packages.${RESET}"
+    fi
+fi
+
 read -p "${BOLD}${UNDERLINE}Install useful utilities? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Installing utilities....${RESET}"
-    sudo apt install htop nmap traceroute screen screenfetch linux-tools-common linux-tools-generic openssh-server tree iperf net-tools nfs-common pv network-manager-vpnc-gnome
+    sudo apt install htop nmap traceroute screen screenfetch linux-tools-common linux-tools-generic openssh-server tree iperf net-tools nfs-common pv
     echo "${GREEN}Installed utilities.${RESET}"
-fi
-
-read -p "${BOLD}${UNDERLINE}Install tweaks? (y/N)${RESET} " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "${YELLOW}Installing tweaks...${RESET}"
-    sudo add-apt-repository ppa:numix/ppa -y
-    sudo apt install gnome-tweak-tool chrome-gnome-shell numix-gtk-theme numix-icon-theme-circle
-    echo "${GREEN}Installed tweaks.${RESET}"
 fi
 
 read -p "${BOLD}${UNDERLINE}Install VS Code? (y/N)${RESET} " -n 1 -r
@@ -126,7 +174,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${GREEN}Installed Minecraft.${RESET}"
 fi
 
-read -p "${BOLD}${UNDERLINE}Install Steam, Minecraft, and Lutris? (y/N)${RESET} " -n 1 -r
+read -p "${BOLD}${UNDERLINE}Install Steam, and Lutris? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Installing Steam...${RESET}"
@@ -138,59 +186,13 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${GREEN}Installed Lutris.${RESET}"
 fi
 
-# Note that this installs pip for python3 under `pip` instead of `pip3`.
-read -p "${BOLD}${UNDERLINE}Install Pip and Python3 development tools? (y/N)${RESET} " -n 1 -r
+read -p "${BOLD}${UNDERLINE}Install Gnome tweaks? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "Checking for pip...${RESET}"
-    if [ ! -f "$(command -v pip)" ]; then
-        echo "Pip not installed. Installing Pip..."
-        curl https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py
-        read -p "${BOLD}${UNDERLINE}Install Pip as user? (y/N)${RESET} " -n 1 -r
-        echo
-
-        # The get-pip.py script requires python3-distutils.
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
-            python3 /tmp/get-pip.py --user
-        else
-            sudo -H python3 /tmp/get-pip.py
-        fi
-        echo "${GREEN}Installed Pip $(pip --version)${RESET}"
-    else
-        echo "${GREEN}Found Pip $(pip --version)${RESET}"
-    fi
-
-    read -p "${BOLD}${UNDERLINE}Install Python development packages for $(pip --version | grep -o '(.*)')? (y/N)${RESET} " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-        echo "${YELLOW}Installing Python development packages without a virtualenv...${RESET}"
-        # These packages are necessary to be installed system-wide.
-        pip install --upgrade --user --requirement "${DOTFILES_DIR}/requirements.txt"
-        python3 -m nb_pdf_template.install
-        mkdir -p ~/.jupyter
-        echo "c.LatexExporter.template_file = 'classicm'" >>~/.jupyter/jupyter_nbconvert_config.py
-        {
-            echo "c.LatexExporter.template_file = 'classicm'"
-            echo "c.NotebookApp.contents_manager_class = 'jupytext.TextFileContentsManager'"
-            echo 'c.ContentsManager.default_jupytext_formats = "ipynb,md"'
-        } >>~/.jupyter/jupyter_notebook_config.py
-
-        # https://github.com/t-makaro/nb_pdf_template
-        # https://github.com/ryantam626/jupyterlab_code_formatter
-        # https://github.com/mwouts/jupytext
-
-        jupyter nbextension install --user --py jupytext
-        jupyter nbextension enable jupytext --user --py
-        # TODO: Configure <ctrl-shift-I> to format cells
-        # TODO: Configure 100-column limit
-        jupyter labextension install @ryantam626/jupyterlab_code_formatter
-        jupyter serverextension enable --user --py jupyterlab_code_formatter
-        # TODO: This requires nodejs and npm
-        # jupyter lab build
-        echo "${BOLD}${RED}Install all other packages in a virtualenv!${RESET}"
-        echo "${BOLD}${RED}Use 'python3 -m ipykernel install --user --name=<kernel name>' to install the current venv as a Jupyter kernel."
-        echo "${GREEN}Installed Python development packages.${RESET}"
-    fi
+    echo "${YELLOW}Installing tweaks...${RESET}"
+    sudo add-apt-repository ppa:numix/ppa -y
+    sudo apt install gnome-tweak-tool chrome-gnome-shell numix-gtk-theme numix-icon-theme-circle
+    echo "${GREEN}Installed tweaks.${RESET}"
 fi
 
 read -p "${BOLD}${UNDERLINE}Install Gnome Shell extensions? (y/N)${RESET} " -n 1 -r
