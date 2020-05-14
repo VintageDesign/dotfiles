@@ -280,6 +280,18 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${BOLD}${RED}Install Gnome extensions before proceding.${RESET}"
 fi
 
+read -p "${BOLD}${UNDERLINE}Install Pointfree font? (y/N)${RESET} " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo "${YELLOW} Downloading Pointfree to ~/.local/share/fonts${RESET}"
+    mkdir -p ~/.local/share/fonts
+    curl --location --output ~/.local/share/fonts/pointfree.ttf "http://fontpro.com/download-family.php?file=17451"
+    fc-cache -f -v
+    echo "${YELLOW}Setting Pointfree as default monospace font${RESET}"
+    gsettings set org.gnome.desktop.interface monospace-font-name 'Pointfree 11'
+    echo "${GREEN}Finished setting fonts...${RESET}"
+fi
+
 read -p "${UNDERLINE}Configure system settings ${BOLD}(requires extensions)?${RESET}${UNDERLINE} (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
