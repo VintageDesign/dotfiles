@@ -3,6 +3,7 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
+# Get the location of the dotfiles directory, by finding the location of this script.
 SOURCE="${BASH_SOURCE[0]}"
 # resolve $SOURCE until the file is no longer a symlink
 while [ -h "$SOURCE" ]; do
@@ -15,12 +16,14 @@ DOTFILES_DIR="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)/.."
 DOTFILES_DIR="$(readlink --canonicalize --no-newline "${DOTFILES_DIR}")"
 echo "Found configuration directory: ${DOTFILES_DIR}"
 
+# Life isn't complete without some colors.
 source "${DOTFILES_DIR}/lib/colors.sh"
 
 read -p "${BOLD}${UNDERLINE}Update dotfiles and vim plugins? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Updating dotfiles and plugins...${RESET}"
+    # --remote uses live-at-head strategy.
     (cd "${DOTFILES_DIR}" && git pull && git submodule update --remote --recursive --init)
     echo "${GREEN}Updated dotfiles and plugins.${RESET}"
 fi
@@ -159,7 +162,7 @@ read -p "${BOLD}${UNDERLINE}Install VS Code? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Installing VS Code and setting-sync...${RESET}"
-    curl -L https://go.microsoft.com/fwlink/?LinkID=760868 -o /tmp/code.deb
+    curl --location https://go.microsoft.com/fwlink/?LinkID=760868 --output /tmp/code.deb
     sudo apt install /tmp/code.deb
     code --install-extension shan.code-settings-sync
     echo "${BOLD}${RED}See: https://marketplace.visualstudio.com/items?itemName=Shan.code-settings-sync${RESET}"
@@ -170,7 +173,7 @@ read -p "${BOLD}${UNDERLINE}Install Discord and Spotify? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Installing Discord...${RESET}"
-    curl -L "https://discordapp.com/api/download?platform=linux&format=deb" -o /tmp/discord.deb
+    curl --location "https://discordapp.com/api/download?platform=linux&format=deb" --output /tmp/discord.deb
     sudo apt install /tmp/discord.deb
     echo "${GREEN}Installed Discord.${RESET}"
     echo "${YELLOW}Installing Spotify...${RESET}"
@@ -183,7 +186,7 @@ read -p "${BOLD}${UNDERLINE}Install Minecraft? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Installing Minecraft...${RESET}"
-    curl -L https://launcher.mojang.com/download/Minecraft.deb -o /tmp/minecraft.deb
+    curl --location https://launcher.mojang.com/download/Minecraft.deb --output /tmp/minecraft.deb
     sudo apt install /tmp/minecraft.deb
     echo "${GREEN}Installed Minecraft.${RESET}"
 fi
@@ -204,7 +207,6 @@ read -p "${BOLD}${UNDERLINE}Install Gnome tweaks? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Installing tweaks...${RESET}"
-    sudo add-apt-repository ppa:numix/ppa -y
     sudo apt install gnome-tweak-tool chrome-gnome-shell numix-gtk-theme numix-icon-theme-circle
     echo "${GREEN}Installed tweaks.${RESET}"
 fi
@@ -220,10 +222,11 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${BOLD}${RED}Install the ${WHITE}gsconnect${RED}, ${WHITE}workspace-matrix${RED}, ${WHITE}netspeed${RED}, and ${WHITE}multi-monitors-add-on${RED} extensions before proceeding.${RESET}"
 fi
 
-read -p "${BOLD}${UNDERLINE}Configure system settings? (y/N)${RESET} " -n 1 -r
+read -p "${BOLD}${UNDERLINE}Configure system settings (requires extensions)? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Configuring system settings...${RESET}"
+    gsettings list-recursively > settings.orig
     gsettings set org.gnome.shell favorite-apps "['firefox.desktop', 'org.gnome.Nautilus.desktop']"
     gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts false
     gsettings set org.gnome.desktop.peripherals.touchpad natural-scroll false
@@ -237,6 +240,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
     gsettings set org.gnome.settings-daemon.plugins.power ambient-enabled true
     gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 48
+    # Every time, I have to look this up...
     gsettings set org.gnome.shell.extensions.dash-to-dock isolate-workspaces true
     echo "${GREEN}Configured system settings.${RESET}"
 
@@ -279,8 +283,7 @@ echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Adding ${WHITE}Defaults    insults${YELLOW} to /etc/sudoers...${RESET}"
     # NOTE: Bad things happen if you fuck up this line.
+    # Even worse things happen if you've encrypted your disk.
     echo "Defaults    insults" | sudo tee -a /etc/sudoers >/dev/null
     echo "${GREEN}Added to /etc/sudoers${RESET}"
 fi
-
-echo "${GREEN}Done configuring system.${RESET}"
