@@ -20,7 +20,7 @@ alias acl='sudo apt-get autoclean'
 alias arem='sudo apt-get autoremove'
 
 alias wiki='vim $VIMWIKI_PATH/index.wiki'
-alias todo='vim $VIMWIKI_PATH/todo.wiki'
+alias todo='vim $VIMWIKI_PATH/todo/todo.wiki'
 alias journal='vim $VIMWIKI_PATH/diary/diary.wiki'
 alias today='vim -c VimwikiMakeDiaryNote'
 alias tomorrow='vim -c VimwikiMakeTomorrowDiaryNote'
