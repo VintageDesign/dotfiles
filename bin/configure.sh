@@ -66,6 +66,21 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${GREEN}Installed shfmt version: $(shfmt --version)${RESET}"
 fi
 
+read -p "${BOLD}${UNDERLINE}Install Tilix as default terminal? (y/N)${RESET} " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo "${YELLOW}Installing Tilix...${RESET}"
+    sudo apt install tilix
+    sudo update-alternatives --set x-terminal-emulator /usr/bin/tilix.wrapper
+    # As per https://askubuntu.com/a/294430, nautilus uses a hard coded list of terminals.
+    # The suggested "fix" of removing gnome-terminal and symlinking to tilix doesn't work
+    # See https://bugzilla.gnome.org/show_bug.cgi?id=627943 for asinine WONTFIX justifications.
+    echo "${YELLOW}Loading profile from dotfiles${RESET}"
+    dconf dump /com/gexperts/Tilix/ > "${DOTFILES_DIR}"/tilix.dconf.default
+    dconf load /com/gexperts/Tilix/ < "${DOTFILES_DIR}"/tilix.dconf
+    echo "${GREEN}Installed Tilix.${RESET}"
+fi
+
 read -p "${BOLD}${UNDERLINE}Install LaTeX? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
