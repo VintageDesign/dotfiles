@@ -76,8 +76,8 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     # The suggested "fix" of removing gnome-terminal and symlinking to tilix doesn't work
     # See https://bugzilla.gnome.org/show_bug.cgi?id=627943 for asinine WONTFIX justifications.
     echo "${YELLOW}Loading profile from dotfiles${RESET}"
-    dconf dump /com/gexperts/Tilix/ > "${DOTFILES_DIR}"/tilix.dconf.default
-    dconf load /com/gexperts/Tilix/ < "${DOTFILES_DIR}"/tilix.dconf
+    dconf dump /com/gexperts/Tilix/ >"${DOTFILES_DIR}"/tilix.dconf.default
+    dconf load /com/gexperts/Tilix/ <"${DOTFILES_DIR}"/tilix.dconf
     echo "${GREEN}Installed Tilix.${RESET}"
 fi
 
@@ -304,6 +304,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     gsettings set org.gnome.settings-daemon.plugins.power ambient-enabled true
     gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 3600
     gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
+    gsettings set org.gnome.shell disabled-extensions "['desktop-icons@csoriano']"
     gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 48
     gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts false
     # Every time, I have to look this up...
