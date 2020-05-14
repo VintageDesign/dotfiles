@@ -235,7 +235,10 @@ read -p "${UNDERLINE}Configure system settings ${BOLD}(requires extensions)?${RE
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Configuring system settings...${RESET}"
-    gsettings list-recursively >settings.orig
+    echo "Saving original gsettings to ~/settings.orig"
+    if [ ! -f ~/settings.orig ]; then
+        gsettings list-recursively >~/settings.orig
+    fi
     gsettings set org.gnome.shell favorite-apps "['firefox.desktop', 'org.gnome.Nautilus.desktop']"
     gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts false
     gsettings set org.gnome.desktop.peripherals.touchpad natural-scroll false
