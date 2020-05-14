@@ -70,7 +70,12 @@ read -p "${BOLD}${UNDERLINE}Install LaTeX? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Installing texlive, chktex, pdf2svg, and pandoc...${RESET}"
-    sudo apt install texlive-full chktex pdf2svg pandoc inkscape
+    sudo apt install \
+        chktex \
+        inkscape \
+        pandoc \
+        pdf2svg \
+        texlive-full
     echo "${GREEN}Installed texlive, chktex, pdf2svg, and pandoc.${RESET}"
 fi
 
@@ -78,7 +83,22 @@ read -p "${BOLD}${UNDERLINE}Install dev packages? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Installing dev packages...${RESET}"
-    sudo apt install gcc g++ clang clang-format clang-tidy gdb valgrind make cmake doxygen graphviz python3-dev python3-distutils optipng xclip
+    sudo apt install \
+        clang \
+        clang-format \
+        clang-tidy \
+        cmake \
+        doxygen \
+        g++ \
+        gcc \
+        gdb \
+        graphviz \
+        make \
+        optipng \
+        python3-dev \
+        python3-distutils \
+        valgrind \
+        xclip
     echo "${GREEN}Installed dev packages.${RESET}"
 fi
 
@@ -154,7 +174,20 @@ read -p "${BOLD}${UNDERLINE}Install useful utilities? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Installing utilities....${RESET}"
-    sudo apt install htop nmap traceroute screen screenfetch linux-tools-common linux-tools-generic openssh-server tree iperf net-tools nfs-common pv
+    sudo apt install \
+        htop \
+        iperf \
+        linux-tools-common \
+        linux-tools-generic \
+        net-tools \
+        nfs-common \
+        nmap \
+        openssh-server \
+        pv \
+        screen \
+        screenfetch \
+        traceroute \
+        tree
     echo "${GREEN}Installed utilities.${RESET}"
 fi
 
