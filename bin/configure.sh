@@ -215,18 +215,27 @@ read -p "${BOLD}${UNDERLINE}Install Gnome Shell extensions? (y/N)${RESET} " -n 1
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Opening Gnome Shell extensions in the default browser...${RESET}"
-    xdg-open https://extensions.gnome.org/extension/1319/gsconnect/
-    xdg-open https://extensions.gnome.org/extension/1485/workspace-matrix/
-    xdg-open https://extensions.gnome.org/extension/921/multi-monitors-add-on/
-    xdg-open https://extensions.gnome.org/extension/104/netspeed/
-    echo "${BOLD}${RED}Install the ${WHITE}gsconnect${RED}, ${WHITE}workspace-matrix${RED}, ${WHITE}netspeed${RED}, and ${WHITE}multi-monitors-add-on${RED} extensions before proceeding.${RESET}"
+    EXTENSIONS=(
+        https://extensions.gnome.org/extension/104/netspeed/
+        https://extensions.gnome.org/extension/1166/extension-update-notifier/
+        https://extensions.gnome.org/extension/1319/gsconnect/
+        https://extensions.gnome.org/extension/1485/workspace-matrix/
+        https://extensions.gnome.org/extension/1723/wintile-windows-10-window-tiling-for-gnome/
+        https://extensions.gnome.org/extension/708/panel-osd/
+        https://extensions.gnome.org/extension/906/sound-output-device-chooser/
+        https://extensions.gnome.org/extension/921/multi-monitors-add-on/
+    )
+    for extension in "${EXTENSIONS[@]}"; do
+        xdg-open "$extension"
+    done
+    echo "${BOLD}${RED}Install Gnome extensions before proceding.${RESET}"
 fi
 
-read -p "${BOLD}${UNDERLINE}Configure system settings (requires extensions)? (y/N)${RESET} " -n 1 -r
+read -p "${UNDERLINE}Configure system settings ${BOLD}(requires extensions)?${RESET}${UNDERLINE} (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Configuring system settings...${RESET}"
-    gsettings list-recursively > settings.orig
+    gsettings list-recursively >settings.orig
     gsettings set org.gnome.shell favorite-apps "['firefox.desktop', 'org.gnome.Nautilus.desktop']"
     gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts false
     gsettings set org.gnome.desktop.peripherals.touchpad natural-scroll false
