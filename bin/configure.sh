@@ -175,6 +175,7 @@ echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Installing utilities....${RESET}"
     sudo apt install \
+        colordiff \
         htop \
         iperf \
         linux-tools-common \
@@ -272,31 +273,44 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     if [ ! -f ~/settings.orig ]; then
         gsettings list-recursively >~/settings.orig
     fi
+    # Set firefox and Nautilus to be the only apps always shown in the dock.
     gsettings set org.gnome.shell favorite-apps "['firefox.desktop', 'org.gnome.Nautilus.desktop']"
-    gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts false
-    gsettings set org.gnome.desktop.peripherals.touchpad natural-scroll false
-    gsettings set org.gnome.settings-daemon.plugins.color night-light-enabled true
-    gsettings set org.gnome.desktop.interface clock-format '12h'
-    gsettings set org.gtk.Settings.FileChooser clock-format '12h'
-    gsettings set org.gnome.desktop.notifications show-in-lock-screen false
-    gsettings set org.gnome.desktop.privacy remember-recent-files false
     gsettings set org.gnome.desktop.datetime automatic-timezone true
+    gsettings set org.gnome.desktop.interface clock-format '12h'
+    gsettings set org.gnome.desktop.notifications show-in-lock-screen false
+    # Who in their right mind uses natural scrolling?
+    gsettings set org.gnome.desktop.peripherals.touchpad natural-scroll false
+    gsettings set org.gnome.desktop.privacy remember-recent-files false
+    gsettings set org.gnome.desktop.wm.keybindings move-to-monitor-up "['<Primary><Super>Up']"
+    gsettings set org.gnome.desktop.wm.keybindings move-to-monitor-right "['<Primary><Super>Right']"
+    gsettings set org.gnome.desktop.wm.keybindings move-to-monitor-left "['<Primary><Super>Left']"
+    gsettings set org.gnome.desktop.wm.keybindings move-to-monitor-down "['<Primary><Super>Down']"
+    gsettings set org.gnome.settings-daemon.plugins.color night-light-enabled true
+    gsettings set org.gnome.settings-daemon.plugins.power ambient-enabled true
     gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 3600
     gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
-    gsettings set org.gnome.settings-daemon.plugins.power ambient-enabled true
     gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 48
+    gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts false
     # Every time, I have to look this up...
     gsettings set org.gnome.shell.extensions.dash-to-dock isolate-workspaces true
+    gsettings set org.gtk.Settings.FileChooser clock-format '12h'
     echo "${GREEN}Configured system settings.${RESET}"
 
     echo "${YELLOW}Configuring Gnome tweaks...${RESET}"
-    gsettings set org.gnome.desktop.wm.preferences focus-mode 'sloppy'
-    gsettings set org.gnome.desktop.interface icon-theme 'Numix-Circle'
-    gsettings set org.gnome.desktop.interface gtk-theme 'Yaru-dark'
     gsettings set org.gnome.desktop.interface clock-show-weekday true
-    gsettings set org.gnome.shell.extensions.desktop-icons show-trash false
-    gsettings set org.gnome.shell.extensions.desktop-icons show-home false
+    gsettings set org.gnome.desktop.interface gtk-theme 'Yaru-dark'
+    gsettings set org.gnome.desktop.interface icon-theme 'Numix-Circle'
+    # Focus a window by moving the mouse over it.
+    gsettings set org.gnome.desktop.wm.preferences focus-mode 'sloppy'
+    gsettings set org.gnome.mutter attach-modal-dialogs false
+    gsettings set org.gnome.mutter center-new-windows true
+    gsettings set org.gnome.mutter dynamic-workspaces false
+    gsettings set org.gnome.mutter edge-tiling false
     gsettings set org.gnome.mutter workspaces-only-on-primary false
+    gsettings set org.gnome.shell.extensions.desktop-icons show-home false
+    gsettings set org.gnome.shell.extensions.desktop-icons show-trash false
+    gsettings set org.gnome.shell.overrides edge-tiling false
+    gsettings set org.gnome.shell.overrides workspaces-only-on-primary false
     echo "${GREEN}Configured Gnome tweaks.${RESET}"
 fi
 
