@@ -45,19 +45,22 @@ read -p "${BOLD}${UNDERLINE}Install shellcheck and shfmt? (y/N)${RESET} " -n 1 -
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Installing shellcheck...${RESET}"
-    export scversion="latest"
-    curl -L "https://storage.googleapis.com/shellcheck/shellcheck-${scversion}.linux.x86_64.tar.xz" -o /tmp/shellcheck.tar.xz
+    curl --location --output /tmp/shellcheck.tar.xz "https://github.com/koalaman/shellcheck/releases/download/stable/shellcheck-stable.linux.x86_64.tar.xz"
     tar -xJf /tmp/shellcheck.tar.xz --directory /tmp/
-    cp /tmp/shellcheck-"${scversion}"/shellcheck ~/.local/bin/
+    cp /tmp/shellcheck-stable/shellcheck ~/.local/bin/
     chmod +x ~/.local/bin/shellcheck
-    echo "${GREEN}Installed shellcheck version:${RESET}"
+    echo "${GREEN}Installed latest shellcheck, version:${RESET}"
     shellcheck --version
-    echo
-    echo "${YELLOW}Installing shmft...${RESET}"
-    curl -L https://github.com/mvdan/sh/releases/download/v3.0.1/shfmt_v3.0.1_linux_amd64 -o /tmp/shfmt
-    cp /tmp/shfmt ~/.local/bin/
+
+    echo "${YELLOW}Installing shfmt...${RESET}"
+    # shfmt doesn't have a 'latest' tag, so we find it ourselves.
+    USER="mvdan"
+    REPO="sh"
+    curl --silent "https://api.github.com/repos/$USER/$REPO/releases/latest" | # Get latest release from GitHub api
+        grep --only-matching --perl-regexp '"tag_name": "\K(.*)(?=")' |        # Get the latest tag
+        xargs -I {} curl --location --output ~/.local/bin/shfmt --remote-name "https://github.com/$USER/$REPO/releases/download/{}/shfmt_{}_linux_amd64"
     chmod +x ~/.local/bin/shfmt
-    echo "${GREEN}Installed shellcheck version: $(shfmt --version)${RESET}"
+    echo "${GREEN}Installed shfmt version: $(shfmt --version)${RESET}"
 fi
 
 read -p "${BOLD}${UNDERLINE}Install LaTeX? (y/N)${RESET} " -n 1 -r
