@@ -107,6 +107,8 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         echo "${YELLOW}Installing Python development packages without a virtualenv...${RESET}"
         # These packages are necessary to be installed system-wide.
         pip install --upgrade --user --requirement "${DOTFILES_DIR}/requirements.txt"
+
+        # https://github.com/t-makaro/nb_pdf_template
         python3 -m nb_pdf_template.install
         mkdir -p ~/.jupyter
 
@@ -118,18 +120,27 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
             echo 'c.ContentsManager.default_jupytext_formats = "ipynb,md"'
         } >>~/.jupyter/jupyter_notebook_config.py
 
-        # https://github.com/t-makaro/nb_pdf_template
-        # https://github.com/ryantam626/jupyterlab_code_formatter
-        # https://github.com/mwouts/jupytext
-
-        jupyter nbextension install --user --py jupytext
-        jupyter nbextension enable jupytext --user --py
-        # TODO: Configure <ctrl-shift-I> to format cells
-        # TODO: Configure 100-column limit
-        jupyter labextension install @ryantam626/jupyterlab_code_formatter
-        jupyter serverextension enable --user --py jupyterlab_code_formatter
-        # TODO: This requires nodejs and npm
-        # jupyter lab build
+        read -p "${BOLD}${UNDERLINE}Install node.js and npm from package manager? (y/N)${RESET} " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            sudo apt install nodejs npm
+        fi
+        read -p "${BOLD}${UNDERLINE}Install Jupyter extensions (requires node.js)? (y/N)${RESET} " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            if which node && which npm; then
+                # https://github.com/mwouts/jupytext
+                jupyter nbextension install --user --py jupytext
+                jupyter nbextension enable jupytext --user --py
+                # https://github.com/ryantam626/jupyterlab_code_formatter
+                # TODO: Configure <ctrl-shift-I> to format cells
+                # TODO: Configure 100-column limit
+                jupyter labextension install @ryantam626/jupyterlab_code_formatter
+                jupyter serverextension enable --user --py jupyterlab_code_formatter
+            else
+                echo "${BOLD}${RED}node.js not found. Try again.${RESET}"
+            fi
+        fi
         echo "${BOLD}${RED}Install all other packages in a virtualenv!${RESET}"
         echo "${BOLD}${RED}Use 'python3 -m ipykernel install --user --name=<kernel name>' to install the current venv as a Jupyter kernel."
         echo "${GREEN}Installed Python development packages.${RESET}"
