@@ -57,13 +57,3 @@ fzf-git-browse() {
         true
     fi
 }
-
-remote-screenshot() {
-    HOST=${1:-inferno}
-    # Default to the same format as Gnome.
-    IMG="${2:-"/home/root/${HOST} on $(date '+%Y-%m-%d at %H-%M-%S').png"}"
-    echo "Saving screenshot as ${IMG}"
-    ssh "${HOST}" import -display 0:0 -window root "'${IMG}'"
-    echo "Downloading ${IMG} to ~/Pictures/"
-    scp "${HOST}:${IMG//\ /\\\ }" ~/Pictures/
-}
