@@ -118,6 +118,57 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${GREEN}Installed dev packages.${RESET}"
 fi
 
+read -p "${BOLD}${UNDERLINE}Install Docker? (y/N)${RESET} " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    # If these packages weren't installed, that's okay.
+    sudo apt remove docker docker-engine docker.io containerd runc || true
+    sudo apt install \
+        apt-transport-https \
+        ca-certificates \
+        curl \
+        gnupg-agent \
+        software-properties-common
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    # Docker isn't officially supported on 20.04, so use the 19.10 repository.
+    release=$(lsb_release -cs)
+    if [ $release = focal ]; then
+        release=eoan
+    fi
+    echo "${YELLOW}Adding apt ${WHITE}'${release}'${YELLOW} repository...${RESET}"
+    sudo add-apt-repository \
+        "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+        ${release} \
+        stable"
+    sudo apt install \
+        containerd.io \
+        docker-ce \
+        docker-ce-cli
+    echo "${YELLOW}Performing post-installation steps...${RESET}"
+    # It's okay if the group already exists.
+    sudo groupadd --force docker
+    sudo usermod -aG docker $USER
+    sudo systemctl enable docker
+    echo "${RED}You must reboot before changes take effect...${RESET}"
+fi
+
+read -p "${BOLD}${UNDERLINE}Install NVIDIA Container Toolkit? (y/N)${RESET} " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo "${YELLOW}Adding nvidia-docker apt repository...${RESET}"
+    distribution=$(
+        . /etc/os-release
+        echo $ID$VERSION_ID
+    )
+    curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
+    curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+    sudo apt update
+    sudo apt install nvidia-container-toolkit
+    echo "${YELLOW}Restarting docker daemon${RESET}..."
+    sudo systemctl restart docker
+    echo "${GREEN}Finished installing nvidia-container-toolkit.${RESET}"
+fi
+
 # Note that this installs pip for python3 under `pip` instead of `pip3`.
 read -p "${BOLD}${UNDERLINE}Install Pip and Python3 development tools? (y/N)${RESET} " -n 1 -r
 echo
