@@ -46,3 +46,7 @@
     path = .vim/bundle/fzf.vim
     url = https://github.com/junegunn/fzf.vim.git
     branch = master
+[submodule ".vim/bundle/vim-surround"]
+	path = .vim/bundle/vim-surround
+	url = https://github.com/tpope/vim-surround.git
+	branch = master
