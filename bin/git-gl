@@ -57,3 +57,5 @@ fzf-git-browse() {
         true
     fi
 }
+
+fzf-git-browse "$@"
