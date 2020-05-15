@@ -98,11 +98,15 @@ au BufRead,BufNewFile nginx.conf set ft=nginx
 " Vim natively knows about Doxygen.
 let g:load_doxygen_syntax = 1
 
-" TODO: Integrate spellchecking with ALE.
-" Doesn't seem to be possible. I can use a grammar linter that also does spell
-" checking, but that'd only work in natural language files. I'd like to
-" spellcheck code.
-"set spell
+" The *.spl is a binary file format necessary for speed.
+" But that doesn't track very well in git (and opens up potential for nasty conflicts).
+" So generate the .spl file if the .add file is newer.
+for d in glob('~/.vim/spell/*.add', 1, 1)
+    if filereadable(d) && (!filereadable(d . '.spl') || getftime(d) > getftime(d . '.spl'))
+        silent exec 'mkspell! ' . fnameescape(d)
+    endif
+endfor
+" Don't spellcheck everything, instead check a restricted subset of filetypes.
 set spelllang=en_us
 set spellfile=~/.vim/spell/en.utf-8.add
 augroup spellingFiletypes

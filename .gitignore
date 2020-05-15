@@ -1,5 +1,6 @@
 *.swp
 *.bak
+*.spl
 .netrwhist
 .histlogs/logrotate.status
 .histlogs/.bash_history.*
