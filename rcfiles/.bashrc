@@ -6,13 +6,6 @@ case $- in
 *) return ;;
 esac
 
-# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=-1
-# Save all history
-HISTFILESIZE=-1
-HISTTIMEFORMAT="%h %d %H:%M:%S "
-shopt -s histappend
-
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
@@ -29,13 +22,24 @@ while [ -h "$SOURCE" ]; do
     # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
     [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
 done
-# Exported at the bottom with the rest of the environment variables.
 DOTFILES_DIR="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)/.."
-DOTFILES_DIR="$(readlink --canonicalize --no-newline "${DOTFILES_DIR}")"
+export DOTFILES_DIR="$(readlink --canonicalize --no-newline "${DOTFILES_DIR}")"
 
+# Source things like utilities, colors, and aliases
 for lib in "${DOTFILES_DIR}/lib/"*.sh; do
     [ -f "$lib" ] && source "$lib"
 done
+
+##################################################################################################
+# History settings
+##################################################################################################
+
+# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+HISTSIZE=-1
+# Save all history
+HISTFILESIZE=-1
+HISTTIMEFORMAT="%h %d %H:%M:%S "
+shopt -s histappend
 
 # I keep having problems with my ~/.bash_history getting wiped, so instead of fixing the problem, provide a way to recover.
 # Unfortunately, I don't know of a nice way to find new commands and automatically append them to a canonical backup.
@@ -56,6 +60,10 @@ function __backup_histfile() {
 
 __backup_histfile
 
+##################################################################################################
+# PS1 Customization
+##################################################################################################
+
 # Prints different escape codes to stdout indicating the exit code of the previous command
 # Colors are provided by $DOTFILES_DIR/lib/colors.sh
 function __decorate_exit_status() {
@@ -72,28 +80,35 @@ if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
 fi
 
 # Determine if connected over ssh.
-__ssh_flag=0
-if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
-    __ssh_flag=1
-else
-    case $(ps -o comm= -p $PPID) in
-    sshd | */sshd) __ssh_flag=1 ;;
-    esac
-fi
+function __is_ssh() {
+    if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
+        return 0
+    else
+        case $(ps -o comm= -p $PPID) in
+        sshd | */sshd) return 0 ;;
+        esac
+    fi
+    return 1
+}
+
+# Test whether the given function exists.
+function function_exists() {
+    declare -f -F "$1" >/dev/null
+    return $?
+}
 
 # Set the base $PS1
 PS1="\u@\h \[${GREEN}\]\w"
 # If connected over SSH, prepend a red (ssh) to the $PS1
-if [ $__ssh_flag -eq 1 ]; then
+if __is_ssh; then
     PS1="\[${BOLD}${RED}\](\[${RESET}${RED}\]ssh\[${BOLD}\]) \[${RESET}\]${PS1}"
 fi
-# Add the Git branch to the $PS1 if present.
-# A space is only added to the end if a branch is present.
-PS1="${PS1}\[${BLUE}\]\$(__git_ps1)\[${RESET}\]"
+# Decorate PS1 with git branch, rebase, cherry-pick state.
+if function_exists __git_ps1; then
+    PS1="${PS1}\[${BLUE}\]\$(__git_ps1)\[${RESET}\]"
+fi
 # Append a colored $ to the end of the $PS1 indicating the exit code
 PS1="${PS1} \[${WHITE}\]\[\$(__decorate_exit_status)\]\$\[${RESET}\] "
-unset __ssh_flag
-
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
 xterm* | rxvt*)
@@ -116,18 +131,15 @@ if ! shopt -oq posix; then
     for completion_file in ~/.bash-completion.d/*; do
         [ -f "$completion_file" ] && source "$completion_file"
     done
-    # TODO: Find the right way to do this.
-    if [ -f /usr/lib/llvm-8/share/clang/bash-autocomplete.sh ]; then
-        . /usr/lib/llvm-8/share/clang/bash-autocomplete.sh
-    fi
-    if [ -f /usr/lib/llvm-9/share/clang/bash-autocomplete.sh ]; then
-        . /usr/lib/llvm-9/share/clang/bash-autocomplete.sh
-    fi
+    # Find and source clang bash completion scripts
+    for f in $(find /usr/lib -name 'bash-autocomplete.sh'); do
+        source "$f"
+    done
 fi
 
 # If tab complete is abimguous, show completions on first <TAB>, not second.
 bind 'set show-all-if-ambiguous on'
-# Cycle through completions with <TAB>. TODO: Color completions?
+# Cycle through completions with <TAB>.
 bind 'TAB:menu-complete'
 # Wait till second <TAB> to complete, list completions on first <TAB>.
 bind 'set menu-complete-display-prefix on'
@@ -137,25 +149,24 @@ bind 'set mark-symlinked-directories on'
 # Enable fzf
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
+##################################################################################################
+# Environment variables
+##################################################################################################
+
 # fzf settings
-export FZF_DEFAULT_OPTS="--history-size=10000"
+export FZF_DEFAULT_OPTS="--history-size=20000"
 export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200'"
 export FZF_CTRL_T_OPTS="--preview 'tree -C {} | head -200'"
 
-##################################################################################################
-# Path settings
-##################################################################################################
-
 # Add ~/.local/bin/ to PATH
 PATH="$HOME/.local/bin${PATH:+:${PATH}}"
-PATH="$HOME/.poetry/bin${PATH:+:${PATH}}"
 
 # Add local manpages, but be sure to not overwrite the defaults
 MANPATH="$(manpath --quiet)"
 MANPATH="$HOME/.local/man${MANPATH:+:${MANPATH}}"
 MANPATH="$HOME/.local/share/man${MANPATH:+:${MANPATH}}"
 
-# A the user-defined CUDA installation to paths.
+# Add the user-defined CUDA installation to paths.
 # The default CUDA installation directory is /usr/local/cuda-xx.y/. But if there are multiple installations
 # available, symlink the desired installation to ~/.local/cuda/.
 PATH="$HOME/.local/cuda/bin${PATH:+:${PATH}}"
@@ -163,8 +174,6 @@ LIBRARY_PATH="$HOME/.local/cuda/lib64${LIBRARY_PATH:+:${LIBRARY_PATH}}"
 
 # Add local header files to gcc include path
 CPATH="$HOME/.local/include${CPATH:+:${CPATH}}"
-# Add ncurses on the Opp Lab machines
-CPATH="$HOME/.local/include/ncursesw${CPATH:+:${CPATH}}"
 
 # Add local libraries to library path.
 LIBRARY_PATH="$HOME/.local/lib${LIBRARY_PATH:+:${LIBRARY_PATH}}"
@@ -177,9 +186,6 @@ export CPATH
 export LIBRARY_PATH
 export LD_LIBRARY_PATH
 export MANPATH
-export DOTFILES_DIR
-
-# I don't know how I've managed this long without doing this?
 export EDITOR=vim
 # Path to my vimwiki clone
 export VIMWIKI_PATH="$HOME/Documents/notes/"
@@ -188,11 +194,3 @@ export LESS=FRX
 
 # Use parallel make by default
 export MAKEFLAGS="-j$(nproc)"
-
-# For using XMing on WSL
-# export DISPLAY=:0
-# export TERM=xterm-256color
-
-# Prevent games from minimizing when focus is lost.
-# Steam doesn't read your bashrc. This variable needs to be set through the game options.
-export SDL_VIDEO_MINIMIZE_ON_FOCUS_LOSS=0
