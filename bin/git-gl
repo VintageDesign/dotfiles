@@ -1,6 +1,24 @@
 #!/bin/bash
 
-# Browse git log
+# Interactively browse git log.
+#
+# Defines multiple keyboard shortcuts:
+#
+# <ctrl-c> - exit
+# <ctrl-y> - checkout selected commit
+# <ctrl-h> - copy short hash of selected commit to X11 primary clipboard
+# <ctrl-r> - start an interactive rebase from HEAD to selected commit
+# <ctrl-p> - cherry-pick the selected commit
+# <enter>  - open selected commit in a pager for full viewing pleasure
+#
+# BUG: While you can use git-gl to pass arguments to the underlying git-log command, tab-completion doesn't work.
+# BUG: There is nothing stopping you from cherry-picking the selected commit on top of itself.
+#      (If you're browsing the current branch, not another one)
+# BUG: There's something wonky in the interaction of diff-highlight, less, and fzf.
+#      The background highlight is often wrong in the fzf preview pane, but correct when opened in less.
+# TODO: Figure out how to get the full commit from the short commit.
+# TODO: There's a lot of boilerplate here, maybe tone down the copy-paste.
+# TODO: Test how interactive rebase works when you are on branch A, and run 'git gl B`.
 fzf-git-browse() {
     # Ignore tags, and ignore branches prefixed with save/ or trash/
     git log \
@@ -11,8 +29,10 @@ fzf-git-browse() {
         --format="%C(auto)%h%d %s %C(black)%C(bold)%an, %cr" \
         --decorate=short \
         --decorate-refs-exclude='refs/tags/*' \
+        `# Pass all arguments through to git-log` \
         "$@" |
         fzf \
+            `# Enables selecting content with mouse. Outdated by <ctrl-h>?` \
             --no-mouse \
             --ansi \
             --no-sort \
@@ -23,6 +43,7 @@ fzf-git-browse() {
                 | head -1 \
                 | xargs -I % sh -c 'git show --color=always %' \
                 | perl /usr/share/doc/git/contrib/diff-highlight/diff-highlight" \
+            `# Open selected commit in a pager so you can see the whole thing` \
             --bind "enter:execute(
                 echo {} \
                     | grep -o '[a-f0-9]\{7,\}' \
@@ -31,6 +52,7 @@ fzf-git-browse() {
                     | perl /usr/share/doc/git/contrib/diff-highlight/diff-highlight \
                     | LESS=RX less \
                 )" \
+            `# Checkout the selected commit (y for yank)` \
             --bind "ctrl-y:execute(
                 echo {} \
                     | grep -o '[a-f0-9]\{7,\}' \
@@ -38,6 +60,7 @@ fzf-git-browse() {
                     | xargs -I % sh -c \
                         'git checkout %' \
                 )+abort" \
+            `# Copy the selected commit's short hash to the clipboard (h for hash)` \
             --bind "ctrl-h:execute(
                 echo {} \
                     | grep -o '[a-f0-9]\{7,\}' \
@@ -45,12 +68,21 @@ fzf-git-browse() {
                     | tr -d '\n' \
                     | xclip -selection clipboard \
                 )+abort" \
+            `# Perform an interactive rebase from the current HEAD to the selected commit` \
             --bind "ctrl-r:execute(
                 echo {} \
                     | grep -o '[a-f0-9]\{7,\}' \
                     | head -1 \
                     | tr -d '\n' \
                     | xargs -oI % git rebase --interactive --autosquash %~ \
+                )+abort" \
+            `# Cherry pick the selected commit. Needs a bit of testing.` \
+            --bind "ctrl-p:execute(
+                echo {} \
+                    | grep -o '[a-f0-9]\{7,\}' \
+                    | head -1 \
+                    | tr -d '\n' \
+                    | xargs -oI % git cherry-pick % \
                 )+abort"
     # Do not register a user exit of fzf as an error.
     if [ $? -eq 130 ]; then
