@@ -1,5 +1,7 @@
 " NOTE: Must be set *before* ALE is loaded to take effect.
 let g:ale_completion_enabled = 1
+" Enable showing hover balloons when mousing over a symbol or problem.
+let g:ale_set_balloons = 1
 execute pathogen#infect()
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -126,56 +128,6 @@ augroup END
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Keybinds
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Toggle paste mode with f3
-set pastetoggle=<F3>
-" Turn off search highlighting with enter
-nnoremap <CR> :nohl<CR><CR>
-
-" Use ctrl+[jk] to move lines up and down in normal, insert, and visual mode.
-nnoremap <C-j> :m .+1<CR>==
-nnoremap <C-k> :m .-2<CR>==
-inoremap <C-j> <Esc>:m .+1<CR>==gi
-inoremap <C-k> <Esc>:m .-2<CR>==gi
-vnoremap <C-j> :m '>+1<CR>gv=gv
-vnoremap <C-k> :m '<-2<CR>gv=gv
-
-" Combined with adding the following to ~/.Xresources
-" XTerm*vt100.translations: #override \n\
-"    Ctrl ~Meta Shift <Key>a: string(0x1b) string("[65;5u") \n\
-"    Ctrl ~Meta Shift <Key>i: string(0x1b) string("[73;5u") \n\
-" This will map <C-S-a> and <C-a> differently.
-" Unfortunately, this only works in XTerm terminals, which I don't use.
-" map <ESC>[65;5u <C-S-a>
-" map <ESC>[73;5u <C-S-i>
-" map <C-S-a> :echo "ctrl shift a"<CR>
-" map <C-a>   :echo "ctrl a"<CR>
-" map <C-S-i> :echo "ctrl shift i"<CR>
-" map <C-i>   :echo "ctrl i"<CR>
-
-" Copy visual selection to clipboard. Works for <ctrl-c> not <ctrl-shift-c>
-vnoremap <C-y> :'<,'>:w !xclip -selection clipboard<CR><CR>
-
-" Map <space> to fold.
-nnoremap <space> za
-
-" Visual movement. Act as the arrow keys do when lines wrap.
-nnoremap j gj
-nnoremap k gk
-
-" Open a new empty buffer. Current buffer must be written.
-nmap <C-t> :enew<CR>
-" Move to the next buffer.
-nmap <C-l> :bnext<CR>
-" Move to the previous buffer.
-nmap <C-h> :bprevious<CR>
-
-" Open netrw to the side.
-noremap <silent> <C-n> :call ToggleNetrw()<CR>
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Custom Commands
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 command Stage  GitGutterStageHunk
@@ -261,30 +213,7 @@ let g:ale_sign_column_always = 1
 " Allow ALE to trigger manual completion with <C-X><C-O>
 set omnifunc=ale#completion#OmniFunc
 
-" TODO: Something to do with the mouse?
-let g:ale_set_balloons = 1
 "set completeopt=menu,menuone,preview,noselect,noinsert
-
-" TODO: Map these to things that make sense.
-"<Plug>(ale_find_references)
-"<Plug>(ale_go_to_definition)
-"<Plug>(ale_go_to_type_definition)
-" Display whatever info the LSP gives.
-"<Plug>(ale_hover)
-":ALERename
-":ALESymbolSearch <query>
-"<Plug>(ale_previous_wrap)
-"<Plug>(ale_next_wrap)
-
-" BUG: <C-Space> is broken, even with the <C-@> hack from stackoverflow.
-inoremap <C-Space> <C-\><C-O>:ALEComplete<CR>
-inoremap <C-@> <C-Space>
-inoremap <C-P> <C-\><C-O>:ALEComplete<CR>
-" BUG: Vim can't distinguish <ctrl-shift-I> from <ctrl-I>
-" BUG: Even worse, running :verbose map <Tab> seems to indicate that this
-" exact line somehow sets the <Tab> keybind to <Plug>(ale_fix)??
-nmap <C-I> <Plug>(ale_fix)
-imap <C-I> <C-\><C-O>:ALEFix<CR>
 
 " Show 5 lines of errors (default: 10)
 let g:ale_list_window_size = 5
@@ -302,6 +231,76 @@ let g:ale_cpp_clang_options = '-std=c++17 -Wall -Wextra -Wpedantic -x c++'
 let g:ale_cpp_clangtidy_options = '-std=c++17 -Wall -Wextra -Wpedantic -x c++'
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Keybinds
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Toggle paste mode with f3
+set pastetoggle=<F3>
+" Turn off search highlighting with enter
+nnoremap <CR> :nohl<CR><CR>
+
+" Use ctrl+[jk] to move lines up and down in normal, insert, and visual mode.
+nnoremap <C-j> :m .+1<CR>==
+nnoremap <C-k> :m .-2<CR>==
+inoremap <C-j> <Esc>:m .+1<CR>==gi
+inoremap <C-k> <Esc>:m .-2<CR>==gi
+vnoremap <C-j> :m '>+1<CR>gv=gv
+vnoremap <C-k> :m '<-2<CR>gv=gv
+
+" Combined with adding the following to ~/.Xresources
+" XTerm*vt100.translations: #override \n\
+"    Ctrl ~Meta Shift <Key>a: string(0x1b) string("[65;5u") \n\
+"    Ctrl ~Meta Shift <Key>i: string(0x1b) string("[73;5u") \n\
+" This will map <C-S-a> and <C-a> differently.
+" Unfortunately, this only works in XTerm terminals, which I don't use.
+" map <ESC>[65;5u <C-S-a>
+" map <ESC>[73;5u <C-S-i>
+" map <C-S-a> :echo "ctrl shift a"<CR>
+" map <C-a>   :echo "ctrl a"<CR>
+" map <C-S-i> :echo "ctrl shift i"<CR>
+" map <C-i>   :echo "ctrl i"<CR>
+
+" Copy visual selection to clipboard. Works for <ctrl-c> not <ctrl-shift-c>
+vnoremap <C-y> :'<,'>:w !xclip -selection clipboard<CR><CR>
+
+" Map <space> to fold.
+nnoremap <space> za
+
+" Visual movement. Act as the arrow keys do when lines wrap.
+nnoremap j gj
+nnoremap k gk
+
+" Open a new empty buffer. Current buffer must be written.
+nmap <C-t> :enew<CR>
+" Move to the next buffer.
+nmap <C-l> :bnext<CR>
+" Move to the previous buffer.
+nmap <C-h> :bprevious<CR>
+
+" Open netrw to the side. Use <C-B>, because that's the shortcut in VS Code.
+noremap <silent> <C-B> :call ToggleNetrw()<CR>
+
+" BUG: Vim can't distinguish <ctrl-shift-I> from <ctrl-I> from <Tab>
+" https://stackoverflow.com/questions/14641942/how-to-unmap-tab-and-do-not-make-ctrl-i-invalid-in-vim
+" I would prefer to use <C-S-I>, because that's the VS Code shortcut, and I already have it learned.
+nmap <F1> <Plug>(ale_fix)
+imap <F1> <C-\><C-O>:ALEFix<CR>
+
+" gd is normally goto definition of word in current function. gD is in current file.
+nmap gd <Plug>(ale_go_to_definition)
+nmap <F2> <Plug>(ale_go_to_definition)
+imap <F2> <C-\><C-O>:ALEGoToDefinition<CR>
+" <F3> is pastetoggle
+nmap <F4> <Plug>(ale_find_references)
+imap <F4> <C-\><C-O>:ALEFindReferences<CR>
+
+" Use <C-N>, because that's the default insert-mode dumb completion.
+inoremap <C-N> <C-\><C-O>:ALEComplete<CR>
+
+" Go to next problem.
+nmap ]p <Plug>(ale_next_wrap)
+nmap [p <Plug>(ale_previous_wrap)
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Vimwiki settings
 " If :help vimwiki doesn't work, run :Helptags
