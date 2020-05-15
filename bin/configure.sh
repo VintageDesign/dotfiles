@@ -76,7 +76,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     # The suggested "fix" of removing gnome-terminal and symlinking to tilix doesn't work
     # See https://bugzilla.gnome.org/show_bug.cgi?id=627943 for asinine WONTFIX justifications.
     echo "${YELLOW}Loading profile from dotfiles${RESET}"
-    dconf dump /com/gexperts/Tilix/ >"${DOTFILES_DIR}"/tilix.dconf.default
+    dconf dump /com/gexperts/Tilix/ >"${DOTFILES_DIR}"/tilix.dconf.bak
     dconf load /com/gexperts/Tilix/ <"${DOTFILES_DIR}"/tilix.dconf
     echo "${GREEN}Installed Tilix.${RESET}"
 fi
