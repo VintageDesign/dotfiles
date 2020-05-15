@@ -29,6 +29,7 @@ while [ -h "$SOURCE" ]; do
     # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
     [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
 done
+# Exported at the bottom with the rest of the environment variables.
 DOTFILES_DIR="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)/.."
 DOTFILES_DIR="$(readlink --canonicalize --no-newline "${DOTFILES_DIR}")"
 
@@ -36,28 +37,30 @@ for lib in "${DOTFILES_DIR}/lib/"*.sh; do
     [ -f "$lib" ] && source "$lib"
 done
 
-# I keep having problems with my ~/.bash_history getting wiped, so make daily backups.
-# Unfortunately, I don't know of a nice way to find new commands and append them to a canonical backup.
-# So just make daily backups, and warn if something has gone wrong.
-#
-# TODO: Consider using logrotate --force, and make a backup any time a new interactive shell is started?
-if [ -f ~/.histlogs/logrotate.conf ]; then
-    logrotate --state ~/.histlogs/logrotate.status ~/.histlogs/logrotate.conf
+# I keep having problems with my ~/.bash_history getting wiped, so instead of fixing the problem, provide a way to recover.
+# Unfortunately, I don't know of a nice way to find new commands and automatically append them to a canonical backup.
+# So rely on manual intervention in the case something bad happens.
+function __backup_histfile() {
+    if [ -f ~/.histlogs/logrotate.conf ]; then
+        # Make a backup every time a shell is opened.
+        logrotate --force --state ~/.histlogs/logrotate.status ~/.histlogs/logrotate.conf
 
-    # Complain loudly if $HISTFILE is smaller than the latest backup.
-    latest=$(find ~/.histlogs/ -name "${HISTFILE##*/}.*" | sort -n -t . -k 3 | head -1)
-    if [ ! -f "$latest" ] || [ ! -f "$HISTFILE" ] || [ "$(wc -l <"$HISTFILE")" -lt "$(wc -l <"$latest")" ]; then
-        echo "${RED}${BOLD}Something horrible has happened to ${WHITE}${HISTFILE}${RED}...${RESET}"
-        wc -l "$HISTFILE" "$latest"
+        latest=$(find ~/.histlogs/ -name "${HISTFILE##*/}.*" | sort -n -t . -k 3 | head -1)
+        # Complain loudly if $HISTFILE is smaller than the latest backup.
+        if [ ! -f "$latest" ] || [ ! -f "$HISTFILE" ] || [ "$(wc -l <"$HISTFILE")" -lt "$(wc -l <"$latest")" ]; then
+            echo "${RED}${BOLD}Something horrible has happened to ${WHITE}${HISTFILE}${RED}...${RESET}"
+            wc -l "$HISTFILE" "$latest"
+        fi
     fi
-fi
+}
+
+__backup_histfile
 
 # Prints different escape codes to stdout indicating the exit code of the previous command
 # Colors are provided by $DOTFILES_DIR/lib/colors.sh
 function __decorate_exit_status() {
     if [ $? -eq 0 ]; then
         echo -en "${WHITE}"
-        # echo -e "${BOLD}${GREEN}"
     else
         echo -en "${BOLD}${RED}"
     fi
