@@ -2,6 +2,9 @@
 let g:ale_completion_enabled = 1
 " Enable showing hover balloons when mousing over a symbol or problem.
 let g:ale_set_balloons = 1
+" Highlight marks in colors determined by vim-gitgutter
+let g:SignatureMarkTextHLDynamic = 1
+let g:SignatureMarkerTextHLDynamic = 1
 execute pathogen#infect()
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -11,9 +14,12 @@ syntax on
 colorscheme blaquemagick
 " Only takes effect if added *after* 'syntax on'.
 highlight Comment cterm=italic
-" Need to distringuish Keyword from Normal enough so that gitcommitSummary is
-" distinguishable.
+" Need to distringuish Keyword from Normal enough so that gitcommitSummary is distinguishable.
 highlight Keyword cterm=bold ctermfg=66
+" Don't use blaquemagick blue/green/purple for gitgutter signs
+highlight DiffDelete ctermfg=1 ctermbg=NONE
+highlight DiffAdd    ctermfg=2 ctermbg=NONE
+highlight DiffChange ctermfg=3 ctermbg=NONE
 
 let g:airline_theme='minimalist'
 " Show opened buffers at the top of the screen.
