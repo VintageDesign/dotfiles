@@ -1,0 +1,51 @@
+snippet safe "Safety settings" w
+set -o errexit
+set -o pipefail
+set -o nounset
+endsnippet
+
+snippet if
+    if [[ ${1:condition} ]]; then
+        ${0:${VISUAL}}
+    fi
+endsnippet
+snippet elif
+    elif [[ ${1:condition} ]]; then
+        ${0:${VISUAL}}
+endsnippet
+snippet for
+    for (( ${2:i} = 0; $2 < ${1:count}; $2++ )); do
+        ${0:${VISUAL}}
+    done
+endsnippet
+snippet fori
+    for ${1:needle} in ${2:haystack} ; do
+        ${0:${VISUAL}}
+    done
+endsnippet
+snippet wh
+    while [[ ${1:condition} ]]; do
+        ${0:${VISUAL}}
+    done
+endsnippet
+snippet until
+    until [[ ${1:condition} ]]; do
+        ${0:${VISUAL}}
+    done
+endsnippet
+snippet case
+    case ${1:word} in
+        ${2:pattern})
+            ${0};;
+    esac
+endsnippet
+snippet sdir "Get script directory" b
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do
+    # resolve $SOURCE until the file is no longer a symlink
+    DIR="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)"
+    SOURCE="$(readlink "$SOURCE")"
+    # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+    [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+endsnippet

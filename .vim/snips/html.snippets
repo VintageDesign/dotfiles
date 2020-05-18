@@ -1,0 +1,311 @@
+# snippets for personal website
+
+snippet "(code|pre)" "code block" r
+<pre class="language-${1:python}" pl-3"<code>${0:${VISUAL}}</code></pre>
+endsnippet
+
+snippet "figu?r?e?" "figure" r
+<figure class="figure d-block mx-auto w-${1:100}>
+    <img class="figure-img img-fluid rounded w-100" src="${2:url}" alt="$3">
+    <figcaption class="figure-caption text-right">${3:caption}</figcaption>
+</figure>
+endsnippet
+
+snippet "(blockq?u?o?t?e?|quote)" "<blockquote>" r
+<blockquote${1: class="blockquote border-left border-2 pl-2"}>
+${2:<p class="mb-0">${3}</p>}
+${4:<footer class="blockquote-footer">${5}</footer>}
+</blockquote>${0}
+endsnippet
+
+snippet html "<html>" w
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="${2:description}"
+    <title>${1:title}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://static.agill.xyz/css/common.css">
+    <link rel="shortcut icon" type="image/png" href="https://static.agill.xyz/images/favicon.png">
+    ${3:<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>}
+    ${4:<link href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.css" rel="stylesheet" type="text/css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.js" integrity="sha384-XhWAe6BtVcvEdS3FFKT7Mcft4HJjPqMQvi5V4YhzH9Qxw497jC13TupOEvjoIPy7" crossorigin="anonymous"></script>}
+    ${5:<script language="javascript">
+        const katexOpts = {
+            macros: {
+                "\\norm": "\\left\\lVert#1\\right\\rVert",
+                "\\ceil": "\\left\\lceil#1\\right\\rceil",
+                "\\floor": "\\left\\lfloor#1\\right\\rfloor",
+                "\\countf": "\\operatorname{count}\\left(#1\\right)",
+                "\\entropy": "\\operatorname{H}",
+                "\\perplexity": "\\operatorname{PP}",
+                "\\model": "\\operatorname{LM}",
+                "\\softmax": "\\operatorname{softmax}",
+            },
+        };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous" onload="renderMathInElement(document.body, katexOpts);"></script>}
+    ${6:<script defer src="https://static.agill.xyz/js/highlight.min.js" onload="hljs.initHighlightingOnLoad();"></script>
+    <link rel="stylesheet" href="https://static.agill.xyz/css/ascetic.min.css">}
+</head>
+<body class="d-flex flex-column">
+    <header class="bg-dark sticky-top mb-3">
+        <nav class="container navbar navbar-expand-lg navbar-dark">
+            <a class="navbar-brand" href="/">agill.xyz</a>
+            <div class="toggleable-content text-right">
+                <a href="#" class="menu-icon text-muted"><span class="navbar-toggler-icon"></span></a>
+                <div class="trigger navbar-nav">
+                    <a class="nav-item nav-link" href="/">Home</a>
+                    <a class="nav-item nav-link" href="/blog">Blog</a>
+                    <a class="nav-item nav-link" href="/research">Research</a>
+                    <a class="nav-item nav-link" href="https://mc.agill.xyz">Minecraft</a>
+                    <a class="text-muted p-2" href="https://github.com/Notgnoshi"><i class="fab fa-github"></i></a>
+                    <a class="text-muted p-2" href="https://twitter.com/notgnoshi"><i class="fab fa-twitter"></i></a>
+                    <a class="text-muted p-2" href="mailto://Notgnoshi@gmail.com"><i class="fas fa-envelope"></i></a>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container flex-grow-1">
+        <h1>$1</h1>
+        ${0:${VISUAL}}
+    </div>
+</body>
+</html>
+endsnippet
+
+# fragment snippets
+snippet class
+class="${1}"${0}
+endsnippet
+
+# Individual HTML tags
+
+snippet doctype
+<!doctype html>
+endsnippet
+snippet a "<a>" w
+<a ${5:class="${6}" }href="${1:https://${2:example.com}}"${3: target="_blank">${4:anchor text}</a>
+endsnippet
+snippet address "<address>" w
+<address>${1}</address>${0}
+endsnippet
+snippet article "<article>" w
+<article>
+    ${0:${VISUAL}}
+</article>
+endsnippet
+snippet aside "<aside>" w
+<aside>
+    ${0:${VISUAL}}
+</aside>
+endsnippet
+
+snippet b "<b>" w
+<b>${0:${VISUAL}}</b>
+endsnippet
+snippet body "<body>" w
+<body${1:class="d-flex flex-column"}>
+    <div class="container flex-grow-1">
+    ${0:${VISUAL}}
+    </div>
+</body>
+endsnippet
+snippet br "<br>" w
+<br>
+endsnippet
+snippet button "<button>" w
+<button>${1}</button>
+endsnippet
+
+snippet caption "<caption>" w
+<caption>${1}</caption>
+endsnippet
+snippet cite "<cite>" w
+<cite>${1}</cite>
+endsnippet
+
+snippet data "<data>" w
+<data value="${2}">${1}</data>
+endsnippet
+snippet datalist "<datalist>" w
+<datalist id="${1}" name="${2}">
+    ${3}
+</datalist>
+endsnippet
+snippet dd "<dd>" w
+<dd>${1}</dd>
+endsnippet
+snippet del "<del>"
+<del>${0:${VISUAL}}</del>
+endsnippet
+snippet div "<div>" w
+<div${1: class="${2}"}>
+    ${0:${VISUAL}}
+</div>
+endsnippet
+snippet dl "<dl>" w
+<dl>
+    ${1:definition}
+</dl>
+endsnippet
+snippet dt "<dt>" w
+<dt>${1}</dt>
+endsnippet
+
+snippet em "<em>" w
+<em>${0:${VISUAL}}</em>
+endsnippet
+
+snippet footer "<footer>" w
+<footer${1: class="${2}"}>
+    ${3}
+</footer>
+snippet form "<form>" w
+<form action="${1}" method="${2:get}" accept-charset="utf-8">
+    ${0:${VISUAL}}
+</form>
+endsnippet
+
+snippet h1 "HTML <h1>" w
+<h1>${0:${VISUAL}}</h1>
+endsnippet
+snippet h2 "HTML <h2>" w
+<h2>${0:${VISUAL}}</h2>
+endsnippet
+snippet h3 "HTML <h3>" w
+<h3>${0:${VISUAL}}</h3>
+endsnippet
+snippet h4 "HTML <h4>" w
+<h4>${0:${VISUAL}}</h4>
+endsnippet
+snippet h5 "HTML <h5>" w
+<h5>${0:${VISUAL}}</h5>
+endsnippet
+snippet h6 "HTML <h6>" w
+<h6>${0:${VISUAL}}</h6>
+endsnippet
+snippet hr "<hr>" w
+<hr>
+endsnippet
+
+snippet i "<i>" w
+<i>${0:${VISUAL}}</i>
+endsnippet
+snippet img "<img>" w
+<img src="${1} alt="${2}">
+endsnippet
+snippet input "Input with Label" w
+<label for="${2:${1/[[:alpha:]]+|( )/(?1:_:\L$0)/g}}">$1</label><input type="${3:text/submit/hidden/button}" name="${4:$2}" value="$5"${6: id="${7:$2}"}>
+endsnippet
+
+snippet kbd "<kbd>" w
+<kbd>${1}</kbd>
+endsnippet
+
+snippet label "<label>" w
+<label>${1}</label>
+endsnippet
+snippet legend "<legend>" w
+<legend>${1}</legend>
+endsnippet
+snippet li "<li>" w
+<li>${0:${VISUAL}}</li>
+endsnippet
+snippet link "<link>" w
+<link rel="${1:stylesheet}" href="${2}" type="text/css">
+endsnippet
+
+snippet mailto "<mailto>" w
+<a href="mailto:${1:joe@example.com}?subject=${2:subject%20link}">${3:email}</a>
+endsnippet
+snippet main "<main>" w
+<main>
+    ${0:${VISUAL}}
+</main>
+endsnippet
+snippet meta "<meta>" w
+<meta name="${1:name}" content="${2:content}">
+endsnippet
+
+snippet nav "<nav>" w
+<nav>
+    ${1}
+</nav>
+endsnippet
+
+snippet ol "<ol>" w
+<ol>
+    <li>${1}</li>
+</ol>
+endsnippet
+
+snippet p "<p>" w
+<p${1: class="${2}"}>${0:${VISUAL}}</p>
+endsnippet
+
+snippet span "<span>" w
+<span${1: class="${2}"}>${0:${VISUAL}}</span>
+endsnippet
+snippet strong "<strong>" w
+<strong>${0:${VISUAL}}</strong>
+endsnippet
+snippet sub "<sub>" w
+<sub>${0:${VISUAL}}</sub>
+endsnippet
+snippet sup "<sup>" w
+<sup>${0:${VISUAL}}</sup>
+endsnippet
+snippet section "<section>" w
+<section${1: class="${2}"}>
+    ${0:${VISUAL}}
+</section>
+endsnippet
+snippet summary "<summary>" w
+<summary>
+    ${0:${VISUAL}}
+</summary>
+endsnippet
+
+snippet table "<table>" w
+<figure class="figure d-block mx-auto w-${1:100}">
+<table class="table${2: table-sm} table-striped table-hover w-100">
+    <caption>${3}</caption>
+    ${0:${VISUAL}}
+</table>
+</figure>
+endsnippet
+snippet thead "<thead>" w
+<thead>
+    ${1:<tr><th scope="col">...</th></tr>}
+</thead>
+endsnippet
+snippet tbody "<tbody" w
+<tbody>
+    ${1:<tr><td>${2}</td></tr>}
+</tbody>
+endsnippet
+snippet tr "<tr>" w
+<tr>${1:<td></td>}</tr>
+endsnippet
+snippet th "<th>" w
+<th${1: scope="${2:col}"}>${3}</th>
+endsnippet
+snippet td "<td>" w
+<td>${1}</td>
+endsnippet
+snippet title "<title>" w
+<title>${1}</title>
+endsnippet
+
+snippet ul "<ul>" w
+<ul>
+    <li>${1}</li>
+</ul>
+endsnippet
+snippet var "<var>" w
+<var>${0:${VISUAL}}</var>
+endsnippet

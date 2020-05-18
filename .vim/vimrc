@@ -242,6 +242,19 @@ let g:ale_cpp_clangtidy_options = '-std=c++17 -Wall -Wextra -Wpedantic -x c++'
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" UltiSnips
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+inoremap <C-Space> <C-@>
+" BUG: This doesn't work in paste made.
+let g:UltiSnipsExpandTrigger="<C-@>"
+let g:UltiSnipsJumpForwardTrigger="<C-E>"
+let g:UltiSnipsJumpBackwardTrigger="<C-Q>"
+
+" Use an absolute path for a speedup.
+let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/snips']
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Keybinds
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Toggle paste mode with f3

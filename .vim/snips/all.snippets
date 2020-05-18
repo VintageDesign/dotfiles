@@ -1,0 +1,18 @@
+snippet date
+`strftime("%Y-%m-%d")`
+endsnippet
+
+snippet datetime
+`strftime("%Y-%m-%d %H:%M")`
+endsnippet
+
+snippet uuid
+`!p if not snip.c: import uuid; snip.rv = str(uuid.uuid4())`
+endsnippet
+
+snippet box
+`!p snip.rv = '┌' + '─' * (len(t[1]) + 2) + '┐'`
+│ $1 │
+`!p snip.rv = '└' + '─' * (len(t[1]) + 2) + '┘'`
+$0
+endsnippet
