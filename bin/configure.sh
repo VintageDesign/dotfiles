@@ -260,23 +260,6 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         tar -xvf /tmp/checkmake.tar -C ~/.local/bin
     )
     echo "${GREEN}Installed checkmake version: $(checkmake --version | cut -d' ' -f2)${RESET}"
-
-    echo "${YELLOW}Builting and installing tidy-html...${RESET}"
-    if [ -d /tmp/tidy-html5 ]; then
-        (
-            cd /tmp/tidy-html5
-            git pull
-        )
-    else
-        git clone https://github.com/htacg/tidy-html5.git /tmp/tidy-html5
-    fi
-    (
-        cd /tmp/tidy-html5/build/cmake
-        cmake ../.. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/.local -DBUILD_SHARED_LIB:BOOL=OFF
-        # Installs headers regardless of whether it installs the shared library...
-        make && make install
-    )
-    echo "${GREEN}Installed tidy-html version: $(tidy --version | cut -d' ' -f6)${RESET}"
 fi
 
 read -p "${BOLD}${UNDERLINE}Install useful utilities? (y/N)${RESET} " -n 1 -r

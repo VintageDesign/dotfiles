@@ -201,13 +201,12 @@ let g:netrw_list_hide .= ',.*\.swp$'
 " Provides asynchronous Language Server Protocol support.
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Default fixers
-" TODO: Add json and HTML formatters?
 let g:ale_fixers = {
 \   '*':        ['remove_trailing_lines', 'trim_whitespace'],
+\   'c':        ['clang-format'],
+\   'cpp':      ['clang-format'],
 \   'diff':     [],
 \   'python':   ['isort', 'black'],
-\   'cpp':      ['clang-format'],
-\   'c':        ['clang-format'],
 \   'sh':       ['shfmt'],
 \   'tex':      ['latexindent'],
 \}
