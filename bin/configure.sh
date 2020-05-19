@@ -64,6 +64,20 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         python3-distutils \
         valgrind \
         xclip
+
+    echo "${YELLOW}Installing colout...${RESET}"
+    if [ -d /tmp/colout ]; then
+        (
+            cd /tmp/colout
+            git pull
+        )
+    else
+        git clone https://github.com/nojhan/colout.git /tmp/colout
+    fi
+    (
+        cd /tmp/colout
+        python3 setup.py install --user
+    )
     echo "${GREEN}Installed dev packages.${RESET}"
 fi
 
