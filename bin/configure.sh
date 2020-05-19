@@ -19,23 +19,6 @@ echo "Found configuration directory: ${DOTFILES_DIR}"
 # Life isn't complete without some colors.
 source "${DOTFILES_DIR}/lib/colors.sh"
 
-read -p "${BOLD}${UNDERLINE}Update dotfiles and vim plugins? (y/N)${RESET} " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "${YELLOW}Updating dotfiles and plugins...${RESET}"
-    # --remote uses live-at-head strategy.
-    (cd "${DOTFILES_DIR}" && git pull && git submodule update --remote --recursive --init)
-    echo "${GREEN}Updated dotfiles and plugins.${RESET}"
-fi
-
-read -p "${BOLD}${UNDERLINE}Install git, vim, and curl? (y/N)${RESET} " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "${YELLOW}Installing git, vim, and curl...${RESET}"
-    sudo apt install git vim curl
-    echo "${GREEN}Installed git, vim, and curl.${RESET}"
-fi
-
 read -p "${BOLD}${UNDERLINE}Install fzf? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -44,7 +27,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${GREEN}Installed fzf.${RESET}"
 fi
 
-read -p "${BOLD}${UNDERLINE}Install shellcheck and shfmt? (y/N)${RESET} " -n 1 -r
+read -p "${BOLD}${UNDERLINE}Install linters and formatters? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Installing shellcheck...${RESET}"
