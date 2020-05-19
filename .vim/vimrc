@@ -230,6 +230,8 @@ let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%severity%][%linter%][%code%] %s'
 
+let g:ale_python_black_options = '--line-length=100'
+
 let g:ale_cpp_clangd_options = '--background-index --completion-style=bundled --header-insertion=iwyu --suggest-missing-includes -j=4'
 let g:ale_cpp_clang_options = '-std=c++17 -Wall -Wextra -Wpedantic -x c++'
 " TODO: Provide list of default clangtidy checks. Fallback to looking at .clang-tidy
