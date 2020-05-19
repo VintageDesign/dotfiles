@@ -221,15 +221,14 @@ let g:ale_linters = {
 let g:ale_sign_column_always = 1
 " Allow ALE to trigger manual completion with <C-X><C-O>
 set omnifunc=ale#completion#OmniFunc
-
-"set completeopt=menu,menuone,preview,noselect,noinsert
+set completeopt=menu,menuone,popup,noselect,noinsert
 
 " Show 5 lines of errors (default: 10)
 let g:ale_list_window_size = 5
 
 let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
-let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+let g:ale_echo_msg_format = '[%severity%][%linter%][%code%] %s'
 
 let g:ale_cpp_clangd_options = '--background-index --completion-style=bundled --header-insertion=iwyu --suggest-missing-includes -j=4'
 let g:ale_cpp_clang_options = '-std=c++17 -Wall -Wextra -Wpedantic -x c++'
