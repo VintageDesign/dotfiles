@@ -1,6 +1,4 @@
-black
 ipython
-isort
 jupyter
 jupyterlab
 jupyterlab_code_formatter
@@ -8,8 +6,5 @@ jupytext
 nb-pdf-template
 parse-torrent-name
 parsedatetime
-pydocstyle
 pygments
-pylint
-python-language-server[pydocstyle]
 virtualenv

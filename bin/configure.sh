@@ -19,34 +19,12 @@ echo "Found configuration directory: ${DOTFILES_DIR}"
 # Life isn't complete without some colors.
 source "${DOTFILES_DIR}/lib/colors.sh"
 
-read -p "${BOLD}${UNDERLINE}Install fzf? (y/N)${RESET} " -n 1 -r
+read -p "${BOLD}${UNDERLINE}Install/update fzf? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Installing fzf...${RESET}"
     "${DOTFILES_DIR}/.vim/bundle/fzf/install" --all
     echo "${GREEN}Installed fzf.${RESET}"
-fi
-
-read -p "${BOLD}${UNDERLINE}Install linters and formatters? (y/N)${RESET} " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "${YELLOW}Installing shellcheck...${RESET}"
-    curl --location --output /tmp/shellcheck.tar.xz "https://github.com/koalaman/shellcheck/releases/download/stable/shellcheck-stable.linux.x86_64.tar.xz"
-    tar -xJf /tmp/shellcheck.tar.xz --directory /tmp/
-    cp /tmp/shellcheck-stable/shellcheck ~/.local/bin/
-    chmod +x ~/.local/bin/shellcheck
-    echo "${GREEN}Installed latest shellcheck, version:${RESET}"
-    shellcheck --version
-
-    echo "${YELLOW}Installing shfmt...${RESET}"
-    # shfmt doesn't have a 'latest' tag, so we find it ourselves.
-    USER="mvdan"
-    REPO="sh"
-    curl --silent "https://api.github.com/repos/$USER/$REPO/releases/latest" | # Get latest release from GitHub api
-        grep --only-matching --perl-regexp '"tag_name": "\K(.*)(?=")' |        # Get the latest tag
-        xargs -I {} curl --location --output ~/.local/bin/shfmt --remote-name "https://github.com/$USER/$REPO/releases/download/{}/shfmt_{}_linux_amd64"
-    chmod +x ~/.local/bin/shfmt
-    echo "${GREEN}Installed shfmt version: $(shfmt --version)${RESET}"
 fi
 
 read -p "${BOLD}${UNDERLINE}Install Tilix as default terminal? (y/N)${RESET} " -n 1 -r
@@ -64,20 +42,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${GREEN}Installed Tilix.${RESET}"
 fi
 
-read -p "${BOLD}${UNDERLINE}Install LaTeX? (y/N)${RESET} " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "${YELLOW}Installing texlive, chktex, pdf2svg, and pandoc...${RESET}"
-    sudo apt install \
-        chktex \
-        inkscape \
-        pandoc \
-        pdf2svg \
-        texlive-full
-    echo "${GREEN}Installed texlive, chktex, pdf2svg, and pandoc.${RESET}"
-fi
-
-read -p "${BOLD}${UNDERLINE}Install dev packages? (y/N)${RESET} " -n 1 -r
+read -p "${BOLD}${UNDERLINE}Install development packages? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Installing dev packages...${RESET}"
@@ -94,62 +59,12 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         graphviz \
         make \
         optipng \
+        pandoc \
         python3-dev \
         python3-distutils \
         valgrind \
         xclip
     echo "${GREEN}Installed dev packages.${RESET}"
-fi
-
-read -p "${BOLD}${UNDERLINE}Install Docker? (y/N)${RESET} " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    # If these packages weren't installed, that's okay.
-    sudo apt remove docker docker-engine docker.io containerd runc || true
-    sudo apt install \
-        apt-transport-https \
-        ca-certificates \
-        curl \
-        gnupg-agent \
-        software-properties-common
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-    # Docker isn't officially supported on 20.04, so use the 19.10 repository.
-    release=$(lsb_release -cs)
-    if [ $release = focal ]; then
-        release=eoan
-    fi
-    echo "${YELLOW}Adding apt ${WHITE}'${release}'${YELLOW} repository...${RESET}"
-    sudo add-apt-repository \
-        "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-        ${release} \
-        stable"
-    sudo apt install \
-        containerd.io \
-        docker-ce \
-        docker-ce-cli
-    echo "${YELLOW}Performing post-installation steps...${RESET}"
-    # It's okay if the group already exists.
-    sudo groupadd --force docker
-    sudo usermod -aG docker $USER
-    sudo systemctl enable docker
-    echo "${RED}You must reboot before changes take effect...${RESET}"
-fi
-
-read -p "${BOLD}${UNDERLINE}Install NVIDIA Container Toolkit? (y/N)${RESET} " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "${YELLOW}Adding nvidia-docker apt repository...${RESET}"
-    distribution=$(
-        . /etc/os-release
-        echo $ID$VERSION_ID
-    )
-    curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
-    curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
-    sudo apt update
-    sudo apt install nvidia-container-toolkit
-    echo "${YELLOW}Restarting docker daemon${RESET}..."
-    sudo systemctl restart docker
-    echo "${GREEN}Finished installing nvidia-container-toolkit.${RESET}"
 fi
 
 # Note that this installs pip for python3 under `pip` instead of `pip3`.
@@ -220,6 +135,150 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     fi
 fi
 
+read -p "${BOLD}${UNDERLINE}Install Docker? (y/N)${RESET} " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    # If these packages weren't installed, that's okay.
+    sudo apt remove docker docker-engine docker.io containerd runc || true
+    sudo apt install \
+        apt-transport-https \
+        ca-certificates \
+        curl \
+        gnupg-agent \
+        software-properties-common
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    # Docker isn't officially supported on 20.04, so use the 19.10 repository.
+    release=$(lsb_release -cs)
+    if [ $release = focal ]; then
+        release=eoan
+    fi
+    echo "${YELLOW}Adding apt ${WHITE}'${release}'${YELLOW} repository...${RESET}"
+    sudo add-apt-repository \
+        "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+        ${release} \
+        stable"
+    sudo apt install \
+        containerd.io \
+        docker-ce \
+        docker-ce-cli
+    echo "${YELLOW}Performing post-installation steps...${RESET}"
+    # It's okay if the group already exists.
+    sudo groupadd --force docker
+    sudo usermod -aG docker $USER
+    sudo systemctl enable docker
+    echo "${RED}You must reboot before changes take effect...${RESET}"
+fi
+
+read -p "${BOLD}${UNDERLINE}Install NVIDIA Container Toolkit? (y/N)${RESET} " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo "${YELLOW}Adding nvidia-docker apt repository...${RESET}"
+    distribution=$(
+        . /etc/os-release
+        echo $ID$VERSION_ID
+    )
+    curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
+    curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+    sudo apt update
+    sudo apt install nvidia-container-toolkit
+    echo "${YELLOW}Restarting docker daemon${RESET}..."
+    sudo systemctl restart docker
+    echo "${GREEN}Finished installing nvidia-container-toolkit.${RESET}"
+fi
+
+read -p "${BOLD}${UNDERLINE}Install linters and formatters? (y/N)${RESET} " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo "${YELLOW}Installing shellcheck...${RESET}"
+    curl --location --output /tmp/shellcheck.tar.xz "https://github.com/koalaman/shellcheck/releases/download/stable/shellcheck-stable.linux.x86_64.tar.xz"
+    tar -xJf /tmp/shellcheck.tar.xz --directory /tmp/
+    cp /tmp/shellcheck-stable/shellcheck ~/.local/bin/
+    chmod +x ~/.local/bin/shellcheck
+    echo "${GREEN}Installed latest shellcheck, $(shellcheck --version | grep version:)${RESET}"
+
+    echo "${YELLOW}Installing shfmt...${RESET}"
+    # shfmt doesn't have a 'latest' tag, so we find it ourselves.
+    USER="mvdan"
+    REPO="sh"
+    curl --silent "https://api.github.com/repos/$USER/$REPO/releases/latest" | # Get latest release from GitHub api
+        grep --only-matching --perl-regexp '"tag_name": "\K(.*)(?=")' |        # Get the latest tag
+        xargs -I {} curl --location --output ~/.local/bin/shfmt --remote-name "https://github.com/$USER/$REPO/releases/download/{}/shfmt_{}_linux_amd64"
+    chmod +x ~/.local/bin/shfmt
+    echo "${GREEN}Installed shfmt version: $(shfmt --version)${RESET}"
+
+    echo "${YELLOW}Installing Python linters, formatters...${RESET}"
+    pip install --upgrade --user \
+        black \
+        isort \
+        pydocstyle \
+        pylint \
+        'python-language-server[pydocstyle]'
+    echo "${GREEN}Installed Python linters, formatters.${RESET}"
+
+    echo "${YELLOW}Installing gitcommit linter...${RESET}"
+    pip install --upgrade --user gitlint
+    echo "${GREEN}Installed gitlint.${RESET}"
+
+    echo "${YELLOW}Installing jq...${RESET}"
+    USER="stedolan"
+    REPO="jq"
+    curl --silent "https://api.github.com/repos/$USER/$REPO/releases/latest" | # Get latest release from GitHub api
+        grep --only-matching --perl-regexp '"tag_name": "\K(.*)(?=")' |        # Get the latest tag
+        xargs -I {} curl --location --output ~/.local/bin/jq --remote-name "https://github.com/$USER/$REPO/releases/download/{}/jq-linux64"
+    chmod +x ~/.local/bin/jq
+    echo "${GREEN}Installed jq version: $(jq --version)${RESET}"
+
+    echo "${YELLOW}Installing hadolint Dockerfile linter...${RESET}"
+    USER="hadolint"
+    REPO="hadolint"
+    curl --silent "https://api.github.com/repos/$USER/$REPO/releases/latest" | # Get latest release from GitHub api
+        grep --only-matching --perl-regexp '"tag_name": "\K(.*)(?=")' |        # Get the latest tag
+        xargs -I {} curl --location --output ~/.local/bin/hadolint --remote-name "https://github.com/$USER/$REPO/releases/download/{}/hadolint-Linux-x86_64"
+    chmod +x ~/.local/bin/hadolint
+    echo "${GREEN}Installed hadolint version: $(hadolint --version | cut -d' ' -f4)${RESET}"
+
+    # Unfortunately, the packages for checkmake seem to be out of date, so we have to build it ourselves.
+    echo "${YELLOW}Building and installing checkmake...${RESET}"
+    if [ -d /tmp/checkmake ]; then
+        (
+            cd /tmp/checkmake
+            git pull
+        )
+    else
+        git clone https://github.com/mrtazz/checkmake.git /tmp/checkmake
+    fi
+    (
+        cd /tmp/checkmake
+        # This will pull a golang and alpine image, but you can't delete the image without knowing its tag.
+        docker build . -t checkmake
+        id=$(docker create checkmake)
+        docker cp "$id":/checkmake - >/tmp/checkmake.tar
+        docker rm -v "$id"
+        docker rmi --force checkmake
+        docker system prune --force
+
+        tar -xvf /tmp/checkmake.tar -C ~/.local/bin
+    )
+    echo "${GREEN}Installed checkmake version: $(checkmake --version | cut -d' ' -f2)${RESET}"
+
+    echo "${YELLOW}Builting and installing tidy-html...${RESET}"
+    if [ -d /tmp/tidy-html5 ]; then
+        (
+            cd /tmp/tidy-html5
+            git pull
+        )
+    else
+        git clone https://github.com/htacg/tidy-html5.git /tmp/tidy-html5
+    fi
+    (
+        cd /tmp/tidy-html5/build/cmake
+        cmake ../.. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=~/.local -DBUILD_SHARED_LIB:BOOL=OFF
+        # Installs headers regardless of whether it installs the shared library...
+        make && make install
+    )
+    echo "${GREEN}Installed tidy-html version: $(tidy --version | cut -d' ' -f6)${RESET}"
+fi
+
 read -p "${BOLD}${UNDERLINE}Install useful utilities? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -266,25 +325,13 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${GREEN}Installed Spotify.${RESET}"
 fi
 
-read -p "${BOLD}${UNDERLINE}Install Minecraft? (y/N)${RESET} " -n 1 -r
+read -p "${BOLD}${UNDERLINE}Install MS Teams? (y/N)${RESET} " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "${YELLOW}Installing Minecraft...${RESET}"
-    curl --location https://launcher.mojang.com/download/Minecraft.deb --output /tmp/minecraft.deb
-    sudo apt install /tmp/minecraft.deb
-    echo "${GREEN}Installed Minecraft.${RESET}"
-fi
-
-read -p "${BOLD}${UNDERLINE}Install Steam, and Lutris? (y/N)${RESET} " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "${YELLOW}Installing Steam...${RESET}"
-    sudo apt install steam
-    echo "${GREEN}Installed Steam.${RESET}"
-    echo "${YELLOW}Installing Lutris...${RESET}"
-    sudo add-apt-repository ppa:lutris-team/lutris -y
-    sudo apt install lutris
-    echo "${GREEN}Installed Lutris.${RESET}"
+    echo "${YELLOW}Installing MS Teams...${RESET}"
+    curl --location "https://go.microsoft.com/fwlink/p/?linkid=2112886&clcid=0x409&culture=en-us&country=us" --output /tmp/teams.deb
+    sudo apt install /tmp/teams.deb
+    echo "${GREEN}Installed MS Teams.${RESET}"
 fi
 
 read -p "${BOLD}${UNDERLINE}Install Gnome tweaks? (y/N)${RESET} " -n 1 -r
@@ -408,4 +455,37 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     # Even worse things happen if you've encrypted your disk.
     echo "Defaults    insults" | sudo tee -a /etc/sudoers >/dev/null
     echo "${GREEN}Added to /etc/sudoers${RESET}"
+fi
+
+read -p "${BOLD}${UNDERLINE}Install LaTeX? (y/N)${RESET} " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo "${YELLOW}Installing texlive, chktex, pdf2svg...${RESET}"
+    sudo apt install \
+        chktex \
+        inkscape \
+        pdf2svg \
+        texlive-full
+    echo "${GREEN}Installed texlive, chktex, pdf2svg...${RESET}"
+fi
+
+read -p "${BOLD}${UNDERLINE}Install Minecraft? (y/N)${RESET} " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo "${YELLOW}Installing Minecraft...${RESET}"
+    curl --location https://launcher.mojang.com/download/Minecraft.deb --output /tmp/minecraft.deb
+    sudo apt install /tmp/minecraft.deb
+    echo "${GREEN}Installed Minecraft.${RESET}"
+fi
+
+read -p "${BOLD}${UNDERLINE}Install Steam, and Lutris? (y/N)${RESET} " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo "${YELLOW}Installing Steam...${RESET}"
+    sudo apt install steam
+    echo "${GREEN}Installed Steam.${RESET}"
+    echo "${YELLOW}Installing Lutris...${RESET}"
+    sudo add-apt-repository ppa:lutris-team/lutris -y
+    sudo apt install lutris
+    echo "${GREEN}Installed Lutris.${RESET}"
 fi
