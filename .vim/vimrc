@@ -37,6 +37,7 @@ set enc=utf-8
 
 " Set autowrite for use with :make
 set autowrite
+set autoread
 
 " Number of visual spaces per TAB
 set tabstop=4
@@ -92,6 +93,7 @@ set cursorline
 "set cursorcolumn
 " Comma separated list of columns to highlight
 set colorcolumn=100
+set display=truncate
 
 " When creating a new window, make it equal sized to any currently open
 " windows. E.g., when using vsplit multiple times.
