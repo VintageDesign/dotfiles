@@ -235,6 +235,7 @@ let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%severity%][%linter%][%code%] %s'
 
 let g:ale_python_black_options = '--line-length=100'
+let g:ale_python_pydocstyle_options = '--add-ignore=D100'
 
 " Need to be careful with clangd version. This might only work with 9.0+?
 " Installing clangd-10 with snap seems not to work, and it's not available
