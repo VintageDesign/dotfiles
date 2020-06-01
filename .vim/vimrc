@@ -221,7 +221,11 @@ let g:ale_linters = {
 let g:ale_sign_column_always = 1
 " Allow ALE to trigger manual completion with <C-X><C-O>
 set omnifunc=ale#completion#OmniFunc
-set completeopt=menu,menuone,popup,noselect,noinsert
+if has("textprop")
+    set completeopt=menu,menuone,popup,noinsert
+else
+    set completeopt=menu,menuone,preview,noinsert
+endif
 
 " Show 5 lines of errors (default: 10)
 let g:ale_list_window_size = 5
