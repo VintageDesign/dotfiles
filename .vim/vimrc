@@ -215,7 +215,7 @@ let g:ale_fixers = {
 let g:ale_linters = {
 \   'python':   ['pydocstyle', 'pylint', 'pyls'],
 \   'tex':      ['chktex'],
-\   'cpp':      ['clangd', 'clangtidy'],
+\   'cpp':      ['clangd'],
 \}
 
 let g:ale_sign_column_always = 1
@@ -236,13 +236,10 @@ let g:ale_echo_msg_format = '[%severity%][%linter%][%code%] %s'
 
 let g:ale_python_black_options = '--line-length=100'
 
-let g:ale_cpp_clangd_options = '--background-index --completion-style=bundled --header-insertion=iwyu --suggest-missing-includes -j=4'
-let g:ale_cpp_clang_options = '-std=c++17 -Wall -Wextra -Wpedantic -x c++'
-" TODO: Provide list of default clangtidy checks. Fallback to looking at .clang-tidy
-" TODO: Provide default clang-tidy and clang-format configuration in $HOME
-" TODO: Learn how to generate compile_commands.json
-" TODO: Learn how to configure these options per-project.
-let g:ale_cpp_clangtidy_options = '-std=c++17 -Wall -Wextra -Wpedantic -x c++'
+" Need to be careful with clangd version. This might only work with 9.0+?
+" Installing clangd-10 with snap seems not to work, and it's not available
+" through apt on 18.04
+let g:ale_cpp_clangd_options = '--background-index --header-insertion=iwyu --pch-storage=memory --completion-style=bundled --compute-dead --query-driver="/opt/poky/1.5.1/sysroots/x86_64-pokysdk-linux/usr/bin/i586-poky-linux/i586-poky-linux-*,/opt/dey/1.6.7/sysroots/x86_64-deysdk-linux/usr/bin/arm-dey-linux-gnueabi/arm-dey-linux-gnueabi-*" -j=4 --clang-tidy'
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
