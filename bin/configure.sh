@@ -25,6 +25,20 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Installing fzf...${RESET}"
     "${DOTFILES_DIR}/.vim/bundle/fzf/install" --all
     echo "${GREEN}Installed fzf.${RESET}"
+
+    echo "${YELLOW}Installing fd...${RESET}"
+    # fd provides a debian package, but I'm unsure if it sets up the apt repository to keep it up-to-date.
+    USER="sharkdp"
+    REPO="fd"
+    curl --silent "https://api.github.com/repos/$USER/$REPO/releases/latest" | # Get latest release from GitHub api
+        grep --only-matching --perl-regexp '"tag_name": "\K(.*)(?=")' |        # Get the latest tag
+        xargs -I {} curl --location --output /tmp/fd.tar.gz --remote-name "https://github.com/$USER/$REPO/releases/download/{}/fd-{}-x86_64-unknown-linux-gnu.tar.gz"
+    mkdir -p /tmp/fd
+    tar -xzvf /tmp/fd.tar.gz -C /tmp/fd --strip-components=1
+    cp /tmp/fd/fd ~/.local/bin
+    mkdir -p ~/.bash-completion.d
+    cp /tmp/fd/autocomplete/fd.bash-completion ~/.bash-completion.d
+    echo "${GREEN}Installed fd.${RESET}"
 fi
 
 read -p "${BOLD}${UNDERLINE}Install Tilix as default terminal? (y/N)${RESET} " -n 1 -r

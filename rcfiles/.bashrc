@@ -155,6 +155,8 @@ bind 'set mark-symlinked-directories on'
 
 # fzf settings
 export FZF_DEFAULT_OPTS="--history-size=20000"
+export FZF_DEFAULT_COMMAND="fd --type f"
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200'"
 export FZF_CTRL_T_OPTS="--preview 'tree -C {} | head -200'"
 
