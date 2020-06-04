@@ -229,9 +229,6 @@ else
     set completeopt=menu,menuone,preview,noinsert
 endif
 
-" Show 5 lines of errors (default: 10)
-let g:ale_list_window_size = 5
-
 let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%severity%][%linter%][%code%] %s'
@@ -242,7 +239,18 @@ let g:ale_python_pydocstyle_options = '--add-ignore=D100'
 " Need to be careful with clangd version. This might only work with 9.0+?
 " Installing clangd-10 with snap seems not to work, and it's not available
 " through apt on 18.04
-let g:ale_cpp_clangd_options = '--background-index --header-insertion=iwyu --pch-storage=memory --completion-style=bundled --compute-dead --query-driver="/opt/poky/1.5.1/sysroots/x86_64-pokysdk-linux/usr/bin/i586-poky-linux/i586-poky-linux-*,/opt/dey/1.6.7/sysroots/x86_64-deysdk-linux/usr/bin/arm-dey-linux-gnueabi/arm-dey-linux-gnueabi-*" -j=4 --clang-tidy'
+" Also, this is the dumbest syntax I've seen for multi-line strings.
+let g:ale_cpp_clangd_options = '
+    \ --background-index
+    \ --header-insertion=iwyu
+    \ --pch-storage=memory
+    \ --completion-style=bundled
+    \ --compute-dead
+    \ --query-driver="/opt/poky/1.5.1/sysroots/x86_64-pokysdk-linux/usr/bin/i586-poky-linux/i586-poky-linux-*,/opt/dey/1.6.7/sysroots/x86_64-deysdk-linux/usr/bin/arm-dey-linux-gnueabi/arm-dey-linux-gnueabi-*"
+    \ -j=4
+    \ --clang-tidy
+    \ --clang-tidy-checks="-cppcoreguidelines-avoid-magic-numbers,-readability-magic-numbers,-modernize-use-trailing-return-type"
+    \'
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
