@@ -123,6 +123,8 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         echo "${YELLOW}Installing Python development packages without a virtualenv...${RESET}"
         # These packages are necessary to be installed system-wide.
         pip install --upgrade --user --requirement "${DOTFILES_DIR}/requirements.txt"
+        echo "${YELLOW}Modifying $(which pylint) to use environment python...${RESET}"
+        sed -i 's|/usr/bin/python3|/usr/bin/env python3|' "$(which pylint)"
 
         # https://github.com/t-makaro/nb_pdf_template
         python3 -m nb_pdf_template.install
