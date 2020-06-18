@@ -160,6 +160,14 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200'"
 export FZF_CTRL_T_OPTS="--preview 'tree -C {} | head -200'"
 
+# Some customizations for __git_ps1
+export GIT_PS1_SHOWDIRTYSTATE=1
+export GIT_PS1_DESCRIBE_STYLE='branch'
+export GIT_PS1_SHOWCOLORHINTS=0
+export GIT_PS1_SHOWSTASHSTATE=1
+export GIT_PS1_SHOWUNTRACKEDFILES=1
+export GIT_PS1_SHOWUPSTREAM='auto'
+
 # Add ~/.local/bin/ to PATH
 PATH="$HOME/.local/bin${PATH:+:${PATH}}"
 
