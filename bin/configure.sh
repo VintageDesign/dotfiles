@@ -65,6 +65,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         clang \
         clang-format \
         clang-tidy \
+        clangd \
         cmake \
         doxygen \
         g++ \
@@ -280,12 +281,12 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     (
         cd /tmp/checkmake
         # This will pull a golang and alpine image, but you can't delete the image without knowing its tag.
-        docker build . -t checkmake
-        id=$(docker create checkmake)
-        docker cp "$id":/checkmake - >/tmp/checkmake.tar
-        docker rm -v "$id"
-        docker rmi --force checkmake
-        docker system prune --force
+        sudo docker build . -t checkmake
+        id=$(sudo docker create checkmake)
+        sudo docker cp "$id":/checkmake - >/tmp/checkmake.tar
+        sudo docker rm -v "$id"
+        sudo docker rmi --force checkmake
+        sudo docker system prune --force
 
         tar -xvf /tmp/checkmake.tar -C ~/.local/bin
     )
