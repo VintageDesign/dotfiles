@@ -77,6 +77,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         pandoc \
         python3-dev \
         python3-distutils \
+        ripgrep \
         valgrind \
         xclip
 
