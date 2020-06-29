@@ -11,10 +11,10 @@ handle SIGUSR1 SIGUSR2 SIGILL nostop
 
 # Do not stop all threads when hitting a breakpoint.
 # Has the potential to cause problems, depending on the program.
-set pagination off
-set non-stop on
-# Respond to commands, even when the inferior is running.
-set target-async on
+# set pagination off
+# set non-stop on
+# # Respond to commands, even when the inferior is running.
+# set target-async on
 
 # Load local .gdbinit files.
 add-auto-load-safe-path /
@@ -33,7 +33,7 @@ import sys
 
 gcc = glob.glob("/usr/share/gcc-*")
 # TODO: Do something better than grabbing the first match.
-sys.path.insert(0, gcc[0] + "/python")
+if gcc: sys.path.insert(0, gcc[0] + "/python")
 
 from libstdcxx.v6.printers import register_libstdcxx_printers
 register_libstdcxx_printers(None)
