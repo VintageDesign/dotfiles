@@ -271,6 +271,21 @@ let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/snips']
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Toggle paste mode with f3
 set pastetoggle=<F3>
+function! s:paste_toggled(new, old) abort
+    if a:new && !a:old
+        let b:saved_foldexpr = &foldexpr
+        let &l:foldexpr = ''
+    elseif !a:new && a:old && exists('b:saved_foldexpr')
+        let &l:foldexpr = b:saved_foldexpr
+        unlet b:saved_foldexpr
+    endif
+endfunc
+
+" Disable foldexpr when pasting to fix slow pasting performance.
+augroup FastPaste
+    autocmd OptionSet paste call s:paste_toggled(v:option_new, v:option_old)
+augroup END
+
 " Turn off search highlighting with enter
 nnoremap <CR> :nohl<CR><CR>
 
