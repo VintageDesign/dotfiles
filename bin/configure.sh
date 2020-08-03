@@ -382,7 +382,10 @@ echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW} Downloading Pointfree to ~/.local/share/fonts${RESET}"
     mkdir -p ~/.local/share/fonts
-    curl --location --output ~/.local/share/fonts/pointfree.ttf "http://fontpro.com/download-family.php?file=17451"
+    curl --location --output /tmp/pointfree.zip "https://dl.dafont.com/dl/?f=pointfree"
+    unzip /tmp/pointfree.zip
+    mkdir -p ~/.local/share/fonts/
+    mv /tmp/pointfree.ttf ~/.local/share/fonts/
     fc-cache -f -v
     echo "${YELLOW}Setting Pointfree as default monospace font${RESET}"
     gsettings set org.gnome.desktop.interface monospace-font-name 'Pointfree 11'
