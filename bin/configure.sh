@@ -26,6 +26,16 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     "${DOTFILES_DIR}/.vim/bundle/fzf/install" --all
     echo "${GREEN}Installed fzf.${RESET}"
 
+    # A fancier git diff. Used by ~/.gitconfig and git-gl
+    echo "${YELLOW}Installing delta...${RESET}"
+    USER="dandavison"
+    REPO="delta"
+    curl --silent "https://api.github.com/repos/$USER/$REPO/releases/latest" | # Get latest release from GitHub api
+        grep --only-matching --perl-regexp '"tag_name": "\K(.*)(?=")' |        # Get the latest tag
+        xargs -I {} curl --location --output /tmp/delta.deb --remote-name "https://github.com/$USER/$REPO/releases/download/{}/git-delta_{}_amd64.deb"
+    sudo apt install /tmp/delta.deb
+    echo "${GREEN}Installed delta.${RESET}"
+
     echo "${YELLOW}Installing fd...${RESET}"
     # fd provides a debian package, but I'm unsure if it sets up the apt repository to keep it up-to-date.
     USER="sharkdp"

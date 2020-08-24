@@ -6,7 +6,15 @@
     fileMode = false
     eol = lf
     autocrlf = input
-    pager = perl /usr/share/doc/git/contrib/diff-highlight/diff-highlight | less
+    # pager = perl /usr/share/doc/git/contrib/diff-highlight/diff-highlight | less
+    pager = delta
+[interactive]
+    diffFilter = delta --color-only
+[diff]
+    colorMoved = dimmed-zebra
+[delta]
+    line-numbers = true
+    syntax-theme = base16
 [credential]
     helper = cache
     help = cache --timeout=60000

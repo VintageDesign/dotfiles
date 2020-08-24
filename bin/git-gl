@@ -33,7 +33,7 @@ fzf-git-browse() {
         --color=always \
         --format="%C(auto)%h%d %s %C(black)%C(bold)%an, %cr" \
         --decorate=short \
-        --decorate-refs-exclude='refs/tags/*' \
+        `#--decorate-refs-exclude='refs/tags/*'` \
         `# Pass all arguments through to git-log` \
         "$@" |
         fzf \
@@ -47,14 +47,14 @@ fzf-git-browse() {
                 | grep -o '[a-f0-9]\{7,\}' \
                 | head -1 \
                 | xargs -I % sh -c 'git show --color=always %' \
-                | perl /usr/share/doc/git/contrib/diff-highlight/diff-highlight" \
+                | delta" \
             `# Open selected commit in a pager so you can see the whole thing` \
             --bind "enter:execute(
                 echo {} \
                     | grep -o '[a-f0-9]\{7,\}' \
                     | head -1 \
                     | xargs -I % sh -c 'git show --color=always %' \
-                    | perl /usr/share/doc/git/contrib/diff-highlight/diff-highlight \
+                    | delta \
                     | LESS=RX less \
                 )" \
             `# Checkout the selected commit (y for yank)` \

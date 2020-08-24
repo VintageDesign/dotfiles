@@ -163,7 +163,7 @@ export FZF_CTRL_T_OPTS="--preview 'tree -C {} | head -200'"
 # Some customizations for __git_ps1
 export GIT_PS1_SHOWDIRTYSTATE=1
 export GIT_PS1_DESCRIBE_STYLE='branch'
-export GIT_PS1_SHOWCOLORHINTS=0
+export GIT_PS1_SHOWCOLORHINTS=1
 export GIT_PS1_SHOWSTASHSTATE=1
 export GIT_PS1_SHOWUNTRACKEDFILES=1
 export GIT_PS1_SHOWUPSTREAM='auto'
