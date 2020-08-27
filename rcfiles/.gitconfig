@@ -15,6 +15,9 @@
 [delta]
     line-numbers = true
     syntax-theme = base16
+[commit]
+    # commit -v by default
+    verbose = true
 [credential]
     helper = cache
     help = cache --timeout=60000
