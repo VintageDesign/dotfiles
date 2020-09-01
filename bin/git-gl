@@ -39,6 +39,7 @@ fzf-git-browse() {
         fzf \
             `# Enables selecting content with mouse. Outdated by <ctrl-h>?` \
             --no-mouse \
+            --header "<ctrl-y> checkout   <ctrl-h> copy hash   <ctrl-r> rebase   <ctrl-p> cherry pick" \
             --ansi \
             --no-sort \
             --reverse \
