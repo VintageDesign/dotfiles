@@ -13,6 +13,7 @@ MAPPINGS = {
     "rcfiles/.gitconfig-work": ".gitconfig-work",
     "rcfiles/.pylintrc": ".pylintrc",
     "rcfiles/.profile": ".profile",
+    "bash-completion.d/git-gl.bash-completion": ".bash-completion.d/git-gl.bash-completion",
 }
 
 
@@ -42,6 +43,12 @@ def main(args):
         print(TARGET_BIN_DIR, "not present, making.")
         if not args.dry_run:
             TARGET_BIN_DIR.mkdir(parents=True, exist_ok=True)
+
+    completion_dir = TARGET.joinpath(".bash-completion.d").resolve()
+    if not completion_dir.exists():
+        print(completion_dir, "not present, making.")
+        if not args.dry_run:
+            completion_dir.mkdir(parents=True, exist_ok=True)
 
     for file in os.listdir(DOTFILES_DIR.joinpath("bin")):
         MAPPINGS[os.path.join("bin", file)] = TARGET_BIN_DIR.joinpath(file)

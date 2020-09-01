@@ -1,0 +1,5 @@
+# Add refspec completion to git-gl
+# See: https://stackoverflow.com/questions/41307313/custom-git-command-autocompletion
+_git_gl () {
+    __gitcomp_nl "$(__git_refs)"
+}
