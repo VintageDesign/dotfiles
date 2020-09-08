@@ -42,3 +42,5 @@
 
 [includeIf "gitdir:~/swdev/"]
     path = .gitconfig-work
+[includeIf "gitdir:/tmp/fishspear_release"]
+    path = .gitconfig-work
