@@ -35,20 +35,6 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         xargs -I {} curl --location --output /tmp/delta.deb --remote-name "https://github.com/$USER/$REPO/releases/download/{}/git-delta_{}_amd64.deb"
     sudo apt install /tmp/delta.deb
     echo "${GREEN}Installed delta.${RESET}"
-
-    echo "${YELLOW}Installing fd...${RESET}"
-    # fd provides a debian package, but I'm unsure if it sets up the apt repository to keep it up-to-date.
-    USER="sharkdp"
-    REPO="fd"
-    curl --silent "https://api.github.com/repos/$USER/$REPO/releases/latest" | # Get latest release from GitHub api
-        grep --only-matching --perl-regexp '"tag_name": "\K(.*)(?=")' |        # Get the latest tag
-        xargs -I {} curl --location --output /tmp/fd.tar.gz --remote-name "https://github.com/$USER/$REPO/releases/download/{}/fd-{}-x86_64-unknown-linux-gnu.tar.gz"
-    mkdir -p /tmp/fd
-    tar -xzvf /tmp/fd.tar.gz -C /tmp/fd --strip-components=1
-    cp /tmp/fd/fd ~/.local/bin
-    mkdir -p ~/.bash-completion.d
-    cp /tmp/fd/autocomplete/fd.bash-completion ~/.bash-completion.d
-    echo "${GREEN}Installed fd.${RESET}"
 fi
 
 read -p "${BOLD}${UNDERLINE}Install Tilix as default terminal? (y/N)${RESET} " -n 1 -r
@@ -87,7 +73,6 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         pandoc \
         python3-dev \
         python3-distutils \
-        ripgrep \
         valgrind \
         xclip
 
@@ -310,6 +295,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Installing utilities....${RESET}"
     sudo apt install \
         colordiff \
+        fd-find \
         htop \
         iperf \
         linux-tools-common \
@@ -319,6 +305,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         nmap \
         openssh-server \
         pv \
+        ripgrep \
         screen \
         screenfetch \
         traceroute \
