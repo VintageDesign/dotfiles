@@ -1,3 +1,4 @@
+black
 ipython
 jupyter
 jupyterlab
@@ -6,5 +7,7 @@ jupytext
 nb-pdf-template
 parse-torrent-name
 parsedatetime
+pydocstyle
 pygments
+pylint
 virtualenv

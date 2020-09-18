@@ -28,11 +28,11 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 
     # A fancier git diff. Used by ~/.gitconfig and git-gl
     echo "${YELLOW}Installing delta...${RESET}"
-    USER="dandavison"
+    USERNAME="dandavison"
     REPO="delta"
-    curl --silent "https://api.github.com/repos/$USER/$REPO/releases/latest" | # Get latest release from GitHub api
+    curl --silent "https://api.github.com/repos/$USERNAME/$REPO/releases/latest" | # Get latest release from GitHub api
         grep --only-matching --perl-regexp '"tag_name": "\K(.*)(?=")' |        # Get the latest tag
-        xargs -I {} curl --location --output /tmp/delta.deb --remote-name "https://github.com/$USER/$REPO/releases/download/{}/git-delta_{}_amd64.deb"
+        xargs -I {} curl --location --output /tmp/delta.deb --remote-name "https://github.com/$USERNAME/$REPO/releases/download/{}/git-delta_{}_amd64.deb"
     sudo apt install /tmp/delta.deb
     echo "${GREEN}Installed delta.${RESET}"
 fi
@@ -225,11 +225,11 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 
     echo "${YELLOW}Installing shfmt...${RESET}"
     # shfmt doesn't have a 'latest' tag, so we find it ourselves.
-    USER="mvdan"
+    USERNAME="mvdan"
     REPO="sh"
-    curl --silent "https://api.github.com/repos/$USER/$REPO/releases/latest" | # Get latest release from GitHub api
+    curl --silent "https://api.github.com/repos/$USERNAME/$REPO/releases/latest" | # Get latest release from GitHub api
         grep --only-matching --perl-regexp '"tag_name": "\K(.*)(?=")' |        # Get the latest tag
-        xargs -I {} curl --location --output ~/.local/bin/shfmt --remote-name "https://github.com/$USER/$REPO/releases/download/{}/shfmt_{}_linux_amd64"
+        xargs -I {} curl --location --output ~/.local/bin/shfmt --remote-name "https://github.com/$USERNAME/$REPO/releases/download/{}/shfmt_{}_linux_amd64"
     chmod +x ~/.local/bin/shfmt
     echo "${GREEN}Installed shfmt version: $(shfmt --version)${RESET}"
 
@@ -247,20 +247,20 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${GREEN}Installed gitlint.${RESET}"
 
     echo "${YELLOW}Installing jq...${RESET}"
-    USER="stedolan"
+    USERNAME="stedolan"
     REPO="jq"
-    curl --silent "https://api.github.com/repos/$USER/$REPO/releases/latest" | # Get latest release from GitHub api
+    curl --silent "https://api.github.com/repos/$USERNAME/$REPO/releases/latest" | # Get latest release from GitHub api
         grep --only-matching --perl-regexp '"tag_name": "\K(.*)(?=")' |        # Get the latest tag
-        xargs -I {} curl --location --output ~/.local/bin/jq --remote-name "https://github.com/$USER/$REPO/releases/download/{}/jq-linux64"
+        xargs -I {} curl --location --output ~/.local/bin/jq --remote-name "https://github.com/$USERNAME/$REPO/releases/download/{}/jq-linux64"
     chmod +x ~/.local/bin/jq
     echo "${GREEN}Installed jq version: $(jq --version)${RESET}"
 
     echo "${YELLOW}Installing hadolint Dockerfile linter...${RESET}"
-    USER="hadolint"
+    USERNAME="hadolint"
     REPO="hadolint"
-    curl --silent "https://api.github.com/repos/$USER/$REPO/releases/latest" | # Get latest release from GitHub api
+    curl --silent "https://api.github.com/repos/$USERNAME/$REPO/releases/latest" | # Get latest release from GitHub api
         grep --only-matching --perl-regexp '"tag_name": "\K(.*)(?=")' |        # Get the latest tag
-        xargs -I {} curl --location --output ~/.local/bin/hadolint --remote-name "https://github.com/$USER/$REPO/releases/download/{}/hadolint-Linux-x86_64"
+        xargs -I {} curl --location --output ~/.local/bin/hadolint --remote-name "https://github.com/$USERNAME/$REPO/releases/download/{}/hadolint-Linux-x86_64"
     chmod +x ~/.local/bin/hadolint
     echo "${GREEN}Installed hadolint version: $(hadolint --version | cut -d' ' -f4)${RESET}"
 
@@ -380,6 +380,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW} Downloading Pointfree to ~/.local/share/fonts${RESET}"
     mkdir -p ~/.local/share/fonts
     curl --location --output /tmp/pointfree.zip "https://dl.dafont.com/dl/?f=pointfree"
+    # BUG: This unzips in the CWD
     unzip /tmp/pointfree.zip
     mkdir -p ~/.local/share/fonts/
     mv /tmp/pointfree.ttf ~/.local/share/fonts/
