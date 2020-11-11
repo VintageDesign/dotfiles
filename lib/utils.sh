@@ -61,17 +61,6 @@ additions() {
              { printf "added lines: %s removed lines: %s total lines: %s\n", add, subs, loc }' -
 }
 
-# converts CRLF endings to LF endings
-dos2unix() {
-    sed -i 's/.$//' "$1"
-}
-
-# converts LF endings to CRLF endings
-unix2dos() {
-    # requires GNU sed
-    sed -i 's/$/\r/' "$1"
-}
-
 # Remove the given item from your $PATH.
 function remove-from-path() {
     export PATH=$(echo -n "$PATH" | awk -v RS=: -v ORS=: '$0 != "'$1'"' | sed 's/:$//')

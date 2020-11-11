@@ -295,11 +295,13 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Installing utilities....${RESET}"
     sudo apt install \
         colordiff \
+        dos2unix \
         fd-find \
         htop \
         iperf \
         linux-tools-common \
         linux-tools-generic \
+        moreutils \
         net-tools \
         nfs-common \
         nmap \
