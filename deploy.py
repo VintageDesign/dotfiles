@@ -11,6 +11,7 @@ MAPPINGS = {
     "rcfiles/.gdbinit": ".gdbinit",
     "rcfiles/.gitconfig": ".gitconfig",
     "rcfiles/.gitconfig-work": ".gitconfig-work",
+    "rcfiles/.gitignore": ".gitignore",
     "rcfiles/.pylintrc": ".pylintrc",
     "rcfiles/.profile": ".profile",
     "bash-completion.d/git-gl.bash-completion": ".bash-completion.d/git-gl.bash-completion",
