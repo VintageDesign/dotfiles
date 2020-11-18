@@ -24,10 +24,6 @@ alias arem='sudo apt-get autoremove'
 
 alias wiki='vim $VIMWIKI_PATH/index.wiki'
 alias todo='vim $VIMWIKI_PATH/todo/todo.wiki'
-alias journal='vim $VIMWIKI_PATH/diary/diary.wiki'
-alias today='vim -c VimwikiMakeDiaryNote'
-alias tomorrow='vim -c VimwikiMakeTomorrowDiaryNote'
-alias yesterday='vim -c VimwikiMakeYesterdayDiaryNote'
 
 function man() {
     # Export the variables in a subshell to avoid polluting
