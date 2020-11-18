@@ -155,10 +155,10 @@ bind 'set mark-symlinked-directories on'
 
 # fzf settings
 export FZF_DEFAULT_OPTS="--history-size=100000"
-export FZF_DEFAULT_COMMAND="fd --type f"
+export FZF_DEFAULT_COMMAND="fdfind --type f"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200'"
-export FZF_CTRL_T_OPTS="--preview 'tree -C {} | head -200'"
+export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -n 60'"
+export FZF_CTRL_T_OPTS="--preview 'batcat --style changes --color=always --line-range :60 {}'"
 
 # Some customizations for __git_ps1
 export GIT_PS1_SHOWDIRTYSTATE=1
@@ -197,6 +197,7 @@ export LIBRARY_PATH
 export LD_LIBRARY_PATH
 export MANPATH
 export EDITOR=vim
+export BAT_THEME=base16
 # Path to my vimwiki clone
 export VIMWIKI_PATH="$HOME/Documents/notes/"
 # Fix less not rendering control characters with git-log on the Opp lab machines.

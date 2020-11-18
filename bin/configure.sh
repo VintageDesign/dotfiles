@@ -307,11 +307,12 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         nmap \
         openssh-server \
         pv \
-        ripgrep \
         screen \
         screenfetch \
         traceroute \
         tree
+    # workaround https://bugs.launchpad.net/ubuntu/+source/rust-bat/+bug/1868517
+    sudo apt install -o Dpkg::Options::="--force-overwrite" bat ripgrep
     echo "${GREEN}Installed utilities.${RESET}"
 fi
 
