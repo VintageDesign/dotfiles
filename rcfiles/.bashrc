@@ -155,10 +155,10 @@ bind 'set mark-symlinked-directories on'
 
 # fzf settings
 export FZF_DEFAULT_OPTS="--history-size=100000"
-export FZF_DEFAULT_COMMAND="fdfind --type f"
+export FZF_DEFAULT_COMMAND="fd --type f"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -n 60'"
-export FZF_CTRL_T_OPTS="--preview 'batcat --style changes --color=always --line-range :60 {}'"
+export FZF_CTRL_T_OPTS="--preview 'bat --style changes --color=always --line-range :60 {}'"
 
 # Some customizations for __git_ps1
 export GIT_PS1_SHOWDIRTYSTATE=1

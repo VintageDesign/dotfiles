@@ -313,6 +313,8 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         tree
     # workaround https://bugs.launchpad.net/ubuntu/+source/rust-bat/+bug/1868517
     sudo apt install -o Dpkg::Options::="--force-overwrite" bat ripgrep
+    ln -s $(which fdfind) ~/.local/bin/fd
+    ln -s $(which batcat) ~/.local/bin/bat
     echo "${GREEN}Installed utilities.${RESET}"
 fi
 

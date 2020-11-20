@@ -4,9 +4,6 @@ alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
 
-alias fd='fdfind'
-alias bat='batcat'
-
 alias tree='tree -C'
 
 alias ls='ls -h --color=auto'
