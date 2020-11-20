@@ -236,20 +236,20 @@ let g:ale_echo_msg_format = '[%severity%][%linter%][%code%] %s'
 let g:ale_python_black_options = '--line-length=100'
 let g:ale_python_pydocstyle_options = '--add-ignore=D100'
 
-" Need to be careful with clangd version. This might only work with 9.0+?
-" Installing clangd-10 with snap seems not to work, and it's not available
-" through apt on 18.04
-" Also, this is the dumbest syntax I've seen for multi-line strings.
+" You probably want clangd-11 for project-specific config files.
+" https://clangd.llvm.org/config.html
+" Additionally, you can set g:ale_cpp_clangd_executable, or set `clangd` to `clangd-11`
+" sudo update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-11 100
 let g:ale_cpp_clangd_options = '
     \ --background-index
     \ --header-insertion=iwyu
     \ --pch-storage=memory
     \ --completion-style=bundled
     \ --compute-dead
-    \ --query-driver="/opt/poky/1.5.1/sysroots/x86_64-pokysdk-linux/usr/bin/i586-poky-linux/i586-poky-linux-*,/opt/dey/1.6.7/sysroots/x86_64-deysdk-linux/usr/bin/arm-dey-linux-gnueabi/arm-dey-linux-gnueabi-*"
+    \ --recovery-ast
+    \ --query-driver="/opt/poky/1.5.1/**/i586-poky-linux-*,/opt/dey/1.6.7/**/arm-dey-linux-gnueabi-*"
     \ -j=4
     \ --clang-tidy
-    \ --clang-tidy-checks="-cppcoreguidelines-avoid-magic-numbers,-readability-magic-numbers,-modernize-use-trailing-return-type"
     \'
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
