@@ -68,3 +68,6 @@
 [submodule ".vim/bundle/vim-qml"]
 	path = .vim/bundle/vim-qml
 	url = https://github.com/peterhoeg/vim-qml.git
+[submodule ".vim/bundle/CurtineIncSw.vim"]
+	path = .vim/bundle/CurtineIncSw.vim
+	url = https://github.com/ericcurtin/CurtineIncSw.vim.git

@@ -272,8 +272,6 @@ let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/snips']
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Keybinds
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Toggle paste mode with f3
-set pastetoggle=<F3>
 function! s:paste_toggled(new, old) abort
     if a:new && !a:old
         let b:saved_foldexpr = &foldexpr
@@ -348,9 +346,10 @@ imap <F1> <C-\><C-O>:ALEFix<CR>
 nmap gd <Plug>(ale_go_to_definition)
 nmap <F2> <Plug>(ale_go_to_definition)
 imap <F2> <C-\><C-O>:ALEGoToDefinition<CR>
-" <F3> is pastetoggle
-nmap <F4> <Plug>(ale_find_references)
-imap <F4> <C-\><C-O>:ALEFindReferences<CR>
+" nmap <F4> <Plug>(ale_find_references)
+" imap <F4> <C-\><C-O>:ALEFindReferences<CR>
+nnoremap <F4> :call CurtineIncSw()<CR>
+inoremap <F4> :call CurtineIncSw()<CR>
 
 " Use <C-N>, because that's the default insert-mode dumb completion.
 inoremap <C-N> <C-\><C-O>:ALEComplete<CR>
