@@ -62,3 +62,9 @@
 	path = .vim/bundle/ultisnips
 	url = https://github.com/SirVer/ultisnips.git
 	branch = master
+[submodule ".vim/bundle/qmake-syntax-vim"]
+	path = .vim/bundle/qmake-syntax-vim
+	url = https://github.com/artoj/qmake-syntax-vim.git
+[submodule ".vim/bundle/vim-qml"]
+	path = .vim/bundle/vim-qml
+	url = https://github.com/peterhoeg/vim-qml.git
