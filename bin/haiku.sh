@@ -33,6 +33,7 @@ SEED=""
 NUMBER=5
 TEMPERATURE=1
 MAX_TOKENS=20
+DOMAIN=http://142.93.71.65
 
 while [ $# -ge 1 ]; do
     case "$1" in
@@ -83,6 +84,8 @@ if [ -n "$SEED" ]; then
 fi
 
 curl \
+    --insecure \
+    --location \
     --silent \
     --show-error \
     --get \
@@ -94,5 +97,5 @@ curl \
     --data-urlencode "k=0" \
     --data-urlencode "p=0.9" \
     --data-urlencode "max_tokens=$MAX_TOKENS" \
-    "https://agill.xyz/generate" |
+    "$DOMAIN/generate" |
     jq
