@@ -36,8 +36,8 @@
 	branch = master
 [submodule "vim/bundle/vimwiki"]
 	path = vim/bundle/vimwiki
-    url = https://github.com/vimwiki/vimwiki.git
-    branch = master
+	url = https://github.com/vimwiki/vimwiki.git
+	branch = dev
 [submodule "vim/bundle/vim-systemd-syntax"]
 	path = vim/bundle/vim-systemd-syntax
 	url = https://github.com/Matt-Deacalion/vim-systemd-syntax.git
