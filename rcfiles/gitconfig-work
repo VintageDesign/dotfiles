@@ -8,3 +8,9 @@
 [submodule]
     # Not really a good idea on a projects with many submodules that appear/disappear
     recurse = false
+
+# Use SSH instead of HTTPS
+[url "git@github.com:"]
+    insteadOf = https://github.com/
+[url "git@source.raven.engineering:"]
+    insteadOf = https://source.raven.engineering/
