@@ -106,3 +106,7 @@
 	path = vim/bundle/vis
 	url = https://github.com/vim-scripts/vis.git
 	branch = master
+[submodule "vim/bundle/vim-ps1"]
+	path = vim/bundle/vim-ps1
+	url = https://github.com/PProvost/vim-ps1.git
+	branch = master
