@@ -1,0 +1,150 @@
+#!/bin/bash
+set -o errexit
+set -o pipefail
+set -o nounset
+# set -o noclobber
+
+usage() {
+    echo "Usage: $0 [--primary] <--copy | --paste> [FILE]"
+    echo
+    echo "Copy/paste to/from the system clipboard. Supports both X11 and Wayland via xclip/wl-clipboard"
+    echo
+    echo "  -h, --help          Show this help and exit"
+    echo "  -P, --primary       Operate on the PRIMARY clipboard instead of the default CLIPBOARD"
+    echo "  -c, --copy          Copy the given text"
+    echo "  -p, --paste         Paste the text from the clipboard"
+    echo
+    echo "If no FILE is specified, copy/paste operations will be on stdin/stdout respectively."
+    echo "You may also pass '-' to explicitly signal you want stdin/stdout."
+}
+
+check_dependencies() {
+    local -a required_utils=()
+
+    case "$XDG_SESSION_TYPE" in
+    x11)
+        # sudo apt install xclip
+        required_utils+=(xclip)
+        ;;
+    wayland)
+        # sudo apt install wl-clipboard
+        required_utils+=(wl-copy wl-paste)
+        ;;
+    *)
+        echo "Unrecognized XDG_SESSION_TYPE='$XDG_SESSION_TYPE'" >&2
+        exit 1
+        ;;
+    esac
+
+    for requirement in "${required_utils[@]}"; do
+        if ! command -v "$requirement" >/dev/null 2>&1; then
+            echo "Missing required dependencies '$requirement'" >&2
+            exit 1
+        fi
+    done
+}
+
+perform_x11() {
+    local clipboard="$1"
+    local operation="$2"
+    local file="$3"
+
+    local -a extra_args=()
+    if [[ "$clipboard" == primary ]]; then
+        extra_args+=(-selection primary)
+    else
+        extra_args+=(-selection clipboard)
+    fi
+
+    if [[ "$operation" == copy ]]; then
+        xclip -in "${extra_args[@]}" <"$file"
+    else
+        xclip -out "${extra_args[@]}" >"$file"
+    fi
+}
+
+perform_wayland() {
+    local clipboard="$1"
+    local operation="$2"
+    local file="$3"
+
+    local -a extra_args=()
+    if [[ "$clipboard" == primary ]]; then
+        extra_args+=(--primary)
+    fi
+
+    if [[ "$operation" == copy ]]; then
+        wl-copy "${extra_args[@]}" <"$file"
+    else
+        # Don't add an additional newline to the output.
+        wl-paste --no-newline "${extra_args[@]}" >"$file"
+    fi
+}
+
+perform() {
+    case "$XDG_SESSION_TYPE" in
+    x11)
+        perform_x11 "$@"
+        ;;
+    wayland)
+        perform_wayland "$@"
+        ;;
+    *)
+        echo "Unrecognized XDG_SESSION_TYPE='$XDG_SESSION_TYPE'" >&2
+        exit 1
+        ;;
+    esac
+}
+
+main() {
+    local parsed_positional_arguments=0
+    # Either "copy", or "paste"
+    local operation=""
+    # Either "primary", or "default"
+    local clipboard="default"
+    local file="-"
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+        --help | -h)
+            usage
+            exit
+            ;;
+        --primary | -P)
+            clipboard="primary"
+            ;;
+        --copy | -c)
+            operation="copy"
+            ;;
+        --paste | -p)
+            operation="paste"
+            ;;
+        *)
+            if [[ $parsed_positional_arguments -eq 0 ]]; then
+                file="$1"
+            else
+                echo "Too many positional arguments: '$1'" >&2
+                exit 1
+            fi
+            parsed_positional_arguments=$((parsed_positional_arguments + 1))
+            ;;
+        esac
+        shift
+    done
+
+    if [[ -z "$operation" ]]; then
+        echo "You must specify either --copy or --paste" >&2
+        exit 1
+    fi
+    check_dependencies "$operation"
+
+    if [[ "$file" == "-" && "$operation" == "copy" ]]; then
+        file=/dev/stdin
+    elif [[ "$file" == "-" && "$operation" == "paste" ]]; then
+        file=/dev/stdout
+    fi
+
+    perform "$clipboard" "$operation" "$file"
+}
+
+main "$@"
