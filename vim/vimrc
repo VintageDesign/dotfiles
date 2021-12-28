@@ -557,9 +557,10 @@ let wiki.syntax = 'markdown'
 let wiki.ext = '.wiki'
 let wiki.auto_tags = 1
 let wiki.automatic_nested_syntaxes = 1
-let wiki.nested_syntaxes = {'bash':'sh', 'shell':'sh', 'terminal':'sh', 'latex': 'tex'}
+let wiki.nested_syntaxes = {'bash':'sh', 'shell':'sh', 'terminal':'sh', 'latex': 'tex', 'c++': 'cpp'}
+let wiki.auto_toc = 1
 let g:vimwiki_list = [wiki]
-let g:vimwiki_folding = 'expr'
+let g:vimwiki_folding = 'syntax'
 let g:vimwiki_table_mappings = 0
 let g:vimwiki_key_mappings = { 'table_mappings': 0, }
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
