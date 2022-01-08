@@ -1,0 +1,20 @@
+#!/usr/bin/gawk -f
+
+# Example:
+#     $ cat vowels.txt | tr '\n' ' '
+#     a a a e e i o u
+#     $ cat name.txt | tr '\n' ' '
+#     a u s t i n
+#     $ ./set-intersection name.txt vowels.txt | tr '\n' ' '
+#     u i a
+
+!buf[$0]++ {acc[$0] += 1}
+
+ENDFILE {
+    delete buf;
+    files++
+}
+
+END {
+    for (k in acc) if (acc[k] == files) print k
+}
