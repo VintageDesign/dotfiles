@@ -53,6 +53,7 @@
     chp   = cherry-pick
     cor   = checkout --recurse-submodules
     yolo  = !git commit -am \"$(curl -s http://whatthecommit.com/index.txt)\"
+    rekt  = reset HEAD~ --hard
     dt    = difftool
     mt    = mergetool
 [push]
