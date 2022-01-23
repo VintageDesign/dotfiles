@@ -49,14 +49,14 @@ fzf-git-browse() {
             --preview "echo {} \
                 | grep -o '\<[a-f0-9]\{7,\}\>' \
                 | head -1 \
-                | xargs -I % sh -c 'git show --color=always %' \
+                | xargs -I % sh -c 'git show --submodule --color=always %' \
                 | delta --features='line-numbers' --width \$FZF_PREVIEW_COLUMNS" \
             `# Open selected commit in a pager so you can see the whole thing` \
             --bind "enter:execute(
                 echo {} \
                     | grep -o '\<[a-f0-9]\{7,\}\>' \
                     | head -1 \
-                    | xargs -I % sh -c 'git show --color=always %' \
+                    | xargs -I % sh -c 'git show --submodule --color=always %' \
                     | delta --width \$(tput cols) --paging=always \
                     | LESS=R less \
                 )" \
