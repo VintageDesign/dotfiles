@@ -383,7 +383,7 @@ let g:ale_fixers = {
             \   'tex':      ['latexindent'],
             \}
 let g:ale_linters = {
-            \   'cmake':    ['cmakelint'],
+            \   'cmake':    ['cmake_lint'],
             \   'cpp':      ['clangd'],
             \   'python':   ['pydocstyle', 'pylint', 'pyls', 'jedils'],
             \   'rust':     ['analyzer'],
