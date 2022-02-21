@@ -12,8 +12,8 @@ if ! shopt -oq posix; then
     for completion_file in ~/.bash_completion.d/*; do
         [ -f "$completion_file" ] && source "$completion_file"
     done
-    # Find and source clang bash completion scripts
-    for f in $(find /usr/lib -name 'bash-autocomplete.sh'); do
-        source "$f"
-    done
+    # # Find and source clang bash completion scripts
+    # for f in $(find /usr/lib -name 'bash-autocomplete.sh'); do
+    #     source "$f"
+    # done
 fi
