@@ -524,11 +524,11 @@ vnoremap <C-k> :m '<-2<CR>gv=gv
 
 " These keybinds require a Vim built with the +clipboard feature.
 " On Ubuntu, the vim-gtk package provides such a Vim.
-inoremap <C-p> <ESC>"+pa
+inoremap <C-S-p> <ESC>"+Pa
 inoremap <C-y> <ESC>"+yy
 vnoremap <C-y> "+y
-vnoremap <C-p> "+p
-nnoremap <C-p> "+p
+vnoremap <C-S-p> "+P
+nnoremap <C-S-p> "+P
 nnoremap <C-y> "+yy
 
 " Map <space> to fold.
