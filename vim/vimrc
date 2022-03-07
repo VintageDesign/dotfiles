@@ -419,6 +419,8 @@ let g:ale_cpp_clangd_options = '
 "     rustup +nightly component add rust-analyzer-preview
 let g:ale_rust_analyzer_executable = "/home/nots/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rust-analyzer"
 
+let g:ale_dockerfile_hadolint_use_docker = 'yes'
+
 set completeopt=menu,menuone,popup
 " If the completion popup is visible, accept the selected completion on <Enter>
 inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"

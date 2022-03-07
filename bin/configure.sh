@@ -248,13 +248,8 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${GREEN}Installed jq version: $(jq --version)${RESET}"
 
     echo "${YELLOW}Installing hadolint Dockerfile linter...${RESET}"
-    USERNAME="hadolint"
-    REPO="hadolint"
-    curl --silent "https://api.github.com/repos/$USERNAME/$REPO/releases/latest" | # Get latest release from GitHub api
-        grep --only-matching --perl-regexp '"tag_name": "\K(.*)(?=")' |            # Get the latest tag
-        xargs -I {} curl --location --output ~/.local/bin/hadolint --remote-name "https://github.com/$USERNAME/$REPO/releases/download/{}/hadolint-Linux-x86_64"
-    chmod +x ~/.local/bin/hadolint
-    echo "${GREEN}Installed hadolint version: $(hadolint --version | cut -d' ' -f4)${RESET}"
+    docker pull hadolint/hadolint
+    echo "${GREEN}Installed hadolint.${RESET}"
 
     read -p "${BOLD}${UNDERLINE}Install prettier (and nodejs, npm)? (y/N)${RESET} " -n 1 -r
     echo
