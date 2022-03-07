@@ -30,6 +30,7 @@
 [diff]
     tool = vimdiff
     guitool = vscode
+    submodule=log
 [difftool "vscode"]
     cmd = code --wait --diff $LOCAL $REMOTE
 [commit]
