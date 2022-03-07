@@ -161,6 +161,8 @@ set ignorecase
 set smartcase
 " Must be turned off manually
 set hlsearch
+" Show number of search results in statusline.
+set shortmess-=S
 " Use mouse interaction in every mode
 set mouse=a
 
