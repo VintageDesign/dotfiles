@@ -4,12 +4,10 @@ gitlint
 ipython
 isort
 jedi
-# Works better than pyls on a certain work project.
 jedi-language-server
 parsedatetime
 pydocstyle
 pygments
 pylint
 pylint-venv
-python-language-server
 rope
