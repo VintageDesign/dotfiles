@@ -211,23 +211,34 @@ au BufRead,BufNewFile nginx/*.conf set ft=nginx
 let g:load_doxygen_syntax = 1
 let g:doxygen_enhanced_color = 0
 
-" The *.spl is a binary file format necessary for speed.
-" But that doesn't track very well in git (and opens up potential for nasty conflicts).
-" So generate the .spl file if the .add file is newer.
-for d in glob('~/.vim/spell/*.add', 1, 1)
-    " BUG: This clears the screen, so when you exit vim, the prompt is on the
-    " bottom of the screen. This is surprisingly frustrating.
-    "
-    "     silent! execute '!sort --unique ' fnameescape(d) ' --output ' fnameescape(d)
+function! SetupSpellfile()
+    " The *.spl is a binary file format necessary for speed.
+    " But that doesn't track very well in git (and opens up potential for nasty conflicts).
+    " So generate the .spl file if the .add file is newer.
+    for d in glob('~/.vim/spell/*.add', 1, 1)
+        " It's nice to have the spellfile sorted, and duplicates removed as
+        " you add new words.
+        silent! execute '!sort --unique ' shellescape(d) ' --output ' shellescape(d)
 
-    " This likely forces the generation of the binary .spl file. Until the
-    " performance becomes noticeable, that's acceptable. Otherwise, I think a
-    " git-hook, or a more sophisticated shell incantation to also _diff_ the
-    " sorted file against the original one, would be the approach to use.
-    if filereadable(d) && (!filereadable(d . '.spl') || getftime(d) > getftime(d . '.spl'))
-        silent exec 'mkspell! ' . fnameescape(d)
-    endif
-endfor
+        " This likely forces the generation of the binary .spl file. Until the
+        " performance becomes noticeable, that's acceptable. Otherwise, I think a
+        " git-hook, or a more sophisticated shell incantation to also _diff_ the
+        " sorted file against the original one, would be the approach to use.
+        if filereadable(d) && (!filereadable(d . '.spl') || getftime(d) > getftime(d . '.spl'))
+            silent exec 'mkspell! ' . fnameescape(d)
+        endif
+    endfor
+endfunction
+
+" Need to delay shelling out to sort until after the vim-altscreen plugin has
+" been initialized with the myNoAltScreen augroup has executed.
+"
+" Otherwise, :execute commands get printed to the "normal" screen. Even if you
+" use silent!, this moves the prompt to the bottom of the screen.
+augroup DelaySpellfileSetupUntilAltScreen
+    autocmd VimEnter * call SetupSpellfile()
+augroup END
+
 " Don't spellcheck everything, instead check a restricted subset of filetypes.
 set spelllang=en_us
 set spellfile=~/.vim/spell/en.utf-8.add
