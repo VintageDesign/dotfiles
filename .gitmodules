@@ -110,3 +110,7 @@
 	path = vim/bundle/vim-ps1
 	url = https://github.com/PProvost/vim-ps1.git
 	branch = master
+[submodule "vim/bundle/vim-altscreen"]
+	path = vim/bundle/vim-altscreen
+	url = https://github.com/fcpg/vim-altscreen.git
+	branch = master
