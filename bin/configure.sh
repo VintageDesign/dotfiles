@@ -62,7 +62,6 @@ echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "${YELLOW}Installing dev packages...${RESET}"
     sudo apt install \
-        bear \
         clang \
         clang-format \
         clang-tidy \
