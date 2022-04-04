@@ -1,2 +1,5 @@
 *.sw?
 .gdb_history
+.clangd
+.cache/
+compile_commands.json
