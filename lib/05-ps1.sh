@@ -22,6 +22,16 @@ xterm* | rxvt*)
 *) ;;
 esac
 
+# Indicate that your shell is polluted by a Yocto eSDK toolchain environment
+function __yocto_sysroot_ps1() {
+    OLD_EXIT_STATUS=$?
+    if [ -n "$OECORE_TARGET_SYSROOT" ]; then
+        echo -n "[$(basename "$OECORE_TARGET_SYSROOT")] "
+    fi
+    return $OLD_EXIT_STATUS
+}
+PS1="\[${YELLOW}\]\$(__yocto_sysroot_ps1)\[${RESET}\]${PS1}"
+
 # Determine if connected over ssh.
 function __is_ssh() {
     if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
