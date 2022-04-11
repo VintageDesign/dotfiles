@@ -565,10 +565,10 @@ nmap <C-h> :bprevious<CR>
 
 " Use fzf.vim to open searchable list of buffers and their previews.
 noremap <silent> <C-F><C-B> :Buffers<CR>
+" All files
 noremap <silent> <C-F><C-F> :Files<CR>
-" If run on a visual selection, it will show the history for that selection.
-" Otherwise, show the history for the current buffer.
-noremap <silent> <C-F><C-G> :BCommits<CR>
+" git ls-files
+noremap <silent> <C-F><C-G> :GFiles<CR>
 noremap <silent> <C-F><C-M> :Marks<CR>
 " noremap <silent> <C-F><C-S> :Snippets<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
