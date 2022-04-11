@@ -13,8 +13,10 @@ shopt -s checkwinsize
 
 # fzf settings
 export FZF_DEFAULT_OPTS="--history-size=100000"
-export FZF_DEFAULT_COMMAND="fd --type f"
-export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+# Don't ignore files in Vim with C-f-f. You can get git ls-files with C-f-g.
+export FZF_DEFAULT_COMMAND="fd --type f --no-ignore"
+# But still make C-t from the shell ignore ignored files.
+export FZF_CTRL_T_COMMAND="fd --type f"
 export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -n 60'"
 export FZF_CTRL_T_OPTS="--preview 'bat --style changes --color=always --line-range :60 {}'"
 
