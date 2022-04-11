@@ -562,6 +562,10 @@ nmap <C-t> :enew<CR>
 nmap <C-l> :bnext<CR>
 " Move to the previous buffer.
 nmap <C-h> :bprevious<CR>
+" Make :bd not close any open windows
+" https://vim.fandom.com/wiki/Deleting_a_buffer_without_closing_the_window
+" https://stackoverflow.com/questions/2605036/how-to-redefine-a-command-in-vim
+cnoreabbrev <expr> bd getcmdtype() == ":" && getcmdline() == 'bd' ? 'bprevious\|bdelete #' : 'bdelete'
 
 " Use fzf.vim to open searchable list of buffers and their previews.
 noremap <silent> <C-F><C-B> :Buffers<CR>
