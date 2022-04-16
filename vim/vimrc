@@ -575,7 +575,7 @@ noremap <silent> <C-F><C-F> :Files<CR>
 " git ls-files
 noremap <silent> <C-F><C-G> :GFiles<CR>
 noremap <silent> <C-F><C-M> :Marks<CR>
-" noremap <silent> <C-F><C-S> :Snippets<CR>
+noremap <silent> <C-F><C-S> :Snippets<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
