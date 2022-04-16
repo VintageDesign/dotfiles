@@ -257,8 +257,7 @@ if exists("&spelloptions")
 endif
 
 augroup spellingFiletypes
-    autocmd!
-    autocmd FileType vimwiki,markdown,text,gitcommit setlocal spell
+    autocmd FileType vimwiki,markdown,gitcommit setlocal spell
 augroup END
 nnoremap <F7> :setlocal spell! spell?<CR>
 
