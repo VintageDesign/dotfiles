@@ -2,6 +2,7 @@
 3D
 ACK
 analytics
+Asemic
 async
 ATD
 Autocompletion
@@ -48,6 +49,7 @@ CUDA
 cursorcolumn
 customizations
 databroker
+Delaunay
 deserialization
 deserialize
 destructor
@@ -167,6 +169,7 @@ reimport
 renderer
 replanned
 repo
+resumable
 ripgrep
 Roadmap
 ROS
