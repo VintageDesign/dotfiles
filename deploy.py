@@ -7,6 +7,7 @@ from pathlib import Path
 MAPPINGS = {
     "vim/": ".vim/",
     "rcfiles/bashrc": ".bashrc",
+    "rcfiles/clangd.yml": ".config/clangd/config.yaml",
     "rcfiles/gdbinit": ".gdbinit",
     "rcfiles/gitconfig": ".gitconfig",
     "rcfiles/gitconfig-work": ".gitconfig-work",
@@ -75,6 +76,9 @@ def main(args):
                 # TODO: Decide if removing the directory ourselves is okay to do.
                 print(dest, "exists and is a directory! Not symlinking!")
             else:
+                if not dest.parent.exists():
+                    print("creating", dest.parent, "directory")
+                    dest.parent.mkdir(parents=True, exist_ok=True)
                 dest.symlink_to(src)
 
 
