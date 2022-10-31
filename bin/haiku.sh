@@ -33,7 +33,7 @@ SEED=""
 NUMBER=5
 TEMPERATURE=1
 MAX_TOKENS=20
-DOMAIN=http://142.93.71.65
+DOMAIN=https://agill.xyz
 
 while [ $# -ge 1 ]; do
     case "$1" in
@@ -84,7 +84,6 @@ if [ -n "$SEED" ]; then
 fi
 
 curl \
-    --insecure \
     --location \
     --silent \
     --show-error \
