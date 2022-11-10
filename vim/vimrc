@@ -453,7 +453,9 @@ let g:ale_rust_analyzer_executable = "/home/nots/.rustup/toolchains/nightly-x86_
 
 let g:ale_rust_analyzer_config = {
     \ 'cargo': {'loadOutDirsFromCheck': v:true},
-    \ 'procMacro': {'enable': v:true}
+    \ 'procMacro': {'enable': v:true},
+    \ 'checkOnSave': {'command': 'clippy', 'enable': v:true},
+    \ 'diagnostics': { 'disabled': ['unresolved-proc-macro'] },
 \ }
 
 let g:ale_dockerfile_hadolint_use_docker = 'yes'
