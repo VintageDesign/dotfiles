@@ -122,3 +122,7 @@
 	path = vim/bundle/rust.vim
 	url = https://github.com/rust-lang/rust.vim.git
 	branch = master
+[submodule "vim/bundle/vim-localvimrc"]
+	path = vim/bundle/vim-localvimrc
+	url = https://github.com/embear/vim-localvimrc.git
+	branch = master
