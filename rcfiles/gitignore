@@ -1,4 +1,5 @@
 *.sw?
+.lvimrc
 .gdb_history
 .clangd
 .cache/
