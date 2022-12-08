@@ -113,6 +113,8 @@ let g:airline_symbols.linenr = ' ln:'
 packadd! matchit
 packadd! termdebug
 
+let g:localvimrc_ask = 0
+
 " All packadds need to be before the `filetype indent plugin on` in order for
 " ftdetect scripts to be loaded.
 filetype indent plugin on
