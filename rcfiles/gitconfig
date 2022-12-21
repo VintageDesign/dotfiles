@@ -68,3 +68,8 @@
     path = .gitconfig-work
 [includeIf "gitdir:~/workspace/"]
     path = .gitconfig-work
+[blame]
+    # NOTE: You may have to create this file (even if it's empty) before you can use git-blame
+    ignoreRevsFile = .git-blame-ignore-revs
+    markIgnoredLines = true
+    markUnblamableLines = true
