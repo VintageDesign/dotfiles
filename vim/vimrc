@@ -419,7 +419,7 @@ let g:ale_fixers = {
 let g:ale_linters = {
             \   'cmake':    ['cmake_lint'],
             \   'cpp':      ['clangd'],
-            \   'python':   ['pydocstyle', 'pylint', 'pyls', 'jedils'],
+            \   'python':   ['pydocstyle', 'pylint', 'pylsp', 'jedils'],
             \   'rust':     ['analyzer'],
             \   'tex':      ['chktex'],
             \}

@@ -12,4 +12,5 @@ pydocstyle
 pygments
 pylint
 pylint-venv
+python-lsp-server
 rope
