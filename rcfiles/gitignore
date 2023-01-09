@@ -6,3 +6,5 @@
 compile_commands.json
 doc/tags
 .vscode/
+__pycache__/
+*.pyc
