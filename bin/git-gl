@@ -27,13 +27,13 @@ fzf-git-browse() {
         --exclude='save/*' \
         --exclude='trash/*' \
         --color=always \
-        --format="%C(auto)%h%d %s %C(black)%C(bold)%an, %ar" \
+        --format="%C(auto)%h%d %s %C(dim)%an, %ar" \
         --decorate=short \
         `#--decorate-refs-exclude='refs/tags/*'` \
         `# Pass all arguments through to git-log` \
         "$@" |
         fzf \
-            `# Enables selecting content with mouse. Outdated by <ctrl-h>?` \
+            `# Enables selecting content with mouse.` \
             --no-mouse \
             --header "<ctrl-y> checkout   <ctrl-h> copy hash   <ctrl-r> rebase   <ctrl-p> cherry pick" \
             --ansi \
@@ -46,7 +46,7 @@ fzf-git-browse() {
                 | xargs -I % sh -c 'git show --submodule --color=always %' \
                 | DELTA_FEATURES="" delta --features='line-numbers' --width \$FZF_PREVIEW_COLUMNS" \
             `# Open selected commit in a pager so you can see the whole thing` \
-            --bind "enter:execute(
+            --bind "enter:execute( \
                 echo {} \
                     | grep -o '\<[a-f0-9]\{7,\}\>' \
                     | head -1 \
@@ -55,7 +55,7 @@ fzf-git-browse() {
                     | LESS=R less \
                 )" \
             `# Checkout the selected commit (y for yank)` \
-            --bind "ctrl-y:execute(
+            --bind "ctrl-y:execute( \
                 echo {} \
                     | grep -o '\<[a-f0-9]\{7,\}\>' \
                     | head -1 \
@@ -63,7 +63,7 @@ fzf-git-browse() {
                         'git checkout %' \
                 )+abort" \
             `# Copy the selected commit's short hash to the clipboard (h for hash)` \
-            --bind "ctrl-h:execute(
+            --bind "ctrl-h:execute( \
                 echo {} \
                     | grep -o '\<[a-f0-9]\{7,\}\>' \
                     | head -1 \
@@ -72,15 +72,15 @@ fzf-git-browse() {
                     | xclip -selection clipboard \
                 )" \
             `# Perform an interactive rebase from the current HEAD to the selected commit` \
-            --bind "ctrl-r:execute(
+            --bind "ctrl-r:execute( \
                 echo {} \
                     | grep -o '\<[a-f0-9]\{7,\}\>' \
                     | head -1 \
                     | tr -d '\n' \
                     | xargs -oI % git rebase --interactive --autosquash %~ \
                 )+abort" \
-            `# Cherry pick the selected commit. Needs a bit of testing.` \
-            --bind "ctrl-p:execute(
+            `# Cherry pick the selected commit.` \
+            --bind "ctrl-p:execute( \
                 echo {} \
                     | grep -o '\<[a-f0-9]\{7,\}\>' \
                     | head -1 \
