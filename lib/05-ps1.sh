@@ -49,6 +49,27 @@ if __is_ssh; then
     PS1="\[${BOLD}${RED}\](\[${RESET}${RED}\]ssh\[${BOLD}\]) \[${RESET}\]${PS1}"
 fi
 
+function __is_serial() {
+    case "$(tty)" in
+    /dev/tty[0-9])
+        # local console
+        return 1
+        ;;
+    /dev/tty[a-zA-Z]*[0-9])
+        # serial console
+        return 0
+        ;;
+    *)
+        # Likely a /dev/pty/ pseudo terminal
+        return 1
+        ;;
+    esac
+}
+# If connected over serial console, prepend a red (serial) to the $PS1
+if __is_serial; then
+    PS1="\[${BOLD}${RED}\](\[${RESET}${RED}\]serial\[${BOLD}\]) \[${RESET}\]${PS1}"
+fi
+
 # Test whether the given function exists.
 function function_exists() {
     declare -f -F "$1" >/dev/null
