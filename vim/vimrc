@@ -334,6 +334,12 @@ augroup overrideRustGdb
     autocmd!
     autocmd FileType rust let g:termdebugger = 'rust-gdb'
 augroup END
+
+augroup overrideYamlIndentation
+    autocmd!
+    autocmd FileType yaml setlocal ts=4 sts=4 sw=4 expandtab
+augroup END
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
