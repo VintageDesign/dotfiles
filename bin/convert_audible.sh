@@ -6,8 +6,19 @@ set -o noclobber
 
 convert_to_mp3() {
     local activation_bytes="$1"
-    local audible_drm_audiobook="$2"
-    ffmpeg -activation_bytes "$activation_bytes" -i "$audible_drm_audiobook" -threads 0 -map_metadata 0 -map_chapters 0 -id3v2_version 3 "${audible_drm_audiobook%.*}.mp3"
+    local aax="$2"
+
+    if ! ffmpeg \
+        -activation_bytes "$activation_bytes" \
+        -i "$aax" \
+        -threads 0 \
+        -map_metadata 0 \
+        -map_chapters 0 \
+        -id3v2_version 3 \
+        "${aax%.*}.mp3" \
+        ; then
+        echo "Failed to convert $aax" >&2
+    fi
 }
 
 usage() {
@@ -18,16 +29,17 @@ usage() {
     echo "  -h, --help                                  Show this help and exit"
     echo "  -a, --activation-bytes ACTIVATION_BYTES     Your Audible user account's activation bytes"
     echo "                                              See: https://audible-converter.ml/"
+    echo "  -j, --jobs JOBS                             Number of jobs to use"
 }
 
 # Run the conversion in parallel
 convert_all_to_mp3() {
     local activation_bytes="$1"
-    local -n audible_drm_audiobooks="$2"
-    local max_jobs=8
+    local -n aaxs="$2"
+    local max_jobs="$3"
 
-    for audiobook in "${audible_drm_audiobooks[@]}"; do
-        if test "$(jobs | wc -l)" -ge $max_jobs; then
+    for audiobook in "${aaxs[@]}"; do
+        if test "$(jobs | wc -l)" -ge "$max_jobs"; then
             wait -n
         fi
 
@@ -41,6 +53,7 @@ convert_all_to_mp3() {
 main() {
     local activation_bytes=""
     local audiobooks=()
+    local jobs=8
 
     while test $# -gt 0; do
         case "$1" in
@@ -52,6 +65,10 @@ main() {
             activation_bytes="$2"
             shift
             ;;
+        --jobs | -j)
+            jobs="$2"
+            shift
+            ;;
         *)
             audiobooks+=("$1")
             ;;
@@ -59,7 +76,7 @@ main() {
         shift
     done
 
-    convert_all_to_mp3 "$activation_bytes" audiobooks
+    convert_all_to_mp3 "$activation_bytes" audiobooks "$jobs"
 }
 
 main "$@"
