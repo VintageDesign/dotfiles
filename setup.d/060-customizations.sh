@@ -52,7 +52,7 @@ if prompt_default_no "Configure system settings?"; then
 fi
 
 if prompt_default_no "Install/update HeadsetControl?"; then
-    if [[ -d ~/src/HeadesetControl/ ]]; then
+    if [[ -d ~/src/HeadsetControl/ ]]; then
         pushd ~/src/HeadsetControl/ || exit 1
         git pull
     else
@@ -60,9 +60,9 @@ if prompt_default_no "Install/update HeadsetControl?"; then
         pushd ~/src/HeadsetControl/ || exit 1
     fi
 
-    cmake -B build/
-    cmake --build build/
-    pushd ~/src/HeadsetControl/build/ || exit 1
+    cmake -B ./build/
+    cmake --build ./build/
+    pushd ./build/ || exit 1
     sudo make install
     sudo udevadm control --reload-rules && sudo udevadm trigger
     popd || exit 1
