@@ -15,7 +15,11 @@ My personal dotfiles and shell scripts
 * Prerequisite packages
 
   ```sh
-  sudo dnf install vim-enhanced stow git make curl
+  sudo dnf install vim-enhanced stow git curl
+  ```
+
+  ```sh
+  sudo apt install vim-gtk stow git curl
   ```
 
 ## Installation
@@ -23,5 +27,5 @@ My personal dotfiles and shell scripts
 ```bash
 git clone --recurse-submodules git@github.com:Notgnoshi/dotfiles.git ~/.config/dotfiles
 cd ~/.config/dotfiles
-make stow
+./setup
 ```
