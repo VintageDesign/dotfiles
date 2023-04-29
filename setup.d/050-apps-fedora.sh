@@ -20,11 +20,11 @@ if prompt_default_no "Install GUI apps?"; then
     fi
 
     if prompt_default_no "Install Discord?"; then
-        sudo dnf --assumeyes install discord
+        sudo flatpak install --assumeyes com.discordapp.Discord
     fi
 
     if prompt_default_no "Install Spotify?"; then
-        sudo flatpak install --assumeyes flathub com.spotify.Client
+        sudo flatpak install --assumeyes com.spotify.Client
     fi
 
     download_and_install_teams() {
