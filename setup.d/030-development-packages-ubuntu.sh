@@ -20,7 +20,9 @@ if prompt_default_no "Install native software development packages?"; then
         libhidapi-dev
         iwyu
         kcachegrind
+        libasan6
         libboost-all-dev
+        libubsan1
         libzmq3-dev
         lld
         lldb

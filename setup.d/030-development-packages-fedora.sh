@@ -21,6 +21,8 @@ if prompt_default_no "Install native software development packages?"; then
         hidapi-devel
         iwyu
         kcachegrind
+        libasan
+        libubsan
         lld
         lldb
         make
