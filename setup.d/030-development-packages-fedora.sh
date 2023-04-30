@@ -4,7 +4,7 @@ if prompt_default_no "Install native software development packages?"; then
         # TODO: On Fedora Bear actually tracks close to the upstream, but as of right now, there's
         # what looks like an important bugfix that isn't in the fedora package yet (3.1.2)
         bear
-        boost
+        boost-devel
         clang
         clang-tools-extra
         cmake
