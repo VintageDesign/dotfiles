@@ -1,4 +1,4 @@
-snippet set "Safety settings" w
+snippet set "Safety settings" b
 set -o errexit
 set -o pipefail
 set -o nounset
@@ -49,4 +49,60 @@ while [ -h "$SOURCE" ]; do
     # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
     [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
 done
+endsnippet
+
+snippet script "Bash script template" b
+#!/bin/bash
+set -o errexit
+set -o pipefail
+set -o nounset
+set -o noclobber
+
+export RED=$(tput setaf 1)
+export GREEN=$(tput setaf 2)
+export YELLOW=$(tput setaf 3)
+export BLUE=$(tput setaf 4)
+export RESET=$(tput sgr0)
+
+debug() {
+    echo "${BLUE}DEBUG:${RESET} $*"
+}
+
+info() {
+    echo "${GREEN}INFO:${RESET} $*"
+}
+
+error() {
+    echo "${RED}ERROR:${RESET} $*" >&2
+}
+
+usage() {
+    echo "Usage: \$0 [--help]"
+    echo
+    echo "  --help, -h      Show this help and exit"
+}
+
+main() {
+    local positionals=()
+
+    while [[ $# -gt 0 ]]; do
+        case "\$1" in
+        --help | -h)
+            usage
+            exit 0
+            ;;
+        -*)
+            error "Unexpected option: \$1"
+            usage >&2
+            exit 1
+            ;;
+        *)
+            positionals+=("\$1")
+            ;;
+        esac
+        shift
+    done
+}
+
+main "$@"
 endsnippet
