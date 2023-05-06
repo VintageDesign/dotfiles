@@ -10,7 +10,7 @@ if prompt_default_no "Install/update dotfiles?"; then
         stow --verbose=1 --dir="$DOTFILES_SETUP_SCRIPT_DIR" --target="$HOME" --restow dotfiles
         # Stow seems to ignore .gitignore, and I can't figure out how to force it, so do it by hand.
         if [[ ! -e "$HOME/.gitignore" ]]; then
-            ln "$DOTFILES_SETUP_SCRIPT_DIR/dotfiles/.gitignore" "$HOME/.gitignore"
+            ln -s "$DOTFILES_SETUP_SCRIPT_DIR/dotfiles/.gitignore" "$HOME/.gitignore"
         fi
     elif prompt_default_no "Undeploy dotfiles?"; then
         stow --verbose=1 --dir="$DOTFILES_SETUP_SCRIPT_DIR" --target="$HOME" --delete dotfiles
