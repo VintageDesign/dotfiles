@@ -27,6 +27,7 @@ if prompt_default_no "Install native software development packages?"; then
         lldb
         make
         meld
+        openssl-devel
         optipng
         pandoc
         pkg-config
