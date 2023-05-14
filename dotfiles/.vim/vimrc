@@ -486,6 +486,9 @@ imap <F2> <C-\><C-O>:ALEDetail<CR>
 " Use a popup, not a new window for the lint details and hover
 let g:ale_floating_preview = 1
 let g:ale_floating_window_border = []
+let g:ale_virtualtext_cursor = 'current'
+let g:ale_virtualtext_column = 80
+let g:ale_virtualtext_maxcolumn = 120
 
 " Find references to the symbol under the cursor.
 " TODO: Use FZF to select and preview (with syntax highlighting!)
