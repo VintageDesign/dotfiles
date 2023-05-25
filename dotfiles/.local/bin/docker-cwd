@@ -4,15 +4,19 @@ set -o pipefail
 set -o nounset
 set -o noclobber
 
+CARGO_HOME="${CARGO_HOME:-$HOME/.cargo/}"
+
 # Sharing /etc/passwd is a bit hacky, but is needed for SSH to find ~/.ssh/
 docker run \
     --rm \
     -it \
+    --mount "type=bind,src=$CARGO_HOME,dst=$CARGO_HOME" \
     --mount "type=bind,src=$PWD,dst=$PWD" \
     --mount "type=bind,src=$SSH_AUTH_SOCK,dst=/ssh-agent" \
     --mount "type=bind,src=/etc/passwd,dst=/etc/passwd,ro" \
     --mount "type=bind,src=$HOME/.ssh/id_rsa,dst=$HOME/.ssh/id_rsa,ro" \
     --env "SSH_AUTH_SOCK=/ssh-agent" \
+    --env CARGO_HOME \
     --user "$(id -u):$(id -g)" \
     --workdir "$PWD" \
     "$@"
