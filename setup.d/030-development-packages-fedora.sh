@@ -27,6 +27,7 @@ if prompt_default_no "Install native software development packages?"; then
         lldb
         make
         meld
+        openssl-devel
         optipng
         pandoc
         pkg-config
@@ -54,6 +55,47 @@ if prompt_default_no "Install Docker?"; then
 
     info "${YELLOW}Docker installed, but you need to reboot or start a new shell with 'newgrp docker' to continue"
 fi # Docker
+
+download_and_install_dive() {
+    local version="$1"
+    local version_no_v
+    version_no_v=$(echo -n "$version" | sed -En 's/v(.*)/\1/p')
+    local artifact="dive_${version_no_v}_linux_amd64.rpm"
+
+    pushd /tmp || exit 1
+
+    debug "downloading $artifact ..."
+    github_download_release "wagoodman/dive" "$version" "$artifact"
+
+    debug "installing..."
+    sudo dnf --assumeyes localinstall "$artifact"
+
+    popd || exit 1
+}
+
+if prompt_default_no "Install Docker dive?"; then
+    latest_version=$(github_latest_release_tag "wagoodman/dive")
+    info "Found latest version: $latest_version"
+
+    if command -v dive &>/dev/null; then
+        installed_version="v$(dive --version | cut -d ' ' -f 2 | tr -d '\n')"
+        debug "Found installed version: $installed_version"
+
+        if [[ "$installed_version" != "$latest_version" ]]; then
+            info "Updating dive..."
+            download_and_install_dive "$latest_version"
+        else
+            info "dive $installed_version already installed."
+            if prompt_default_no "Reinstall dive?"; then
+                info "Reinstalling dive..."
+                download_and_install_dive "$latest_version"
+            fi
+        fi
+    else
+        info "Installing dive for the first time..."
+        download_and_install_dive "$latest_version"
+    fi
+fi
 
 if prompt_default_no "Install prettier?"; then
     sudo dnf --assumeyes install npm nodejs

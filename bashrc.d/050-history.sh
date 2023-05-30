@@ -8,7 +8,7 @@
 HISTSIZE=-1
 # Save all history
 HISTFILESIZE=-1
-HISTTIMEFORMAT="%h %d %H:%M:%S "
+HISTTIMEFORMAT="%Y-%m-%d %H:%M:%S: "
 # Append (not overwrite) to the HISTFILE on session exit.
 shopt -s histappend
 
