@@ -245,9 +245,6 @@ def main(args):
                 "Given column '%s' not found in header '%s'", args.column, ",".join(header)
             )
             sys.exit(1)
-        old_column_name = header[column_index]
-        new_column_name = old_column_name + " deltas"
-        header += [new_column_name]
 
     stats = OnlineVariance()
     for row in reader:
