@@ -604,6 +604,9 @@ nnoremap <space> za
 nnoremap j gj
 nnoremap k gk
 
+" Don't bring comments on newlines over to column 0
+inoremap # X<BS>#
+
 " Open a new empty buffer. Current buffer must be written.
 nmap <C-t> :enew<CR>
 " Move to the next buffer.
