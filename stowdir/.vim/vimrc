@@ -542,21 +542,17 @@ inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 " Use FZF :Files to do file completion in insert mode
 imap <c-x><c-f> <plug>(fzf-complete-path)
 
-" Mnemonic: buffers
 noremap <silent> <C-F><C-B> :Buffers<CR>
 " Consistent with <C-T> readline keybind
 noremap <silent> <C-F><C-T> :Files<CR>
-" Mnemonic: git
 noremap <silent> <C-F><C-G> :GFiles<CR>
 " Consistent with <C-R> readline keybind
 noremap <silent> <C-F><C-R> :History:<CR>
 " Mnemonic: find
 noremap <silent> <C-F><C-F> :History/<CR>
-" Mnemonic: history
 noremap <silent> <C-F><C-H> :History<CR>
-" Mnemonic: marks
+noremap <silent> <C-F><C-J> :Jumps<CR>
 noremap <silent> <C-F><C-M> :Marks<CR>
-" Mnemonic: snippets
 noremap <silent> <C-F><C-S> :Snippets<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -607,6 +603,9 @@ nnoremap <space> za
 " Visual movement. Act as the arrow keys do when lines wrap.
 nnoremap j gj
 nnoremap k gk
+
+" Don't bring comments on newlines over to column 0
+inoremap # X<BS>#
 
 " Open a new empty buffer. Current buffer must be written.
 nmap <C-t> :enew<CR>
