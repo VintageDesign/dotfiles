@@ -3,9 +3,9 @@
 *.spl
 *.tmp
 .netrwhist
-dotfiles/.vim/undo
-dotfiles/.vim/viminfo
-dotfiles/.vim/bundle/vis/doc/tags
+stowdir/.vim/undo
+stowdir/.vim/viminfo
+stowdir/.vim/bundle/vis/doc/tags
 
 # Allow adding work-specific aliases without tracking them.
 bashrc.d/100-work.sh
