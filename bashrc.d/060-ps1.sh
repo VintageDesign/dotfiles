@@ -1,7 +1,7 @@
 ##################################################################################################
 # Set the base $PS1
 ##################################################################################################
-PS1="\u@\h \[${BLUE}\]\w"
+PS1="\u@\h \[${GREEN}\]\w"
 
 ##################################################################################################
 # If this is an xterm set the title to user@host:dir
@@ -117,7 +117,7 @@ export GIT_PS1_SHOWDIRTYSTATE=1
 # When in a detached head state, attempt to find the branch HEAD is on.
 export GIT_PS1_DESCRIBE_STYLE='branch'
 # Use colored output to indicate the current status
-export GIT_PS1_SHOWCOLORHINTS=1
+export GIT_PS1_SHOWCOLORHINTS=
 # Show a '$' next to the branch name if something is stashed.
 export GIT_PS1_SHOWSTASHSTATE=1
 # Show a '%' next to the branch name if there are untracked files.
@@ -128,7 +128,7 @@ export GIT_PS1_SHOWUPSTREAM='auto'
 export GIT_PS1_SHOWCONFLICTSTATE='yes'
 
 if function_exists __git_ps1; then
-    PS1="${PS1}\[${RESET}\]\$(__git_ps1)\[${RESET}\]"
+    PS1="${PS1}\[${BLUE}\]\$(__git_ps1)\[${RESET}\]"
 fi
 
 ##################################################################################################
