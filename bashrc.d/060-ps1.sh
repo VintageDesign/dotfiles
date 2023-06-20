@@ -124,6 +124,8 @@ export GIT_PS1_SHOWSTASHSTATE=1
 export GIT_PS1_SHOWUNTRACKEDFILES=1
 # '=' means up to date with upstream, '<' means you're behind, and '>' means you're ahead. '<>' means you've diverged.
 export GIT_PS1_SHOWUPSTREAM='auto'
+# Add |CONFLICT markers if there are merge conflicts
+export GIT_PS1_SHOWCONFLICTSTATE='yes'
 
 if function_exists __git_ps1; then
     PS1="${PS1}\[${BLUE}\]\$(__git_ps1)\[${RESET}\]"
