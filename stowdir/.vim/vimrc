@@ -82,6 +82,20 @@ highlight! link ALEWarning  SpellRare
 highlight! link ALEInfo     SpellCap
 " gruvbox undoes this, so I'm redoing it
 highlight! link ALEError    SpellBad
+
+augroup todoHighlights
+    autocmd!
+    " TODO: Support highlighting in markdown / plaintext files (no comments)
+    " TODO: Support case-insensitivity
+    " TODO: Support TODO (name here) style comments with or without trailing colon
+    autocmd Syntax * syntax match MyTodo /\v<(FIXME|NOTE|TODO|OPTIMIZE|BUG|XXX|IMPORTANT):/ containedin=.*Comment,vimCommentTitle
+augroup END
+highlight! link Todo        MyTodo
+highlight! link pythonTodo  MyTodo
+highlight! link rustTodo    MyTodo
+highlight! link vimTodo     MyTodo
+highlight! link MyTodo      SpellRare
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
