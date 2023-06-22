@@ -128,7 +128,7 @@ if prompt_default_no "Install/update Rust?"; then
     if prompt_default_no "Install/update Cargo subcommands?"; then
         # shellcheck disable=SC1090
         [ -f ~/.cargo/env ] && source ~/.cargo/env
-        cargo install cargo-outdated cargo-nextest cargo-expand cargo-download cargo-depgraph cargo-deadlinks cargo-bloat cargo-udeps
+        cargo install cargo-outdated cargo-nextest cargo-expand cargo-download cargo-depgraph cargo-deadlinks cargo-bloat cargo-udeps cargo-watch
     fi
 fi # Rust
 
