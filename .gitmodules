@@ -132,3 +132,7 @@
 	path = stowdir/.vim/bundle/vim-tmux-navigator
 	url = https://github.com/christoomey/vim-tmux-navigator.git
 	branch = master
+[submodule "stowdir/.tmux/plugins/tpm"]
+	path = stowdir/.tmux/plugins/tpm
+	url = https://github.com/tmux-plugins/tpm.git
+	branch = master
