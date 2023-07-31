@@ -8,4 +8,3 @@ if [ -n "$BASH_VERSION" ]; then
         . ~/.bashrc
     fi
 fi
-[ -f ~/.cargo/env ] && . ~/.cargo/env
