@@ -4,21 +4,6 @@
 PS1="\u@\h \[${GREEN}\]\w"
 
 ##################################################################################################
-# If this is an xterm set the title to user@host:dir
-##################################################################################################
-if [[ -z "${debian_chroot:-}" && -r /etc/debian_chroot ]]; then
-    debian_chroot=$(cat /etc/debian_chroot)
-fi
-
-case "$TERM" in
-xterm* | rxvt*)
-    # Prepends title thingy to $PS1
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-    ;;
-*) ;;
-esac
-
-##################################################################################################
 # Add a colored (VPN) to the beginning if VPN is running and connected
 #
 # VPN_GATEWAY should be set in a non-vcs tracked ./bashrc.d/ file to determine if the VPN is
