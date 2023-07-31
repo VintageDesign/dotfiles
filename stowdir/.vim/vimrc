@@ -594,14 +594,6 @@ nnoremap <CR> :nohl<CR><CR>
 vnoremap < <gv
 vnoremap > >gv
 
-" Use ctrl+[jk] to move lines up and down in normal, insert, and visual mode.
-nnoremap <C-j> :m .+1<CR>==
-nnoremap <C-k> :m .-2<CR>==
-inoremap <C-j> <Esc>:m .+1<CR>==gi
-inoremap <C-k> <Esc>:m .-2<CR>==gi
-vnoremap <C-j> :m '>+1<CR>gv=gv
-vnoremap <C-k> :m '<-2<CR>gv=gv
-
 " These keybinds require a Vim built with the +clipboard feature.
 " On Ubuntu, the vim-gtk package provides such a Vim.
 inoremap <C-S-p> <ESC>"+Pa
@@ -621,12 +613,9 @@ nnoremap k gk
 " Don't bring comments on newlines over to column 0
 inoremap # X<BS>#
 
-" Open a new empty buffer. Current buffer must be written.
+" Open a new empty buffer.
 nmap <C-t> :enew<CR>
-" Move to the next buffer.
-nmap <C-l> :bnext<CR>
-" Move to the previous buffer.
-nmap <C-h> :bprevious<CR>
+
 " Make :bd not close any open windows
 " https://vim.fandom.com/wiki/Deleting_a_buffer_without_closing_the_window
 " https://stackoverflow.com/questions/2605036/how-to-redefine-a-command-in-vim
