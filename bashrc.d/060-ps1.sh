@@ -111,12 +111,21 @@ function_exists() {
 }
 
 # See https://github.com/git/git/blob/master/contrib/completion/git-prompt.sh for more details.
-export GIT_PS1_SHOWDIRTYSTATE=1        # Adds '*' and '+' for unstaged and staged changes
-export GIT_PS1_DESCRIBE_STYLE='branch' # When in a detached head state, attempt to find the branch HEAD is on.
-export GIT_PS1_SHOWCOLORHINTS=1        # Use colored output to indicate the current status ('git status -sb'). Only works if __git_ps1 is used from PROMPT_COMMAND, not PS1.
-export GIT_PS1_SHOWSTASHSTATE=1        # Show a '$' next to the branch name if something is stashed.
-export GIT_PS1_SHOWUNTRACKEDFILES=1    # Show a '%' next to the branch name if there are untracked files.
-export GIT_PS1_SHOWUPSTREAM='auto'     # '=' means up to date with upstream, '<' means you're behind, and '>' means you're ahead. '<>' means you've diverged.
+#
+# Adds '*' and '+' for unstaged and staged changes
+export GIT_PS1_SHOWDIRTYSTATE=1
+# When in a detached head state, attempt to find the branch HEAD is on.
+export GIT_PS1_DESCRIBE_STYLE='branch'
+# Use colored output to indicate the current status
+export GIT_PS1_SHOWCOLORHINTS=
+# Show a '$' next to the branch name if something is stashed.
+export GIT_PS1_SHOWSTASHSTATE=1
+# Show a '%' next to the branch name if there are untracked files.
+export GIT_PS1_SHOWUNTRACKEDFILES=1
+# '=' means up to date with upstream, '<' means you're behind, and '>' means you're ahead. '<>' means you've diverged.
+export GIT_PS1_SHOWUPSTREAM='auto'
+# Add |CONFLICT markers if there are merge conflicts
+export GIT_PS1_SHOWCONFLICTSTATE='yes'
 
 if function_exists __git_ps1; then
     PS1="${PS1}\[${BLUE}\]\$(__git_ps1)\[${RESET}\]"

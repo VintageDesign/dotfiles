@@ -29,7 +29,7 @@
 [submodule "vim/bundle/vim-gitgutter"]
 	path = stowdir/.vim/bundle/vim-gitgutter
 	url = https://github.com/airblade/vim-gitgutter.git
-	branch = master
+	branch = main
 [submodule "vim/bundle/vimwiki"]
 	path = stowdir/.vim/bundle/vimwiki
 	url = https://github.com/vimwiki/vimwiki.git

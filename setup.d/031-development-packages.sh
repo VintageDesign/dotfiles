@@ -1,5 +1,5 @@
 #!/bin/bash
-if prompt_default_yes "Install Python development packages?"; then
+if prompt_default_no "Install Python development packages?"; then
     if prompt_default_no "Install Pip?"; then
         if ! command -v pip &>/dev/null; then
             info "Pip not installed. Installing..."
@@ -16,7 +16,7 @@ if prompt_default_yes "Install Python development packages?"; then
         sed -i 's|/usr/bin/python3|/usr/bin/env python3|' "$(which pylint)"
     fi
 
-    if prompt_default_no "Install/update colout?"; then
+    if prompt_default_yes "Install/update colout?"; then
         mkdir -p "$HOME/src/"
         if [[ -d "$HOME/src/colout/" ]]; then
             pushd "$HOME/src/colout/" || exit 1
@@ -111,7 +111,7 @@ if prompt_default_yes "Install/update linters and formatters?"; then
     fi
 fi # Linters/formatters
 
-if prompt_default_yes "Install/update Rust?"; then
+if prompt_default_no "Install/update Rust?"; then
     if command -v rustup &>/dev/null; then
         installed_version=$(rustup --version |& sed -En 's/rustup\s+([0-9.]+)\s.*/\1/p')
         info "rustup version $installed_version already installed. Updating..."
@@ -128,10 +128,10 @@ if prompt_default_yes "Install/update Rust?"; then
     if prompt_default_no "Install/update Cargo subcommands?"; then
         # shellcheck disable=SC1090
         [ -f ~/.cargo/env ] && source ~/.cargo/env
-        cargo install cargo-outdated cargo-nextest cargo-expand cargo-download cargo-depgraph cargo-deadlinks cargo-bloat cargo-udeps
+        cargo install cargo-outdated cargo-nextest cargo-expand cargo-download cargo-depgraph cargo-deadlinks cargo-bloat cargo-udeps cargo-watch
     fi
 fi # Rust
 
-if prompt_default_yes "Install/update hadolint?"; then
+if prompt_default_no "Install/update hadolint?"; then
     docker pull hadolint/hadolint
 fi

@@ -23,10 +23,6 @@ export FZF_CTRL_T_OPTS="--preview 'bat --style changes --color=always --line-ran
 # Add ~/.local/bin/ to PATH
 PATH="$HOME/.local/bin${PATH:+:${PATH}}"
 
-# Add local manpages, but be sure to not overwrite the defaults
-MANPATH="$(manpath --quiet)"
-MANPATH="$HOME/.local/man${MANPATH:+:${MANPATH}}"
-MANPATH="$HOME/.local/share/man${MANPATH:+:${MANPATH}}"
 # Use vim as my MANPAGER. Has folding, ability to follow links.
 MANPAGER="vim -M +MANPAGER -"
 MANWIDTH=100
@@ -46,7 +42,6 @@ export C_INCLUDE_PATH
 export CPLUS_INCLUDE_PATH
 export LIBRARY_PATH
 export LD_LIBRARY_PATH
-export MANPATH
 export MANPAGER
 export MANWIDTH
 export EDITOR=vim

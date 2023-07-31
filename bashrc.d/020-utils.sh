@@ -16,15 +16,6 @@ randman() {
     man "$(ls -1 /usr/share/man/man?/ | shuf -n1 | cut -d. -f1)"
 }
 
-# Generate a random password al la XKCD
-randpass() {
-    sort -R /usr/share/dict/words |
-        head -n ${1:-4} |
-        awk '{ sub(".", substr(toupper($0),1,1)); printf "%s", $0 }' \
-        ;
-    echo
-}
-
 # attempt to rhyme the given word
 rhyme() {
     {
