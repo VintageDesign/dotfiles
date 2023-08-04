@@ -34,10 +34,6 @@
 	path = stowdir/.vim/bundle/vimwiki
 	url = https://github.com/vimwiki/vimwiki.git
 	branch = dev
-[submodule "vim/bundle/vim-systemd-syntax"]
-	path = stowdir/.vim/bundle/vim-systemd-syntax
-	url = https://github.com/Matt-Deacalion/vim-systemd-syntax.git
-	branch = master
 [submodule "vim/bundle/fzf.vim"]
 	path = stowdir/.vim/bundle/fzf.vim
 	url = https://github.com/junegunn/fzf.vim.git
@@ -136,3 +132,7 @@
 	path = stowdir/.tmux/plugins/tpm
 	url = https://github.com/tmux-plugins/tpm.git
 	branch = master
+[submodule "stowdir/.vim/bundle/vim-systemd-syntax"]
+	path = stowdir/.vim/bundle/vim-systemd-syntax
+	url = https://codeberg.org/Dokana/vim-systemd-syntax.git
+	branch = trunk
