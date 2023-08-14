@@ -136,3 +136,7 @@
 	path = stowdir/.vim/bundle/vim-systemd-syntax
 	url = https://codeberg.org/Dokana/vim-systemd-syntax.git
 	branch = trunk
+[submodule "stowdir/.tmux/tmux-bash-completion"]
+	path = stowdir/.tmux/tmux-bash-completion
+	url = git@github.com:imomaliev/tmux-bash-completion.git
+	branch = master
