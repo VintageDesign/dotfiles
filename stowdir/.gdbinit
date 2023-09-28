@@ -7,7 +7,8 @@ set print symbol on
 
 #... This might have been why I have a hard time accessing the backtrace on segfaults...
 #handle all nostop
-handle SIGUSR1 SIGUSR2 SIGILL nostop
+# handle SIGUSR1 SIGUSR2 SIGILL nostop
+handle SIGUSR1 SIGUSR2 nostop
 
 # Do not stop all threads when hitting a breakpoint.
 # Has the potential to cause problems, depending on the program.
