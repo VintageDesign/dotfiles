@@ -22,6 +22,7 @@ if prompt_default_no "Install native software development packages?"; then
         kcachegrind
         libasan6
         libboost-all-dev
+        libssl-dev
         libubsan1
         libzmq3-dev
         lld
