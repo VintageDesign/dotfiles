@@ -62,10 +62,12 @@ if prompt_default_no "Install Docker?"; then
     sudo chmod a+r /etc/apt/keyrings/docker.gpg
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" |
         sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
-    sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    sudo apt update
+    sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
     sudo groupadd --force docker
     sudo usermod -aG docker "$USER"
+    sudo systemctl enable docker
     sudo systemctl start docker
 
     info "${YELLOW}Docker installed, but you need to reboot or start a new shell with 'newgrp docker' to continue"
