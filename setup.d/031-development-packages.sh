@@ -136,6 +136,43 @@ if prompt_default_no "Install/update Rust?"; then
     fi
 fi # Rust
 
+download_and_install_mold() {
+    local version="$1"
+    local version_no_v
+    version_no_v=$(echo -n "$version" | sed -En 's/v(.*)/\1/p')
+    local artifact="mold-$version_no_v-x86_64-linux.tar.gz"
+
+    pushd /tmp || exit 1
+
+    debug "downloading $artifact ..."
+    github_download_release "rui314/mold" "$version" "$artifact"
+
+    debug "installing ..."
+    tar -C ~/.local/ --strip-components=1 -xzvf "$artifact"
+
+    popd || exit 1
+}
+
+if prompt_default_no "Install/update mold?"; then
+    latest_version="$(github_latest_release_tag "rui314/mold")"
+    if command mold --version &>/dev/null; then
+        installed_version="v$(mold --version | cut -d ' ' -f 2)"
+        debug "Found installed mold version: $installed_version"
+        if [[ "$installed_version" != "$latest_version" ]]; then
+            info "Found newer mold version: $latest_version"
+            download_and_install_mold "$latest_version"
+        else
+            info "Mold $latest_version already installed"
+            if prompt_default_no "Reinstall mold?"; then
+                download_and_install_mold "$latest_version"
+            fi
+        fi
+    else
+        info "Mold not installed. Installing mold $latest_version..."
+        download_and_install_mold "$latest_version"
+    fi
+fi # mold
+
 if prompt_default_no "Install/update hadolint?"; then
     docker pull hadolint/hadolint
 fi
