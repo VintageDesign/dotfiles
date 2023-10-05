@@ -112,6 +112,8 @@ if prompt_default_yes "Install/update linters and formatters?"; then
 fi # Linters/formatters
 
 if prompt_default_no "Install/update Rust?"; then
+    # shellcheck disable=SC1090
+    [ -f ~/.cargo/env ] && source ~/.cargo/env
     if command -v rustup &>/dev/null; then
         installed_version=$(rustup --version |& sed -En 's/rustup\s+([0-9.]+)\s.*/\1/p')
         info "rustup version $installed_version already installed. Updating..."
@@ -122,17 +124,54 @@ if prompt_default_no "Install/update Rust?"; then
     else
         info "rustup not installed. Installing..."
         curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+        # shellcheck disable=SC1090
+        [ -f ~/.cargo/env ] && source ~/.cargo/env
         rustup +nightly component add rust-analyzer-preview
         rustup completions bash >"$DOTFILES_SETUP_SCRIPT_DIR/stowdir/.bash_completion.d/rustup"
         rustup completions bash cargo >"$DOTFILES_SETUP_SCRIPT_DIR/stowdir/.bash_completion.d/cargo"
     fi
 
     if prompt_default_no "Install/update Cargo subcommands?"; then
-        # shellcheck disable=SC1090
-        [ -f ~/.cargo/env ] && source ~/.cargo/env
-        cargo install cargo-outdated cargo-nextest cargo-expand cargo-download cargo-depgraph cargo-deadlinks cargo-bloat cargo-udeps cargo-watch
+        cargo install cargo-outdated cargo-nextest cargo-expand cargo-download cargo-depgraph cargo-deadlinks cargo-bloat cargo-udeps cargo-watch rustfilt
     fi
 fi # Rust
+
+download_and_install_mold() {
+    local version="$1"
+    local version_no_v
+    version_no_v=$(echo -n "$version" | sed -En 's/v(.*)/\1/p')
+    local artifact="mold-$version_no_v-x86_64-linux.tar.gz"
+
+    pushd /tmp || exit 1
+
+    debug "downloading $artifact ..."
+    github_download_release "rui314/mold" "$version" "$artifact"
+
+    debug "installing ..."
+    tar -C ~/.local/ --strip-components=1 -xzvf "$artifact"
+
+    popd || exit 1
+}
+
+if prompt_default_no "Install/update mold?"; then
+    latest_version="$(github_latest_release_tag "rui314/mold")"
+    if command mold --version &>/dev/null; then
+        installed_version="v$(mold --version | cut -d ' ' -f 2)"
+        debug "Found installed mold version: $installed_version"
+        if [[ "$installed_version" != "$latest_version" ]]; then
+            info "Found newer mold version: $latest_version"
+            download_and_install_mold "$latest_version"
+        else
+            info "Mold $latest_version already installed"
+            if prompt_default_no "Reinstall mold?"; then
+                download_and_install_mold "$latest_version"
+            fi
+        fi
+    else
+        info "Mold not installed. Installing mold $latest_version..."
+        download_and_install_mold "$latest_version"
+    fi
+fi # mold
 
 if prompt_default_no "Install/update hadolint?"; then
     docker pull hadolint/hadolint

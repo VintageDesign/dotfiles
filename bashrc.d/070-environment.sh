@@ -52,5 +52,21 @@ export VIMWIKI_PATH="$HOME/Documents/notes/"
 export LESS=FRX
 
 # Use parallel make by default
-PROCS=$(( $(nproc) - 1 ))
+PROCS=$(($(nproc) - 1))
 export MAKEFLAGS="-j$PROCS"
+
+__rustc_linker=""
+if command mold --version >/dev/null 2>&1; then
+    __rustc_linker=mold
+elif command lld --version >/dev/null 2>&1; then
+    __rustc_linker=lld
+fi
+if [[ -n "$__rustc_linker" ]]; then
+    __rustc_linker_flags="-Clink-arg=-fuse-ld=$__rustc_linker"
+    # If it hasn't already been added to RUSTFLAGS, add it (avoid subshells adding it again)
+    if [[ "$RUSTFLAGS" != *"$__rustc_linker_flags"* ]]; then
+        export RUSTFLAGS="$__rustc_linker_flags ${RUSTFLAGS:+${RUSTFLAGS}}"
+    fi
+    unset __rustc_linker_flags
+fi
+unset __rustc_linker
