@@ -1,6 +1,7 @@
 #!/bin/bash
 if prompt_default_no "Install native software development packages?"; then
     PACKAGES=(
+        bear
         clang
         clang-format
         clang-tidy
@@ -40,20 +41,6 @@ if prompt_default_no "Install native software development packages?"; then
     )
 
     sudo apt install "${PACKAGES[@]}"
-
-    if [[ -d ~/src/bear/ ]]; then
-        pushd ~/src/bear/ || exit 1
-        git pull
-    else
-        git clone https://github.com/rizsotto/Bear.git ~/src/bear/
-        pushd ~/src/bear/ || exit 1
-    fi
-    cmake -B build/ -DCMAKE_INSTALL_PREFIX="$HOME/.local/" .
-    cmake --build build/ --parallel
-    pushd ~/src/bear/build/ || exit 1
-    make install
-    popd || exit 1
-    popd || exit 1
 fi # Native
 
 if prompt_default_no "Install Docker?"; then
