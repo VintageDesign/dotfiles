@@ -466,25 +466,21 @@ let g:ale_cpp_clangd_options = '
             \ --pch-storage=memory
             \ --completion-style=bundled
             \ --compute-dead
-            \ --query-driver="/opt/poky/1.5.1/**/i586-poky-linux-*,/opt/dey/1.6.11/**/arm-dey-linux-gnueabi-*,/usr/bin/em++,/home/nots/src/emsdk/upstream/emscripten/em++"
+            \ --query-driver="/opt/poky/1.5.1/**/i586-poky-linux-*,/opt/dey/1.6.11/**/arm-dey-linux-gnueabi-*,/usr/bin/em++,/home/nots/src/emsdk/upstream/emscripten/em++,/usr/bin/c++"
             \ -j=4
             \ --clang-tidy
             \'
 
 let g:ale_cmake_cmake_lint_options = '--config-files .cmake-format.yaml'
 
-" Install with
-"     rustup +nightly component add rust-analyzer-preview
-let g:ale_rust_analyzer_executable = "/home/nots/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rust-analyzer"
-
 let g:ale_rust_analyzer_config = {
-    \ 'cargo': {'loadOutDirsFromCheck': v:true, 'features': 'all'},
+    \ 'cargo': {'features': 'all'},
     \ 'procMacro': {'enable': v:true},
     \ 'check': {'command': 'clippy'},
     \ 'diagnostics': { 'disabled': ['unresolved-proc-macro'] },
 \ }
 
-let g:ale_rust_rustfmt_options = '--config group_imports=StdExternalCrate --config imports_granularity=Module'
+let g:ale_rust_rustfmt_options = '--config group_imports=StdExternalCrate,imports_granularity=Module'
 
 let g:ale_dockerfile_hadolint_use_docker = 'yes'
 

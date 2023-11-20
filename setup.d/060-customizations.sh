@@ -11,14 +11,6 @@ if prompt_default_no "Install Gnome extensions?"; then
     done
 fi
 
-if prompt_default_no "Install multi-monitors-add-on fork?"; then
-    error "The https://github.com/realh/multi-monitors-add-on/ fork doesn't work for Gnome 44"
-    # git clone https://github.com/realh/multi-monitors-add-on.git ~/src/multi-monitors-add-on/
-    # pushd ~/src/multi-monitors-add-on/ || exit 1
-    # cp -r multi-monitors-add-on@spin83 ~/.local/share/gnome-shell/extensions/
-    # popd || exit 1
-fi
-
 if prompt_default_no "Install Pointfree font?"; then
     # https://docs.fedoraproject.org/en-US/quick-docs/fonts/
     mkdir -p ~/.local/share/fonts

@@ -7,6 +7,13 @@ case $- in
 *) return ;;
 esac
 
+# TODO: Default session and layouts?
+if [[ -z "$TMUX" ]]; then
+    tmux
+    # Exit before sourcing the rest of my bashrc
+    exit
+fi
+
 ##################################################################################################
 # Find the location of the dotfiles repository by resolving the ~/.bashrc symlink.
 ##################################################################################################
@@ -33,8 +40,3 @@ export DOTFILES_DIR
 for rcfile in "${DOTFILES_DIR}/bashrc.d/"*.sh; do
     [ -f "$rcfile" ] && source "$rcfile"
 done
-
-# TODO: Default session and layouts?
-if [[ -z "$TMUX" ]]; then
-    tmux
-fi
