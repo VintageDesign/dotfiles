@@ -144,3 +144,7 @@
 	path = stowdir/.vim/bundle/vim-unimpaired
 	url = git@github.com:tpope/vim-unimpaired.git
 	branch = master
+[submodule "stowdir/.vim/bundle/vimspector"]
+	path = stowdir/.vim/bundle/vimspector
+	url = git@github.com:puremourning/vimspector.git
+	branch = master
