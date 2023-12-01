@@ -567,6 +567,57 @@ noremap <silent> <C-F><C-S> :Snippets<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Vimspector
+"
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Run :VimspectorInstall / :VimspectorUpdate to install/update these gadgets
+let g:vimspector_install_gadgets = [ 'debugpy', 'vscode-cpptools', 'CodeLLDB' ]
+
+nmap <F8>  <Plug>VimspectorToggleBreakpoint
+nmap <F9>  <Plug>VimspectorContinue
+nmap <F10> <Plug>VimspectorPause
+
+" mnemonic <Leader>d for debug
+
+nmap <Leader>du <Plug>VimspectorUpFrame
+nmap <Leader>dd <Plug>VimspectorDownFrame
+nmap <Leader>db <Plug>VimspectorBreakpoints
+
+" Use GDB mnemonics (step, next, finish)
+nmap <Leader>ds <Plug>VimspectorStepInto
+nmap <Leader>dn <Plug>VimspectorStepOver
+nmap <Leader>df <Plug>VimspectorStepOut
+
+nmap <Leader>dc <Plug>VimspectorRunToCursor
+
+nmap ]d <Plug>VimspectorJumpToNextBreakpoint
+nmap [d <Plug>VimspectorJumpToPreviousBreakpoint
+
+" Debug inspect the word under the cursor
+nmap <Leader>di <Plug>VimspectorBalloonEval
+" Debug inspect the visually selected text
+xmap <Leader>di <Plug>VimspectorBalloonEval
+
+function! CustomPickProcess( ... ) abort
+    let line_selected = fzf#run( {
+                \ 'source': 'ps ux',
+                \ 'options': '--header-lines=1 '
+                \          . '--prompt="Select Process: " '
+                \ ,
+                \
+                \ } )[ 0 ]
+    if empty( line_selected)
+        return 0
+    endif
+    let pid = split( line_selected )[ 0 ]
+    return str2nr( pid )
+endfunction
+
+let g:vimspector_custom_process_picker_func = 'CustomPickProcess'
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " UltiSnips
 "
 "   <Tab>   - expand snippet, and navigate forward through tab stops
