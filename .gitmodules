@@ -152,3 +152,7 @@
 	path = stowdir/.vim/bundle/vim-test
 	url = https://github.com/vim-test/vim-test.git
 	branch = master
+[submodule "stowdir/.vim/bundle/rust.vim"]
+	path = stowdir/.vim/bundle/rust.vim
+	url = git@github.com:Notgnoshi/rust.vim.git
+	branch = master
