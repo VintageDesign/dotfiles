@@ -152,3 +152,7 @@
 	path = stowdir/.vim/bundle/vim-dispatch
 	url = https://github.com/tpope/vim-dispatch.git
 	branch = master
+[submodule "stowdir/.vim/bundle/vim-test"]
+	path = stowdir/.vim/bundle/vim-test
+	url = https://github.com/vim-test/vim-test.git
+	branch = master
