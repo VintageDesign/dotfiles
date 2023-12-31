@@ -534,8 +534,8 @@ nmap ]p <Plug>(ale_next_wrap)
 nmap [p <Plug>(ale_previous_wrap)
 
 " Got to next/previous item in the quickfix list
-nmap ]q :cnext
-nmap [q :cprev
+nmap ]q :cnext<CR>
+nmap [q :cprev<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
