@@ -96,6 +96,11 @@ highlight! link rustTodo    MyTodo
 highlight! link vimTodo     MyTodo
 highlight! link MyTodo      SpellRare
 
+" Show the syntax groups at the location under the cursor.
+map <Leader>ss :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
+             \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
+             \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -238,7 +243,6 @@ if !isdirectory($HOME."/.vim/undo")
 endif
 set undodir=~/.vim/undo
 set undofile
-nnoremap <F8> :MundoToggle<CR>
 
 " Set Nginx conf filetype
 augroup nginxFiletypeDetection
@@ -412,13 +416,9 @@ let g:netrw_list_hide .= ',.*\.swp$'
 " ALE
 "
 "   <F1> - run all available fixers, in the order specified by g:ale_fixers
-"   <F2> - show more details on lint closest to cursor
+"   <F2> - rename symbol
 "   <F3> - find references
 "   <F4> - toggle header/source (Qt Creator shortcut)
-"   :ALESymbolSearch - search for symbol from LSP
-"   :ALERename - rename symbol under cursor
-"   :ALEFileRename - rename file and fix imports
-"   :ALEDocumentation - Preview window of documentation for the current symbol
 "   gd - go to definition
 "   gD - go to type definition
 "   ]p,[p - next/previous problem
@@ -493,14 +493,17 @@ imap <F1> <C-\><C-O>:ALEFix<CR>
 nmap gd <Plug>(ale_go_to_definition)
 " gD is normally goto definition in the current file, but rebind to ALEGoToTypeDefinition.
 nmap gD <Plug>(ale_go_to_type_definition)
-nmap <F2> <Plug>(ale_detail)
-imap <F2> <C-\><C-O>:ALEDetail<CR>
 " Use a popup, not a new window for the lint details and hover
 let g:ale_floating_preview = 1
 let g:ale_floating_window_border = []
 let g:ale_virtualtext_cursor = 'current'
 let g:ale_virtualtext_column = 80
 let g:ale_virtualtext_maxcolumn = 120
+
+" Rename the symbol under the cursor
+nnoremap <silent> <Plug>(ale_rename_symbol) :ALERename<CR>
+nmap <F2> <Plug>(ale_rename_symbol)
+imap <F2> <C-\><C-O>:ALERename<CR>
 
 " Find references to the symbol under the cursor.
 " TODO: Use FZF to select and preview (with syntax highlighting!)
@@ -518,15 +521,10 @@ inoremap <F4> <C-\><C-O>:call CurtineIncSw()<CR>
 
 " <F5> toggles paste mode
 
-" Show the syntax groups at the location under the cursor.
-map <F6> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
-            \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
-            \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
+" Toggle the netrw pane to the side.
+noremap <silent> <F6> :call ToggleNetrw()<CR>
 
 " <F7> toggles spell mode
-" <F8> toggles undo tree
-" Toggle the netrw pane to the side.
-noremap <silent> <F9> :call ToggleNetrw()<CR>
 
 " Go to next/previous problems
 " Can also open  loclist with :lopen
