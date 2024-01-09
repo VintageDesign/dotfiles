@@ -132,7 +132,20 @@ if prompt_default_no "Install/update Rust?"; then
     fi
 
     if prompt_default_no "Install/update Cargo subcommands?"; then
-        cargo install cargo-outdated cargo-nextest cargo-expand cargo-download cargo-depgraph cargo-deadlinks cargo-bloat cargo-udeps cargo-watch rustfilt
+        cargo install \
+            cargo-bloat \
+            cargo-deadlinks \
+            cargo-depgraph \
+            cargo-download \
+            cargo-duplicates \
+            cargo-expand \
+            cargo-modules \
+            cargo-nextest \
+            cargo-outdated \
+            cargo-udeps \
+            cargo-watch \
+            rustfilt \
+            ;
     fi
 fi # Rust
 
