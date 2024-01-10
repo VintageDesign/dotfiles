@@ -342,11 +342,6 @@ augroup FastPaste
 augroup END
 set pastetoggle=<F5>
 
-augroup autoOpenQuickFixAfterMake
-    autocmd!
-    autocmd QuickFixCmdPost make belowright cwindow
-augroup END
-
 let g:termdebug_wide = 1
 augroup overrideRustGdb
     autocmd!
