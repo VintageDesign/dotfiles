@@ -28,6 +28,8 @@ set history size unlimited
 set history remove-duplicates 20
 set disassembly-flavor intel
 
+set debuginfod enabled on
+
 # Add STL pretty-printers
 python
 import glob
