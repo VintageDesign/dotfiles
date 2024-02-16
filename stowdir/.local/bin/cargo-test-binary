@@ -1,0 +1,21 @@
+#!/bin/bash
+set -o errexit
+set -o pipefail
+set -o nounset
+set -o noclobber
+
+# Find the executable for cargo test
+#
+# Example usage:
+#
+#     $ cargo test-binary
+#     ./target/debug/deps/generative-fb99f3d8284e5e30
+#     ./target/debug/deps/pack-f3371235d65dc039
+#     ./target/debug/deps/snap-23e7d0bd36164783
+#     ./target/debug/deps/wkt2svg-3f770819e9ced253
+#     $ cargo test-binary --bin snap
+#     ./target/debug/deps/snap-23e7d0bd36164783
+#     $ cargo test-binary --lib
+#     ./target/debug/deps/generative-fb99f3d8284e5e30
+cargo --quiet test --no-run --message-format json "$@" |
+    jq -r 'select(.executable != null) | .executable'

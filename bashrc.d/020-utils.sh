@@ -63,13 +63,6 @@ fman() {
         xargs -r man
 }
 
-plog() {
-    # Log stdin to stdout AND stderr, but prefix stderr with an identifying tag.
-    # Taken from https://raimonster.com/scripting-field-guide/#org92f4850
-    local log_prefix="${1:-plog}"
-    tee >(sed -e "s/^/[$log_prefix] /" 1>&2)
-}
-
 shellquote () {
   printf '%q' "$(cat)"
   echo

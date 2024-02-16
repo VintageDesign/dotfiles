@@ -1,0 +1,10 @@
+#!/bin/bash
+set -o errexit
+set -o pipefail
+set -o nounset
+set -o noclobber
+
+# Log stdin to stdout AND stderr, but prefix stderr with an identifying tag.
+# Taken from https://raimonster.com/scripting-field-guide/#org92f4850
+__plog_log_prefix="${1:-plog}"
+tee >(sed -e "s/^/[$__plog_log_prefix] /" 1>&2)

@@ -1,0 +1,13 @@
+#!/bin/bash
+set -o errexit
+set -o pipefail
+
+cargo tree --workspace --prefix none |
+    sed 's/\s\?(.*)//' |            # strip off junk
+    sed 's/\(.*\) \(.*\)/\2 \1/' |  # flip order of version number and crate
+    sort -k 2 |                     # sort by crate
+    uniq |                          # filter out duplicates of the same version
+    uniq -D -f1 |                   # skip the first field (version) and show only the duplicates
+    sed 's/v\(.*\) \(.*\)/\2@\1/' | # format crate@version
+    cat
+# xargs -I % cargo tree --invert % --depth 10

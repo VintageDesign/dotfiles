@@ -1,0 +1,8 @@
+#!/bin/bash
+set -o errexit
+set -o pipefail
+set -o nounset
+set -o noclobber
+
+## Convert the given unix timestamp (seconds since epoch) to a UTC ISO-8601 timestamp
+xargs -I{} date --utc -d "@{}" --iso-8601=ns

@@ -1,0 +1,197 @@
+#!/bin/bash
+#shellcheck enable=SC2155
+set -o errexit
+set -o pipefail
+set -o nounset
+set -o noclobber
+
+export RED=$(tput setaf 1)
+export GREEN=$(tput setaf 2)
+export YELLOW=$(tput setaf 3)
+export BLUE=$(tput setaf 4)
+export RESET=$(tput sgr0)
+
+debug() {
+    echo "${BLUE}DEBUG:${RESET} $*"
+}
+
+info() {
+    echo "${GREEN}INFO:${RESET} $*"
+}
+
+error() {
+    echo "${RED}ERROR:${RESET} $*" >&2
+}
+
+usage() {
+    echo "Usage: $0 [--help] [VIMSPECTOR_CONFIG]"
+    echo
+    echo "  --help, -h                              Show this help and exit"
+    echo "  --configuration, -C <CONFIGURATION>     Pick the configuration from <VIMSPECTOR_CONFIG>"
+    echo "  --cargo-test [...FLAGS]                 Set the Vimspector program to the Cargo test binary."
+    echo "                                          All remaining CLI arguments will be passed to 'cargo test'"
+    echo "  --cargo-run [...FLAGS]                  Set the Vimspector program to the Cargo run binary."
+    echo "                                          All remaining CLI arguments will be passed to 'cargo run'"
+    echo "  --program, -p <PROGRAM>                 Set the program to the given value"
+    echo "  --restore, -r                           Restore the last operation"
+}
+
+get_program() {
+    local vimspector_file="$1"
+    local configuration="$2"
+    local program_key="${3:-program}"
+    jq ".configurations.$configuration.configuration.$program_key" "$vimspector_file"
+}
+
+set_program() {
+    local vimspector_file="$1"
+    local configuration="$2"
+    local new_program="$3"
+    local program_key="${4:-program}"
+
+    new_program="$(echo -n "$new_program" | tr -d "'\"")"
+
+    debug "Setting $program_key = $new_program for configuration '$configuration'"
+
+    jq \
+        --indent 4 \
+        ".configurations.$configuration.configuration.$program_key = \"$new_program\"" \
+        "$vimspector_file" |
+        sponge .vimspector.json
+}
+
+backup_program() {
+    local vimspector_file="$1"
+    local configuration="$2"
+    local current_program
+    current_program="$(get_program "$vimspector_file" "$configuration")"
+    set_program "$vimspector_file" "$configuration" "$current_program" "old_program"
+}
+
+swap_programs() {
+    local vimspector_file="$1"
+    local configuration="$2"
+
+    old_program="$(get_program "$vimspector_file" "$configuration" "old_program")"
+    current_program="$(get_program "$vimspector_file" "$configuration")"
+
+    debug "Swapping program $current_program for $old_program in configuration '$configuration'"
+
+    set_program "$vimspector_file" "$configuration" "$current_program" "old_program"
+    set_program "$vimspector_file" "$configuration" "$old_program" "program"
+}
+
+cargo_test_binary() {
+    local binary
+    binary="$(cargo --quiet test --no-run --message-format json "$@" |
+        jq -r 'select(.executable != null) | .executable')"
+    local lines
+    lines="$(echo "$binary" | wc -l)"
+    if [[ "$lines" -ne 1 ]]; then
+        error "Found '$lines' matching binaries:"
+        echo "$binary" >&2
+        exit 1
+    fi
+    echo -n "$binary"
+}
+
+cargo_run_binary() {
+    local binary
+    binary="$(cargo --quiet run --no-run --message-format json "$@" |
+        jq -r 'select(.executable != null) | .executable')"
+    local lines
+    lines="$(echo "$binary" | wc -l)"
+    if [[ "$lines" -ne 1 ]]; then
+        error "Found '$lines' matching binaries:"
+        echo "$binary" >&2
+        exit 1
+    fi
+    echo -n "$binary"
+}
+
+main() {
+    local vimspector_file=".vimspector.json"
+    local configuration=""
+    local cargo_test="false"
+    local cargo_run="false"
+    local -a cargo_flags=()
+    local restore="false"
+    local program=""
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+        --help | -h)
+            usage
+            exit 0
+            ;;
+        --configuration | -C)
+            configuration="$2"
+            shift
+            ;;
+        --cargo-test)
+            cargo_test="true"
+            shift
+            cargo_flags=("${@}")
+            break
+            ;;
+        --cargo-run)
+            cargo_run="true"
+            shift
+            cargo_flags=("${@}")
+            break
+            ;;
+        --program | -p)
+            program="$2"
+            shift
+            ;;
+        --restore | -r)
+            restore="true"
+            ;;
+        -*)
+            error "Unexpected option: $1"
+            usage >&2
+            exit 1
+            ;;
+        *)
+            vimspector_file="$1"
+            ;;
+        esac
+        shift
+    done
+
+    if [[ ! -f "$vimspector_file" ]]; then
+        error "Vimspector config file '$vimspector_file' does not exist!"
+        exit 1
+    fi
+    if [[ -z "$configuration" ]]; then
+        error "Missing required '--configuration' flag"
+        exit 1
+    fi
+    local config
+    config="$(jq ".configurations.$configuration" "$vimspector_file")"
+    if [[ "$config" = "null" ]]; then
+        error "Configuration '$configuration' not found in '$vimspector_file'"
+        exit 1
+    fi
+
+    if [[ "$cargo_test" = "true" ]]; then
+        local binary
+        binary="$(cargo_test_binary "${cargo_flags[@]}")"
+        debug "Found binary '$binary' from Cargo"
+        backup_program "$vimspector_file" "$configuration"
+        set_program "$vimspector_file" "$configuration" "$binary"
+    elif [[ "$cargo_run" = "true" ]]; then
+        local binary
+        binary="$(cargo_run_binary "${cargo_flags[@]}")"
+        debug "Found binary '$binary' from Cargo"
+        backup_program "$vimspector_file" "$configuration"
+        set_program "$vimspector_file" "$configuration" "$binary"
+    elif [[ -n "$program" ]]; then
+        backup_program "$vimspector_file" "$configuration"
+        set_program "$vimspector_file" "$configuration" "$program"
+    elif [[ "$restore" = "true" ]]; then
+        swap_programs "$vimspector_file" "$configuration"
+    fi
+}
+
+main "$@"

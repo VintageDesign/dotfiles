@@ -96,6 +96,11 @@ highlight! link rustTodo    MyTodo
 highlight! link vimTodo     MyTodo
 highlight! link MyTodo      SpellRare
 
+" Show the syntax groups at the location under the cursor.
+map <Leader>ss :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
+             \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
+             \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -238,7 +243,6 @@ if !isdirectory($HOME."/.vim/undo")
 endif
 set undodir=~/.vim/undo
 set undofile
-nnoremap <F8> :MundoToggle<CR>
 
 " Set Nginx conf filetype
 augroup nginxFiletypeDetection
@@ -338,11 +342,6 @@ augroup FastPaste
 augroup END
 set pastetoggle=<F5>
 
-augroup autoOpenQuickFixAfterMake
-    autocmd!
-    autocmd QuickFixCmdPost make belowright cwindow
-augroup END
-
 let g:termdebug_wide = 1
 augroup overrideRustGdb
     autocmd!
@@ -412,13 +411,9 @@ let g:netrw_list_hide .= ',.*\.swp$'
 " ALE
 "
 "   <F1> - run all available fixers, in the order specified by g:ale_fixers
-"   <F2> - show more details on lint closest to cursor
+"   <F2> - rename symbol
 "   <F3> - find references
 "   <F4> - toggle header/source (Qt Creator shortcut)
-"   :ALESymbolSearch - search for symbol from LSP
-"   :ALERename - rename symbol under cursor
-"   :ALEFileRename - rename file and fix imports
-"   :ALEDocumentation - Preview window of documentation for the current symbol
 "   gd - go to definition
 "   gD - go to type definition
 "   ]p,[p - next/previous problem
@@ -434,6 +429,7 @@ let g:ale_fixers = {
             \   'diff':     [],
             \   'html':     ['prettier'],
             \   'javascript':['prettier'],
+            \   'json':     ['jq'],
             \   'python':   ['isort', 'black'],
             \   'rust':     ['rustfmt'],
             \   'sh':       ['shfmt'],
@@ -457,6 +453,7 @@ let g:ale_python_pydocstyle_options = '--add-ignore=D100'
 " 120 is too much for javascript, but just about right for HTML, which is the
 " more common use-case for me.
 let g:ale_javascript_prettier_options = '--print-width 120 --prose-wrap always --tab-width 4 --html-whitespace-sensitivity css'
+let g:ale_json_jq_options = '--indent 4'
 let g:ale_sh_shfmt_options = '--indent 4'
 let g:ale_tex_latexindent_options = "--yaml=\"defaultIndent:'    '\""
 
@@ -474,7 +471,7 @@ let g:ale_cpp_clangd_options = '
 let g:ale_cmake_cmake_lint_options = '--config-files .cmake-format.yaml'
 
 let g:ale_rust_analyzer_config = {
-    \ 'cargo': {'features': 'all'},
+    \ 'cargo': {'cfgs': ['test'], 'features': 'all'},
     \ 'procMacro': {'enable': v:true},
     \ 'check': {'command': 'clippy'},
     \ 'diagnostics': { 'disabled': ['unresolved-proc-macro'] },
@@ -491,14 +488,17 @@ imap <F1> <C-\><C-O>:ALEFix<CR>
 nmap gd <Plug>(ale_go_to_definition)
 " gD is normally goto definition in the current file, but rebind to ALEGoToTypeDefinition.
 nmap gD <Plug>(ale_go_to_type_definition)
-nmap <F2> <Plug>(ale_detail)
-imap <F2> <C-\><C-O>:ALEDetail<CR>
 " Use a popup, not a new window for the lint details and hover
 let g:ale_floating_preview = 1
 let g:ale_floating_window_border = []
 let g:ale_virtualtext_cursor = 'current'
 let g:ale_virtualtext_column = 80
 let g:ale_virtualtext_maxcolumn = 120
+
+" Rename the symbol under the cursor
+nnoremap <silent> <Plug>(ale_rename_symbol) :ALERename<CR>
+nmap <F2> <Plug>(ale_rename_symbol)
+imap <F2> <C-\><C-O>:ALERename<CR>
 
 " Find references to the symbol under the cursor.
 " TODO: Use FZF to select and preview (with syntax highlighting!)
@@ -516,15 +516,10 @@ inoremap <F4> <C-\><C-O>:call CurtineIncSw()<CR>
 
 " <F5> toggles paste mode
 
-" Show the syntax groups at the location under the cursor.
-map <F6> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
-            \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
-            \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
+" Toggle the netrw pane to the side.
+noremap <silent> <F6> :call ToggleNetrw()<CR>
 
 " <F7> toggles spell mode
-" <F8> toggles undo tree
-" Toggle the netrw pane to the side.
-noremap <silent> <F9> :call ToggleNetrw()<CR>
 
 " Go to next/previous problems
 " Can also open  loclist with :lopen
@@ -532,8 +527,8 @@ nmap ]p <Plug>(ale_next_wrap)
 nmap [p <Plug>(ale_previous_wrap)
 
 " Got to next/previous item in the quickfix list
-nmap ]q :cnext
-nmap [q :cprev
+nmap ]q :cnext<CR>
+nmap [q :cprev<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -567,6 +562,57 @@ noremap <silent> <C-F><C-S> :Snippets<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Vimspector
+"
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Run :VimspectorInstall / :VimspectorUpdate to install/update these gadgets
+let g:vimspector_install_gadgets = [ 'debugpy', 'vscode-cpptools', 'CodeLLDB' ]
+
+nmap <F8>  <Plug>VimspectorToggleBreakpoint
+nmap <F9>  <Plug>VimspectorContinue
+nmap <F10> <Plug>VimspectorPause
+
+" mnemonic <Leader>d for debug
+
+nmap <Leader>du <Plug>VimspectorUpFrame
+nmap <Leader>dd <Plug>VimspectorDownFrame
+nmap <Leader>db <Plug>VimspectorBreakpoints
+
+" Use GDB mnemonics (step, next, finish)
+nmap <Leader>ds <Plug>VimspectorStepInto
+nmap <Leader>dn <Plug>VimspectorStepOver
+nmap <Leader>df <Plug>VimspectorStepOut
+
+nmap <Leader>dc <Plug>VimspectorRunToCursor
+
+nmap ]d <Plug>VimspectorJumpToNextBreakpoint
+nmap [d <Plug>VimspectorJumpToPreviousBreakpoint
+
+" Debug inspect the word under the cursor
+nmap <Leader>di <Plug>VimspectorBalloonEval
+" Debug inspect the visually selected text
+xmap <Leader>di <Plug>VimspectorBalloonEval
+
+function! CustomPickProcess( ... ) abort
+    let line_selected = fzf#run( {
+                \ 'source': 'ps ux',
+                \ 'options': '--header-lines=1 '
+                \          . '--prompt="Select Process: " '
+                \ ,
+                \
+                \ } )[ 0 ]
+    if empty( line_selected)
+        return 0
+    endif
+    let pid = split( line_selected )[ 0 ]
+    return str2nr( pid )
+endfunction
+
+let g:vimspector_custom_process_picker_func = 'CustomPickProcess'
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " UltiSnips
 "
 "   <Tab>   - expand snippet, and navigate forward through tab stops
@@ -578,6 +624,11 @@ let g:UltiSnipsJumpBackwardTrigger="<S-Tab>"
 " Use an absolute path for a speedup.
 let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/snips']
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" vim-test
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let test#strategy = "dispatch"
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Keybinds

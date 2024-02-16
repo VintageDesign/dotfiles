@@ -1,0 +1,236 @@
+#!/usr/bin/env python3
+"""Generate a QGIS project from the given CSV layers.
+
+For example, given labeled (or unlabeled) WKT,
+
+    $ head data.txt
+    label1: POINT(0 0)
+    label2: POINT(1 0.2)
+    label1: LINESTRING(0 0, 1 1)
+    poly: POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))
+
+Convert the WKT to a set of CSV layer files, based on the labels
+
+    $ ./tools/wkt2csv.sh --input data.txt --output-dir ./layers/
+    $ head ./layers/poly.polygon.csv
+    geometry,label
+    "POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))","poly"
+
+Then, generate a QGIS project from the CSV layers and open it
+
+    $ ./tools/qgis-project.py --open --output ./layers/project.qgs ./layers/*.csv
+"""
+import argparse
+import logging
+import subprocess
+import sys
+from pathlib import Path
+from typing import Dict, Iterable, List, Optional, Tuple
+
+import qgis.core
+import qgis.gui
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument(
+        "--log-level",
+        "-l",
+        type=str,
+        default="INFO",
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+        help="Set the logging output level. Defaults to INFO.",
+    )
+    parser.add_argument(
+        "--wgs84",
+        "-w",
+        action="store_true",
+        help="Set the project CRS to WGS 84 (EPSG:4326)",
+    )
+    parser.add_argument(
+        "--crs",
+        "-c",
+        type=str,
+        default=None,
+        help="Set the project CRS to the given EPSG id. E.g., 'EPSG:4326'",
+    )
+    parser.add_argument(
+        "--output",
+        "-o",
+        type=Path,
+        default="project.qgs",
+        help="Script output. Defaults to 'project.qgs'",
+    )
+    parser.add_argument(
+        "--open",
+        "-O",
+        action="store_true",
+        help="Open QGIS with the generated project file",
+    )
+    parser.add_argument(
+        "--group",
+        "-g",
+        action="store_true",
+        help="Automatically group things together that are in the same directory",
+    )
+    parser.add_argument(
+        "--group-depth",
+        type=int,
+        default=2,
+        help="The maximum depth for the grouping",
+    )
+    parser.add_argument(
+        "layers",
+        nargs="+",
+        type=Path,
+        help="The layer files to add to the QGIS project",
+    )
+
+    return parser.parse_args()
+
+
+def create_csv_layer(layer: Path, crs) -> Optional[qgis.core.QgsVectorLayer]:
+    path = layer.absolute()
+    logging.info("Adding layer %s to project...", path)
+    if not layer.exists():
+        logging.error("Layer file %s doesn't exist", path)
+        return None
+
+    layer_name = path.stem
+    uri = f"file://{path}?delimiter=,&wktField=geometry"
+    if crs:
+        uri += f"&crs={crs}"
+    layer = qgis.core.QgsVectorLayer(uri, layer_name, "delimitedtext")
+    if not layer.isValid():
+        logging.error("Layer invalid :(")
+        return None
+
+    return layer
+
+
+def make_groups(
+    tree: qgis.core.QgsLayerTree,
+    layers: List[Path],
+    group_depth: int,
+) -> Dict[Path, qgis.core.QgsLayerTreeGroup]:
+    """Given an arbitrary group of files, make groups for the bottom two leaf layers."""
+    groups = {}
+    layer_groups = {}
+    top_level_groups = set()
+
+    for layer in layers:
+        level = layer
+        names = []
+        for _ in range(group_depth):
+            level = level.parent
+            name = level.name
+            names.append(name)
+        names.reverse()
+
+        dotted_name = ""
+        # The last group added/found on the way down the tree
+        last_group = None
+        # Start top down and add groups for this layer if they don't exist
+        for i, name in enumerate(names):
+            dotted_name = ".".join(names[: i + 1])
+            if dotted_name not in groups:
+                logging.info("Found unique group: %s", dotted_name)
+                new_group = qgis.core.QgsLayerTreeGroup(dotted_name)
+                groups[dotted_name] = new_group
+                if i == 0 and dotted_name not in top_level_groups:
+                    logging.info("Adding new top-level group %s", dotted_name)
+                    top_level_groups.add(level.name)
+                    tree.addChildNode(new_group)
+                if last_group is not None:
+                    logging.debug("Adding %s as child of %s", new_group.name(), last_group.name())
+                    last_group.addChildNode(new_group)
+            last_group = groups[dotted_name]
+
+        layer_groups[layer] = last_group
+
+    return layer_groups
+
+
+def generate_project(
+    layers: Iterable[Path], output: Path, crs_def, grouping: bool, group_depth: int
+) -> bool:
+    project = qgis.core.QgsProject.instance()
+    project.setFileName(str(output))
+
+    if crs_def:
+        crs = qgis.core.QgsCoordinateReferenceSystem(crs_def)
+        if not crs.isValid():
+            logging.error("Invalid CRS: '%s'", crs_def)
+            return False
+        project.setCrs(crs)
+
+    tree = project.layerTreeRoot()
+    layers = [l.resolve() for l in layers]
+    if grouping:
+        groups = make_groups(tree, layers, group_depth)
+
+    extent = qgis.core.QgsRectangle()
+    for layer_file in layers:
+        layer = create_csv_layer(layer_file, crs_def)
+        extent.combineExtentWith(layer.extent())
+        if not layer:
+            logging.error("Failed to add layer %s to project", layer)
+            return False
+        layer_visible = True
+        if grouping:
+            group = groups.get(layer_file, None)
+            if group is not None:
+                layer_visible = False
+                group.addLayer(layer)
+
+        project.addMapLayer(layer, addToLegend=layer_visible)
+
+    logging.info("Found total extent: %s", extent.toString())
+
+    canvas = qgis.gui.QgsMapCanvas()
+    canvas.setExtent(extent)
+    project.write()
+
+    return True
+
+
+def open_qgis(project: Path):
+    project = project.absolute()
+    logging.info("Opening %s with QGIS...", project)
+    with subprocess.Popen(
+        ["qgis", "--project", str(project)], shell=False, stdout=subprocess.PIPE
+    ) as process:
+        process.wait()
+
+
+def main(args):
+    qg = qgis.core.QgsApplication([], True)
+    qg.initQgis()
+
+    crs = None
+    if args.wgs84:
+        crs = "EPSG:4326"
+    elif args.crs:
+        crs = args.crs
+
+    success = generate_project(args.layers, args.output, crs, args.group, args.group_depth)
+    if not success:
+        logging.critical("Failed to generate project. Exiting...")
+        qg.exitQgis()
+        return
+
+    if args.open:
+        open_qgis(args.output)
+    qg.exitQgis()
+
+
+if __name__ == "__main__":
+    args = parse_args()
+    logging.basicConfig(
+        format="%(asctime)s - %(module)s - %(levelname)s: %(message)s",
+        level=args.log_level,
+        stream=sys.stderr,
+    )
+    main(args)

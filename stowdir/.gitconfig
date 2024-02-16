@@ -64,6 +64,14 @@
     prune = true
 [rerere]
     enabled = true
+[branch]
+    sort = -committerdate
+[blame]
+    # NOTE: I have a Bash override for git-blame that creates this file if it doesn't exist in
+    # bashrc.d/030-aliases.sh
+    ignoreRevsFile = .git-blame-ignore-revs
+    markIgnoredLines = true
+    markUnblamableLines = true
 
 [includeIf "gitdir:~/swdev/"]
     path = .gitconfig-work
@@ -71,8 +79,3 @@
     path = .gitconfig-work
 [includeIf "gitdir:~/work/"]
     path = .gitconfig-work
-[blame]
-    # NOTE: You may have to create this file (even if it's empty) before you can use git-blame
-    ignoreRevsFile = .git-blame-ignore-revs
-    markIgnoredLines = true
-    markUnblamableLines = true

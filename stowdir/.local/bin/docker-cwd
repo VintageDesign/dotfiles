@@ -16,7 +16,7 @@ docker run \
     --mount "type=bind,src=/etc/passwd,dst=/etc/passwd,ro" \
     --mount "type=bind,src=$HOME/.ssh/id_rsa,dst=$HOME/.ssh/id_rsa,ro" \
     --env "SSH_AUTH_SOCK=/ssh-agent" \
-    --env CARGO_HOME \
+    --env "CARGO_HOME=$CARGO_HOME" \
     --user "$(id -u):$(id -g)" \
     --workdir "$PWD" \
     "$@"
