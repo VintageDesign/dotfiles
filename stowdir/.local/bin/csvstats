@@ -42,10 +42,10 @@ def parse_args():
     )
     group = parser.add_argument_group("I/O options")
     group.add_argument(
-        "--input",
-        "-i",
+        "input",
         type=argparse.FileType("r"),
         default=sys.stdin,
+        nargs="?",
         help="Script input. Defaults to stdin.",
     )
     group.add_argument(
@@ -77,51 +77,16 @@ def parse_args():
         help="Specify the column delimiter. Default is ','",
     )
 
-    # # TODO:
-    # # If --summary, --distribution, or --histogram are not given, these will output the centered CSV
-    # # Otherwise, center the column, and then perform the given operation.
-    # group = parser.add_mutually_exclusive_group()
-    # group.add_argument(
-    #     "--center-mean",
-    #     "-m",
-    #     action="store_true",
-    #     default=False,
-    #     help="Mean-center the given column",
-    # )
-    # group.add_argument(
-    #     "--center-first",
-    #     "-f",
-    #     action="store_true",
-    #     default=False,
-    #     help="Center the given column around its first value",
-    # )
-
-    group = parser.add_argument_group("Statistical operations")
-    group.add_argument(
-        "--summary",
-        "-s",
-        action="store_true",
+    parser.add_argument(
+        "--histogram",
+        "-H",
+        metavar="BINS",
+        type=int,
+        # False if not passed, None if passed but no value given, otherwise the number of bins
         default=False,
-        help="Calculate summary statistics",
+        nargs="?",
+        help="Plot the histogram of the specified column. The number of bins will be guessed by default",
     )
-    # # TODO:
-    # group.add_argument(
-    #     "--distribution",
-    #     "-D",
-    #     action="store_true",
-    #     default=False,
-    #     help="Estimate the distribution",
-    # )
-    # # TODO:
-    # group.add_argument(
-    #     "--histogram",
-    #     "-H",
-    #     metavar="BINS",
-    #     type=int,
-    #     default=5,
-    #     nargs="?",
-    #     help="Calculate the column histogram with the given number of bins. Default is 5",
-    # )
 
     return parser.parse_args()
 
@@ -246,6 +211,7 @@ def main(args):
             )
             sys.exit(1)
 
+    values = []
     stats = OnlineVariance()
     for row in reader:
         if column_index >= len(row):
@@ -256,6 +222,8 @@ def main(args):
             continue
         try:
             value = float(value)
+            if args.histogram is not False:
+                values.append(value)
         except ValueError:
             logging.critical("Cannot calculate deltas of non-number '%s'", value)
             sys.exit(1)
@@ -267,6 +235,19 @@ def main(args):
     print("sum:", stats.sum, file=args.output)
     print("mean:", stats.mean, file=args.output)
     print("stddev:", stats.stddev, file=args.output)
+
+    if args.histogram is not False:
+        import matplotlib.pyplot as plt
+        import seaborn as sns
+
+        bins = "auto" if args.histogram is None else args.histogram
+
+        sns.set_theme()
+        ax = sns.histplot(values, kde=False, bins=bins, stat="count")
+        if has_header:
+            name = header[column_index]
+            ax.set(xlabel=name)
+        plt.show()
 
 
 if __name__ == "__main__":

@@ -8,7 +8,10 @@ isort
 jedi
 jedi-language-server
 libtmux
+matplotlib>=3.6.0
+numpy<1.25.0
 parsedatetime
+pandas
 pip
 pydocstyle
 pygments
@@ -16,3 +19,4 @@ pylint
 pylint-venv
 python-lsp-server
 rope
+seaborn
