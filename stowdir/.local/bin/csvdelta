@@ -71,17 +71,35 @@ def parse_args():
         help="Whether the CSV file has a header, if not specified, this will be guessed",
     )
     group.add_argument(
+        "--delimiter",
+        "-d",
+        default=None,
+        help="Specify the column delimiter.",
+    )
+    group.add_argument(
         "--column",
         "-c",
         required=True,
         default=None,
         help="Select the specified column from the CSV file. Either column name, or index",
     )
+
+    group = parser.add_mutually_exclusive_group()
     group.add_argument(
-        "--delimiter",
-        "-d",
+        "--center-mean",
+        action="store_true",
+        help="Center the specified column around its mean",
+    )
+    group.add_argument(
+        "--center-first",
+        action="store_true",
+        help="Center the specified column around the value in the first row",
+    )
+    group.add_argument(
+        "--center-value",
         default=None,
-        help="Specify the column delimiter.",
+        type=float,
+        help="Center the specified column around the given value",
     )
 
     return parser.parse_args()
@@ -145,6 +163,75 @@ def column_name_to_index(column_name: str, header: Optional[List[str]]) -> int:
             sys.exit(1)
 
 
+def interrow_delta(reader, writer, column_index):
+    previous_value = None
+    for row in reader:
+        if column_index >= len(row):
+            logging.critical("Row '%s' must be at least %d long", ", ".join(row), column_index + 1)
+            sys.exit(1)
+        value = row[column_index]
+        try:
+            value = float(value)
+        except ValueError:
+            logging.critical("Cannot calculate deltas of non-number '%s'", value)
+            sys.exit(1)
+
+        delta = None
+        if previous_value is not None:
+            delta = value - previous_value
+
+        row += [delta]
+        writer.writerow(row)
+
+        previous_value = value
+
+
+def get_mean(reader, column_index) -> Tuple[float, List]:
+    rows = []
+    n = 0
+    mean = 0
+    for row in reader:
+        if column_index >= len(row):
+            logging.critical("Row '%s' must be at least %d long", ", ".join(row), column_index + 1)
+            sys.exit(1)
+        value = row[column_index]
+        try:
+            value = float(value)
+        except ValueError:
+            logging.critical("Cannot convert '%s' to number", value)
+            sys.exit(1)
+        n += 1
+        delta = value - mean
+        mean += delta / n
+        rows.append(row)
+    return mean, rows
+
+
+
+def center(reader, writer, column_index, kind):
+    center = None
+    if kind == "mean":
+        center, reader = get_mean(reader, column_index)
+    elif isinstance(kind, float):
+        center = kind
+
+    for row in reader:
+        if column_index >= len(row):
+            logging.critical("Row '%s' must be at least %d long", ", ".join(row), column_index + 1)
+            sys.exit(1)
+        value = row[column_index]
+        try:
+            value = float(value)
+        except ValueError:
+            logging.critical("Cannot convert '%s' to number", value)
+            sys.exit(1)
+        if center is None:
+            center = value
+        centered_value = value - center
+        row += [centered_value]
+        writer.writerow(row)
+
+
 def main(args):
     input = None
     if not args.input or args.input == "-":
@@ -184,30 +271,22 @@ def main(args):
             )
             sys.exit(1)
         old_column_name = header[column_index]
-        new_column_name = old_column_name + " deltas"
+        if args.center_mean or args.center_first or args.center_value is not None:
+            suffix = " centered"
+        else:
+            suffix = " deltas"
+        new_column_name = old_column_name + suffix
         header += [new_column_name]
         writer.writerow(header)
 
-    previous_value = None
-    for row in reader:
-        if column_index >= len(row):
-            logging.critical("Row '%s' must be at least %d long", ", ".join(row), column_index + 1)
-            sys.exit(1)
-        value = row[column_index]
-        try:
-            value = float(value)
-        except ValueError:
-            logging.critical("Cannot calculate deltas of non-number '%s'", value)
-            sys.exit(1)
-
-        delta = None
-        if previous_value is not None:
-            delta = value - previous_value
-
-        row += [delta]
-        writer.writerow(row)
-
-        previous_value = value
+    if args.center_mean:
+        center(reader, writer, column_index, "mean")
+    elif args.center_first:
+        center(reader, writer, column_index, "first")
+    elif args.center_value is not None:
+        center(reader, writer, column_index, args.center_value)
+    else:
+        interrow_delta(reader, writer, column_index)
 
     output.close()
     input.close()
