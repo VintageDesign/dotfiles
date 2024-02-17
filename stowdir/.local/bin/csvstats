@@ -1,29 +1,29 @@
 #!/usr/bin/env python3
-"""Compute inter-row deltas in a CSV file.
+"""Calculate statistics on the given CSV file.
 
-Example CSV file:
+For example, given the following CSV file,
 
-    $ cat header.csv
+    $ cat example.csv
     id,value,name
-    0,0.1,one
-    1,.75,two
-    2,-3.4,three
+    0,0.0,first
+    1,0.5,second
+    2,0.75,third
 
-We can calculate the inter-row deltas for the "value" column like so:
+you can calculate summary statistics on the 'value' column like so:
 
-    $ csvdelta.py --input header.csv --column value
-    id,value,name,value deltas
-    0,0.1,one,
-    1,.75,two,0.65
-    2,-3.4,three,-4.15
-
-The output will be a new CSV file with the same contents, except with a new column appended at the
-end with the inter-row deltas.
+    $ csvstats --column value --summary --input example.csv
+    num: 3
+    min: 0.0
+    max: 0.75
+    sum: 1.25
+    mean: 0.41666666666666663
+    stddev: 0.3818813079129867
 """
 import argparse
 import csv
 import io
 import logging
+import math
 import sys
 from typing import List, Optional, Tuple
 
@@ -40,7 +40,7 @@ def parse_args():
         choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
         help="Set the logging output level. Defaults to INFO.",
     )
-    group = parser.add_argument_group("Input options")
+    group = parser.add_argument_group("I/O options")
     group.add_argument(
         "--input",
         "-i",
@@ -68,14 +68,60 @@ def parse_args():
         "-c",
         required=True,
         default=None,
-        help="Select the specified column from the CSV file. Either column name, or index",
+        help="Select the specified column from the CSV file",
     )
     group.add_argument(
         "--delimiter",
         "-d",
-        default=None,
-        help="Specify the column delimiter.",
+        default=",",
+        help="Specify the column delimiter. Default is ','",
     )
+
+    # # TODO:
+    # # If --summary, --distribution, or --histogram are not given, these will output the centered CSV
+    # # Otherwise, center the column, and then perform the given operation.
+    # group = parser.add_mutually_exclusive_group()
+    # group.add_argument(
+    #     "--center-mean",
+    #     "-m",
+    #     action="store_true",
+    #     default=False,
+    #     help="Mean-center the given column",
+    # )
+    # group.add_argument(
+    #     "--center-first",
+    #     "-f",
+    #     action="store_true",
+    #     default=False,
+    #     help="Center the given column around its first value",
+    # )
+
+    group = parser.add_argument_group("Statistical operations")
+    group.add_argument(
+        "--summary",
+        "-s",
+        action="store_true",
+        default=False,
+        help="Calculate summary statistics",
+    )
+    # # TODO:
+    # group.add_argument(
+    #     "--distribution",
+    #     "-D",
+    #     action="store_true",
+    #     default=False,
+    #     help="Estimate the distribution",
+    # )
+    # # TODO:
+    # group.add_argument(
+    #     "--histogram",
+    #     "-H",
+    #     metavar="BINS",
+    #     type=int,
+    #     default=5,
+    #     nargs="?",
+    #     help="Calculate the column histogram with the given number of bins. Default is 5",
+    # )
 
     return parser.parse_args()
 
@@ -138,6 +184,51 @@ def column_name_to_index(column_name: str, header: Optional[List[str]]) -> int:
             sys.exit(1)
 
 
+class OnlineVariance:
+    """Welford's algorithm computes the sample variance incrementally.
+
+    Adapted from https://stackoverflow.com/a/5544108
+    """
+
+    def __init__(self, ddof=1, iterable=None):
+        # delta degrees of freedom. Some stddev calculations use ddof=0 (numpy) and some use ddof=1
+        # (scipy, R)
+        self.ddof = ddof
+        self.n = 0
+        self.mean = 0
+        self.M2 = 0
+        self.sum = 0
+        self.min = sys.float_info.max
+        self.min_idx = 0
+        self.max = sys.float_info.min
+        self.max_idx = 0
+
+        if iterable is not None:
+            for datum in iterable:
+                self.add_value(datum)
+
+    def add_value(self, datum):
+        self.sum += datum
+        if datum > self.max:
+            self.max = datum
+            self.max_idx = self.n
+        if datum < self.min:
+            self.min = datum
+            self.min_idx = self.n
+        self.n += 1
+        delta = datum - self.mean
+        self.mean += delta / self.n
+        self.M2 += delta * (datum - self.mean)
+
+    @property
+    def variance(self):
+        return self.M2 / (self.n - self.ddof)
+
+    @property
+    def stddev(self):
+        return math.sqrt(self.variance)
+
+
 def main(args):
     dialect, has_header = detect_dialect(args)
     reader = csv.reader(args.input, dialect)
@@ -148,38 +239,34 @@ def main(args):
 
     column_index = column_name_to_index(args.column, header)
 
-    writer = csv.writer(args.output, dialect)
     if has_header:
         if column_index >= len(header):
             logging.critical(
                 "Given column '%s' not found in header '%s'", args.column, ",".join(header)
             )
             sys.exit(1)
-        old_column_name = header[column_index]
-        new_column_name = old_column_name + " deltas"
-        header += [new_column_name]
-        writer.writerow(header)
 
-    previous_value = None
+    stats = OnlineVariance()
     for row in reader:
         if column_index >= len(row):
             logging.critical("Row '%s' must be at least %d long", ", ".join(row), column_index + 1)
             sys.exit(1)
         value = row[column_index]
+        if value == "":
+            continue
         try:
             value = float(value)
         except ValueError:
             logging.critical("Cannot calculate deltas of non-number '%s'", value)
             sys.exit(1)
+        stats.add_value(value)
 
-        delta = None
-        if previous_value is not None:
-            delta = value - previous_value
-
-        row += [delta]
-        writer.writerow(row)
-
-        previous_value = value
+    print("num:", stats.n, file=args.output)
+    print(f"min: {stats.min} index: {stats.min_idx}", file=args.output)
+    print(f"max: {stats.max} index: {stats.max_idx}", file=args.output)
+    print("sum:", stats.sum, file=args.output)
+    print("mean:", stats.mean, file=args.output)
+    print("stddev:", stats.stddev, file=args.output)
 
 
 if __name__ == "__main__":
