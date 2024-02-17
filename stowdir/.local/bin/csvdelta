@@ -24,7 +24,10 @@ import argparse
 import csv
 import io
 import logging
+import pathlib
+import shutil
 import sys
+import tempfile
 from typing import List, Optional, Tuple
 
 
@@ -40,19 +43,23 @@ def parse_args():
         choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
         help="Set the logging output level. Defaults to INFO.",
     )
-    group = parser.add_argument_group("Input options")
-    group.add_argument(
-        "--input",
-        "-i",
-        type=argparse.FileType("r"),
-        default=sys.stdin,
+    parser.add_argument(
+        "input",
+        nargs="?",
+        default="-",
         help="Script input. Defaults to stdin.",
+    )
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
+        "--inplace",
+        "-i",
+        action="store_true",
+        help="Whether to edit the input file inplace. Requires a file input, not stdin",
     )
     group.add_argument(
         "--output",
         "-o",
-        type=argparse.FileType("w"),
-        default=sys.stdout,
+        default="-",
         help="Script output. Defaults to stdout.",
     )
 
@@ -61,7 +68,7 @@ def parse_args():
         "--no-header",
         action="store_true",
         default=False,
-        help="Whether the CSV file has a header",
+        help="Whether the CSV file has a header, if not specified, this will be guessed",
     )
     group.add_argument(
         "--column",
@@ -80,13 +87,13 @@ def parse_args():
     return parser.parse_args()
 
 
-def detect_dialect(args) -> Tuple[csv.Dialect, bool]:
+def detect_dialect(args, input) -> Tuple[csv.Dialect, bool]:
     """Detect the dialect of the CSV file, including whether it has a header."""
     sniffer = csv.Sniffer()
-    underlying = args.input.detach()
+    underlying = input.detach()
     buffered_reader = io.BufferedReader(underlying, buffer_size=1024)
     text_reader = io.TextIOWrapper(buffered_reader)
-    args.input = text_reader
+    input = text_reader
     buffer = buffered_reader.peek(1024)
     buffer = buffer.decode("utf-8")
     try:
@@ -113,7 +120,7 @@ def detect_dialect(args) -> Tuple[csv.Dialect, bool]:
         )
         has_header = not args.no_header
 
-    return dialect, has_header
+    return dialect, has_header, input
 
 
 def column_name_to_index(column_name: str, header: Optional[List[str]]) -> int:
@@ -139,8 +146,29 @@ def column_name_to_index(column_name: str, header: Optional[List[str]]) -> int:
 
 
 def main(args):
-    dialect, has_header = detect_dialect(args)
-    reader = csv.reader(args.input, dialect)
+    input = None
+    if not args.input or args.input == "-":
+        input = sys.stdin
+    else:
+        input = pathlib.Path(args.input)
+        if not input.exists():
+            logging.critical("Input '%s' does not exist", args.input)
+            sys.exit(1)
+        input = input.open("r", encoding="utf-8")
+
+    output = None
+    tmpoutput = None
+    if args.inplace:
+        output = tempfile.NamedTemporaryFile(mode="w", delete=False)
+        tempoutput = pathlib.Path(output.name)
+    elif not args.output or args.output == "-":
+        output = sys.stdout
+    else:
+        output = pathlib.Path(args.output)
+        output = output.open("w", encoding="utf-8")
+
+    dialect, has_header, input = detect_dialect(args, input)
+    reader = csv.reader(input, dialect)
 
     header = None
     if has_header:
@@ -148,7 +176,7 @@ def main(args):
 
     column_index = column_name_to_index(args.column, header)
 
-    writer = csv.writer(args.output, dialect)
+    writer = csv.writer(output, dialect)
     if has_header:
         if column_index >= len(header):
             logging.critical(
@@ -180,6 +208,13 @@ def main(args):
         writer.writerow(row)
 
         previous_value = value
+
+    output.close()
+    input.close()
+    if args.inplace:
+        # Move the tempfile over the top of the input file
+        dst = pathlib.Path(args.input)
+        shutil.move(tempoutput, dst)
 
 
 if __name__ == "__main__":
