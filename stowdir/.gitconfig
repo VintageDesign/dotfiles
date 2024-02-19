@@ -26,6 +26,8 @@
     tool = code
 [mergetool "code"]
     cmd = code --wait --merge $REMOTE $LOCAL $BASE $MERGED
+[rebase]
+    autosquash = true
 [diff]
     tool = code
     submodule=log
@@ -46,9 +48,7 @@
     amend = commit --amend --no-edit
     st    = status
     b     = branch -vv
-    # git rebase --autosquash --continue isn't valid...
     rb    = rebase
-    rba   = rebase --autosquash
     chp   = cherry-pick
     cor   = checkout --recurse-submodules
     yolo  = !git commit -am \"$(curl -s https://whatthecommit.com/index.txt)\"
