@@ -24,6 +24,9 @@
     #side-by-side = true
 [merge]
     tool = code
+    # zdiff3 is too new for my work system
+    conflictstyle = diff3
+    algorithm = histogram
 [mergetool "code"]
     cmd = code --wait --merge $REMOTE $LOCAL $BASE $MERGED
 [rebase]
@@ -31,6 +34,8 @@
 [diff]
     tool = code
     submodule=log
+[status]
+    submodulesummary = true
 [difftool "code"]
     cmd = code --wait --diff $LOCAL $REMOTE
 [commit]
