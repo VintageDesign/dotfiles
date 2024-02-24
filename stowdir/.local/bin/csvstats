@@ -78,6 +78,15 @@ def parse_args():
     )
 
     parser.add_argument(
+        "--range",
+        "-R",
+        nargs=2,
+        metavar=("MIN", "MAX"),
+        type=float,
+        default=None,
+        help="Filter out values outside this range",
+    )
+    parser.add_argument(
         "--histogram",
         "-H",
         metavar="BINS",
@@ -212,6 +221,7 @@ def main(args):
             sys.exit(1)
 
     values = []
+    skipped = []
     stats = OnlineVariance()
     for row in reader:
         if column_index >= len(row):
@@ -222,12 +232,24 @@ def main(args):
             continue
         try:
             value = float(value)
-            if args.histogram is not False:
-                values.append(value)
         except ValueError:
             logging.critical("Cannot calculate deltas of non-number '%s'", value)
             sys.exit(1)
+
+        if args.range is not None:
+            min_, max_ = args.range
+            if value < min_ or value > max_:
+                skipped.append(value)
+                continue
+
+        if args.histogram is not False:
+            values.append(value)
         stats.add_value(value)
+
+    if skipped:
+        print("excluded:", len(skipped), file=args.output)
+        print("excluded min:", min(skipped), file=args.output)
+        print("excluded max:", max(skipped), file=args.output)
 
     print("num:", stats.n, file=args.output)
     print(f"min: {stats.min} index: {stats.min_idx}", file=args.output)
@@ -243,7 +265,7 @@ def main(args):
         bins = "auto" if args.histogram is None else args.histogram
 
         sns.set_theme()
-        ax = sns.histplot(values, kde=False, bins=bins, stat="count")
+        ax = sns.histplot(values, kde=True, bins=bins)
         if has_header:
             name = header[column_index]
             ax.set(xlabel=name)
