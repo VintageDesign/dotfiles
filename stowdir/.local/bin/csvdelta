@@ -83,6 +83,11 @@ def parse_args():
         default=None,
         help="Select the specified column from the CSV file. Either column name, or index",
     )
+    group.add_argument(
+        "--output-column",
+        "-C",
+        help="The name of the output column",
+    )
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
@@ -207,7 +212,6 @@ def get_mean(reader, column_index) -> Tuple[float, List]:
     return mean, rows
 
 
-
 def center(reader, writer, column_index, kind):
     center = None
     if kind == "mean":
@@ -271,12 +275,15 @@ def main(args):
             )
             sys.exit(1)
         old_column_name = header[column_index]
-        if args.center_mean or args.center_first or args.center_value is not None:
-            suffix = " centered"
-        else:
-            suffix = " deltas"
-        new_column_name = old_column_name + suffix
-        header += [new_column_name]
+
+        if args.output_column is None:
+            if args.center_mean or args.center_first or args.center_value is not None:
+                suffix = "-centered"
+            else:
+                suffix = "-deltas"
+            args.output_column = old_column_name + suffix
+
+        header += [args.output_column]
         writer.writerow(header)
 
     if args.center_mean:
