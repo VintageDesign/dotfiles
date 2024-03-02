@@ -8,4 +8,4 @@ _get_available_emoticons() {
     done
 }
 
-complete -o nospace -W "--help --list $(_get_available_emoticons)" emoticon.sh
+complete -o nospace -W "--help --list $(_get_available_emoticons)" emoticon

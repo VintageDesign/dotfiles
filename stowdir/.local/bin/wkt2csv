@@ -57,7 +57,7 @@ get_geometry_type() {
 
 filter_wkt() {
     local input="$1"
-    echo "$input" | "$SCRIPT_DIR/filter-wkt.sh" || true
+    echo "$input" | "$SCRIPT_DIR/filter-wkt" || true
 }
 
 parse_feature_from_line() {

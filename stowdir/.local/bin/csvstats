@@ -11,7 +11,7 @@ For example, given the following CSV file,
 
 you can calculate summary statistics on the 'value' column like so:
 
-    $ stats.py --column value --summary --input example.csv
+    $ csvstats --column value --summary --input example.csv
     num: 3
     min: 0.0
     max: 0.75
@@ -21,11 +21,12 @@ you can calculate summary statistics on the 'value' column like so:
 """
 import argparse
 import csv
-import io
 import logging
 import math
 import sys
-from typing import List, Optional, Tuple
+from typing import List
+
+from csvutils import column_name_to_index, detect_dialect
 
 
 def parse_args():
@@ -42,10 +43,10 @@ def parse_args():
     )
     group = parser.add_argument_group("I/O options")
     group.add_argument(
-        "--input",
-        "-i",
+        "input",
         type=argparse.FileType("r"),
         default=sys.stdin,
+        nargs="?",
         help="Script input. Defaults to stdin.",
     )
     group.add_argument(
@@ -77,111 +78,27 @@ def parse_args():
         help="Specify the column delimiter. Default is ','",
     )
 
-    # # TODO:
-    # # If --summary, --distribution, or --histogram are not given, these will output the centered CSV
-    # # Otherwise, center the column, and then perform the given operation.
-    # group = parser.add_mutually_exclusive_group()
-    # group.add_argument(
-    #     "--center-mean",
-    #     "-m",
-    #     action="store_true",
-    #     default=False,
-    #     help="Mean-center the given column",
-    # )
-    # group.add_argument(
-    #     "--center-first",
-    #     "-f",
-    #     action="store_true",
-    #     default=False,
-    #     help="Center the given column around its first value",
-    # )
-
-    group = parser.add_argument_group("Statistical operations")
-    group.add_argument(
-        "--summary",
-        "-s",
-        action="store_true",
-        default=False,
-        help="Calculate summary statistics",
+    parser.add_argument(
+        "--range",
+        "-R",
+        nargs=2,
+        metavar=("MIN", "MAX"),
+        type=float,
+        default=None,
+        help="Filter out values outside this range",
     )
-    # # TODO:
-    # group.add_argument(
-    #     "--distribution",
-    #     "-D",
-    #     action="store_true",
-    #     default=False,
-    #     help="Estimate the distribution",
-    # )
-    # # TODO:
-    # group.add_argument(
-    #     "--histogram",
-    #     "-H",
-    #     metavar="BINS",
-    #     type=int,
-    #     default=5,
-    #     nargs="?",
-    #     help="Calculate the column histogram with the given number of bins. Default is 5",
-    # )
+    parser.add_argument(
+        "--histogram",
+        "-H",
+        metavar="BINS",
+        type=int,
+        # False if not passed, None if passed but no value given, otherwise the number of bins
+        default=False,
+        nargs="?",
+        help="Plot the histogram of the specified column. The number of bins will be guessed by default",
+    )
 
     return parser.parse_args()
-
-
-def detect_dialect(args) -> Tuple[csv.Dialect, bool]:
-    """Detect the dialect of the CSV file, including whether it has a header."""
-    sniffer = csv.Sniffer()
-    underlying = args.input.detach()
-    buffered_reader = io.BufferedReader(underlying, buffer_size=1024)
-    text_reader = io.TextIOWrapper(buffered_reader)
-    args.input = text_reader
-    buffer = buffered_reader.peek(1024)
-    buffer = buffer.decode("utf-8")
-    try:
-        dialect = sniffer.sniff(buffer)
-    except csv.Error:
-        logging.warning("Failed to sniff CSV dialect. Falling back on default")
-        dialect = csv.excel
-    if args.delimiter is not None and args.delimiter != dialect.delimiter:
-        logging.warning(
-            "Overriding detected delimiter '%s' with '%s' set from CLI --delimiter option",
-            dialect.delimiter,
-            args.delimiter,
-        )
-        dialect.delimiter = args.delimiter
-    try:
-        has_header = sniffer.has_header(buffer)
-        logging.debug("Detected header: %s", has_header)
-        if has_header and args.no_header:
-            logging.warning("Detected a header, but CLI arguments specify no header")
-            has_header = not args.no_header
-    except csv.Error:
-        logging.warning(
-            "Failed to detect if CSV has a header. Falling back on CLI --no-header option"
-        )
-        has_header = not args.no_header
-
-    return dialect, has_header
-
-
-def column_name_to_index(column_name: str, header: Optional[List[str]]) -> int:
-    """Convert the given column identifier to an index.
-
-    Allow passing both column names and zero-based column indices.
-    """
-    if header is None:
-        try:
-            return int(column_name)
-        except ValueError:
-            logging.critical("Failed to find column with index '%s'", column_name)
-            sys.exit(1)
-    try:
-        return header.index(column_name)
-    # This ValueError could be nominal (user passes an index rather than a header name)
-    except ValueError:
-        try:
-            return int(column_name)
-        except ValueError:
-            logging.critical("Failed to find column with name '%s'", column_name)
-            sys.exit(1)
 
 
 class OnlineVariance:
@@ -230,8 +147,8 @@ class OnlineVariance:
 
 
 def main(args):
-    dialect, has_header = detect_dialect(args)
-    reader = csv.reader(args.input, dialect)
+    dialect, has_header, input = detect_dialect(args, args.input)
+    reader = csv.reader(input, dialect)
 
     header = None
     if has_header:
@@ -246,6 +163,8 @@ def main(args):
             )
             sys.exit(1)
 
+    values = []
+    skipped = []
     stats = OnlineVariance()
     for row in reader:
         if column_index >= len(row):
@@ -259,7 +178,21 @@ def main(args):
         except ValueError:
             logging.critical("Cannot calculate deltas of non-number '%s'", value)
             sys.exit(1)
+
+        if args.range is not None:
+            min_, max_ = args.range
+            if value < min_ or value > max_:
+                skipped.append(value)
+                continue
+
+        if args.histogram is not False:
+            values.append(value)
         stats.add_value(value)
+
+    if skipped:
+        print("excluded:", len(skipped), file=args.output)
+        print("excluded min:", min(skipped), file=args.output)
+        print("excluded max:", max(skipped), file=args.output)
 
     print("num:", stats.n, file=args.output)
     print(f"min: {stats.min} index: {stats.min_idx}", file=args.output)
@@ -267,6 +200,19 @@ def main(args):
     print("sum:", stats.sum, file=args.output)
     print("mean:", stats.mean, file=args.output)
     print("stddev:", stats.stddev, file=args.output)
+
+    if args.histogram is not False:
+        import matplotlib.pyplot as plt
+        import seaborn as sns
+
+        bins = "auto" if args.histogram is None else args.histogram
+
+        sns.set_theme()
+        ax = sns.histplot(values, kde=True, bins=bins)
+        if has_header:
+            name = header[column_index]
+            ax.set(xlabel=name)
+        plt.show()
 
 
 if __name__ == "__main__":

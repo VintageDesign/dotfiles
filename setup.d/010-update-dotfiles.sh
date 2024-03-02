@@ -11,9 +11,17 @@ if prompt_default_yes "Deploy dotfiles?"; then
     if [[ ! -e "$HOME/.gitignore" ]]; then
         ln -s "$DOTFILES_SETUP_SCRIPT_DIR/stowdir/.gitignore" "$HOME/.gitignore"
     fi
+    if command -v pip &>/dev/null; then
+        pushd "$DOTFILES_SETUP_SCRIPT_DIR/csvutils/" || exit 1
+        pip install --editable .
+        popd || exit 1
+    fi
 elif prompt_default_no "Undeploy dotfiles?"; then
     stow --verbose=1 --dir="$DOTFILES_SETUP_SCRIPT_DIR" --target="$HOME" --delete stowdir
     if [[ -L "$HOME/.gitignore" ]]; then
         rm "$HOME/.gitignore"
+    fi
+    if command -v pip &>/dev/null; then
+        pip uninstall csvutils
     fi
 fi

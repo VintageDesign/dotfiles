@@ -77,7 +77,7 @@ fzf-git-browse() {
                     | grep -o '\<[a-f0-9]\{7,\}\>' \
                     | head -1 \
                     | tr -d '\n' \
-                    | xargs -oI % git rebase --interactive --autosquash %~ \
+                    | xargs -oI % git rebase --interactive %~ \
                 )+abort" \
             `# Cherry pick the selected commit.` \
             --bind "ctrl-p:execute( \

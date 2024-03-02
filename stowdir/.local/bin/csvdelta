@@ -1,0 +1,256 @@
+#!/usr/bin/env python3
+"""Compute inter-row deltas in a CSV file.
+
+Example CSV file:
+
+    $ cat header.csv
+    id,value,name
+    0,0.1,one
+    1,.75,two
+    2,-3.4,three
+
+We can calculate the inter-row deltas for the "value" column like so:
+
+    $ csvdelta --input header.csv --column value
+    id,value,name,value deltas
+    0,0.1,one,
+    1,.75,two,0.65
+    2,-3.4,three,-4.15
+
+The output will be a new CSV file with the same contents, except with a new column appended at the
+end with the inter-row deltas.
+"""
+import argparse
+import csv
+import logging
+import pathlib
+import shutil
+import sys
+import tempfile
+from typing import List, Tuple
+
+from csvutils import column_name_to_index, detect_dialect
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument(
+        "--log-level",
+        "-l",
+        type=str,
+        default="INFO",
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+        help="Set the logging output level. Defaults to INFO.",
+    )
+    parser.add_argument(
+        "input",
+        nargs="?",
+        default="-",
+        help="Script input. Defaults to stdin.",
+    )
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
+        "--inplace",
+        "-i",
+        action="store_true",
+        help="Whether to edit the input file inplace. Requires a file input, not stdin",
+    )
+    group.add_argument(
+        "--output",
+        "-o",
+        default="-",
+        help="Script output. Defaults to stdout.",
+    )
+
+    group = parser.add_argument_group("CSV options")
+    group.add_argument(
+        "--no-header",
+        action="store_true",
+        default=False,
+        help="Whether the CSV file has a header, if not specified, this will be guessed",
+    )
+    group.add_argument(
+        "--delimiter",
+        "-d",
+        default=None,
+        help="Specify the column delimiter.",
+    )
+    group.add_argument(
+        "--column",
+        "-c",
+        required=True,
+        default=None,
+        help="Select the specified column from the CSV file. Either column name, or index",
+    )
+    group.add_argument(
+        "--output-column",
+        "-C",
+        help="The name of the output column",
+    )
+
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
+        "--center-mean",
+        action="store_true",
+        help="Center the specified column around its mean",
+    )
+    group.add_argument(
+        "--center-first",
+        action="store_true",
+        help="Center the specified column around the value in the first row",
+    )
+    group.add_argument(
+        "--center-value",
+        default=None,
+        type=float,
+        help="Center the specified column around the given value",
+    )
+
+    return parser.parse_args()
+
+
+def interrow_delta(reader, writer, column_index):
+    previous_value = None
+    for row in reader:
+        if column_index >= len(row):
+            logging.critical("Row '%s' must be at least %d long", ", ".join(row), column_index + 1)
+            sys.exit(1)
+        value = row[column_index]
+        try:
+            value = float(value)
+        except ValueError:
+            logging.critical("Cannot calculate deltas of non-number '%s'", value)
+            sys.exit(1)
+
+        delta = None
+        if previous_value is not None:
+            delta = value - previous_value
+
+        row += [delta]
+        writer.writerow(row)
+
+        previous_value = value
+
+
+def get_mean(reader, column_index) -> Tuple[float, List]:
+    rows = []
+    n = 0
+    mean = 0
+    for row in reader:
+        if column_index >= len(row):
+            logging.critical("Row '%s' must be at least %d long", ", ".join(row), column_index + 1)
+            sys.exit(1)
+        value = row[column_index]
+        try:
+            value = float(value)
+        except ValueError:
+            logging.critical("Cannot convert '%s' to number", value)
+            sys.exit(1)
+        n += 1
+        delta = value - mean
+        mean += delta / n
+        rows.append(row)
+    return mean, rows
+
+
+def center(reader, writer, column_index, kind):
+    center = None
+    if kind == "mean":
+        center, reader = get_mean(reader, column_index)
+    elif isinstance(kind, float):
+        center = kind
+
+    for row in reader:
+        if column_index >= len(row):
+            logging.critical("Row '%s' must be at least %d long", ", ".join(row), column_index + 1)
+            sys.exit(1)
+        value = row[column_index]
+        try:
+            value = float(value)
+        except ValueError:
+            logging.critical("Cannot convert '%s' to number", value)
+            sys.exit(1)
+        if center is None:
+            center = value
+        centered_value = value - center
+        row += [centered_value]
+        writer.writerow(row)
+
+
+def main(args):
+    input = None
+    if not args.input or args.input == "-":
+        input = sys.stdin
+    else:
+        input = pathlib.Path(args.input)
+        if not input.exists():
+            logging.critical("Input '%s' does not exist", args.input)
+            sys.exit(1)
+        input = input.open("r", encoding="utf-8")
+
+    output = None
+    tempoutput = None
+    if args.inplace:
+        output = tempfile.NamedTemporaryFile(mode="w", delete=False)
+        tempoutput = pathlib.Path(output.name)
+    elif not args.output or args.output == "-":
+        output = sys.stdout
+    else:
+        output = pathlib.Path(args.output)
+        output = output.open("w", encoding="utf-8")
+
+    dialect, has_header, input = detect_dialect(args, input)
+    reader = csv.reader(input, dialect)
+
+    header = None
+    if has_header:
+        header = next(reader)
+
+    column_index = column_name_to_index(args.column, header)
+
+    writer = csv.writer(output, dialect)
+    if has_header:
+        if column_index >= len(header):
+            logging.critical(
+                "Given column '%s' not found in header '%s'", args.column, ",".join(header)
+            )
+            sys.exit(1)
+        old_column_name = header[column_index]
+
+        if args.output_column is None:
+            if args.center_mean or args.center_first or args.center_value is not None:
+                suffix = "-centered"
+            else:
+                suffix = "-deltas"
+            args.output_column = old_column_name + suffix
+
+        header += [args.output_column]
+        writer.writerow(header)
+
+    if args.center_mean:
+        center(reader, writer, column_index, "mean")
+    elif args.center_first:
+        center(reader, writer, column_index, "first")
+    elif args.center_value is not None:
+        center(reader, writer, column_index, args.center_value)
+    else:
+        interrow_delta(reader, writer, column_index)
+
+    output.close()
+    input.close()
+    if args.inplace:
+        # Move the tempfile over the top of the input file
+        dst = pathlib.Path(args.input)
+        shutil.move(tempoutput, dst)
+
+
+if __name__ == "__main__":
+    args = parse_args()
+    logging.basicConfig(
+        format="%(asctime)s - %(module)s - %(levelname)s: %(message)s",
+        level=args.log_level,
+        stream=sys.stderr,
+    )
+    main(args)
