@@ -93,8 +93,8 @@ branch-too-distant() {
     local ahead
     ahead="$(echo "$ratio" | awk '{ print $2 }')"
 
-    local -r lines="${FZF_PREVIEW_LINES:-${FZF_LINES:-${LINES:-20}}}"
-    local -r limit="$((2 * lines / 3))"
+    local -r lines="${FZF_PREVIEW_LINES:-${FZF_LINES:-${LINES:-$(tput lines)}}}"
+    local -r limit="$((lines / 2))"
 
     [[ $behind -gt "$limit" ]] || [[ $ahead -gt "$limit" ]]
 }
