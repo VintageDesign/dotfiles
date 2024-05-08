@@ -144,6 +144,8 @@ if prompt_default_no "Install/update Rust?"; then
             cargo-outdated \
             cargo-udeps \
             cargo-watch \
+            dump_syms \
+            minidump-stackwalk \
             rustfilt \
             ;
     fi
