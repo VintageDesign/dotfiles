@@ -47,15 +47,6 @@ git-object-exists() {
     git rev-parse -q --verify "$object" >/dev/null
 }
 
-## For the given git-log arguments, determine if it's a git log of the current HEAD or not
-given-branch-is-current-branch() {
-    # We can't predict what, if any, of the git-log arguments are. They're just passed straight to
-    # git-log. Maybe there's formatting, maybe it's '-- /some/file', maybe it's some other branch.
-    # So rather than using rev-parse on HEAD and the branch name (because we don't know what the
-    # branch name is), parse the output of git-log
-    git log --decorate=short --oneline -n 1 --color=never "$@" | grep '[ |\/*]*\<[a-f0-9]\{7,\}\> ([^)]*HEAD' >/dev/null
-}
-
 ## Get the default branch for the origin remote
 get-default-branch() {
     # TODO: Support multiple remotes?
@@ -111,6 +102,9 @@ git-short-log() {
 
 ## An interactive decorator around git-short-log
 fzf-git-log() {
+    local -r rebase="$1"
+    shift
+
     local fzf_args=(
         # Show a preview of each commit with 'git show | delta'
         --preview-label="[ Commit ]"
@@ -162,10 +156,7 @@ fzf-git-log() {
     )
 
     local fzf_header="<ctrl-h> copy hash   <ctrl-g> copy message   <ctrl-y> checkout"
-
-    # Check if the git-log invocation is targeting the current branch, or some other branch.
-    # This lets us enable/disable different functionality like cherry-picking and rebasing.
-    if given-branch-is-current-branch "$@"; then
+    if [[ "$rebase" = "true" ]]; then
         fzf_header="$fzf_header   <ctrl-r> rebase"
         fzf_args+=(
             # Interactively rebase the current branch onto the selected commit
@@ -234,6 +225,7 @@ fzf-git-log() {
 main() {
     local use_fzf="true"
     local heuristics="true"
+    local rebase="true"
     local args=()
 
     for arg in "$@"; do
@@ -251,9 +243,11 @@ main() {
     for arg in "${args[@]}"; do
         if git-object-exists "$arg"; then
             git_refs+=("$arg")
+            rebase="false"
         # Branch heuristics don't make sense when looking at the log for a file path
         elif [[ -e "$arg" ]]; then
             heuristics="false"
+            rebase="false"
         fi
     done
 
@@ -316,7 +310,7 @@ main() {
     fi
 
     if [[ "$use_fzf" = "true" ]]; then
-        fzf-git-log "${args[@]}"
+        fzf-git-log "$rebase" "${args[@]}"
     else
         git-short-log "${args[@]}"
     fi
