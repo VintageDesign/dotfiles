@@ -1,0 +1,244 @@
+#!/bin/bash
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+usage() {
+    echo "Usage: $0 [--help] [--token-file <PATH>] [--gitlab-url <URL>] [--project <ID>] <PIPELINE_ID>"
+    echo
+    echo "Profile GitLab pipelines"
+    echo
+    echo "Taken from https://news.ycombinator.com/item?id=36604990 and modified to work with"
+    echo "current GitLab and jq releases"
+    echo
+    echo "  --help, -h                  Show this help and exit"
+    echo "  --token-file, -t <PATH>     Path to file containing a GitLab personal access token"
+    echo "  --gitlab-url, -u <URL>      GitLab URL"
+    echo "  --project, -p <ID>          GitLab Project ID/Path"
+    echo "  --output, -o <PATH>         Path to save output to. Defaults to stdout"
+    echo "  --details, -d               Download job traces and decompose jobs"
+    echo "                                  Requires 'ansi2txt' from the 'colorized-logs' package"
+    echo
+    echo "  <PIPELINE_ID>               The integer pipeline ID to generate a profile for"
+    echo
+    echo "Example:"
+    echo
+    echo "    $0 --project group/foo/bar 677588"
+    echo
+    echo "This will generate a JSON profile that you can upload to https://ui.perfetto.dev for"
+    echo "visualization."
+}
+
+query_project() {
+    local gitlab_url="$1"
+    local project="$2"
+    local token="$3"
+
+    curl --silent "https://${gitlab_url}/api/v4/projects/${project}?private_token=${token}"
+}
+
+query_pipeline_stats() {
+    local gitlab_url="$1"
+    local project="$2"
+    local pipeline_id="$3"
+    local token="$4"
+
+    curl --silent "https://${gitlab_url}/api/v4/projects/${project}/pipelines/${pipeline_id}/jobs?per_page=100&private_token=${token}"
+}
+
+query_job_trace() {
+    local gitlab_url="$1"
+    local project="$2"
+    local job_id="$3"
+    local token="$4"
+
+    curl --silent "https://${gitlab_url}/api/v4/projects/${project}/jobs/${job_id}/trace?private_token=${token}"
+}
+
+transform_job_trace_to_sections() {
+    local pipeline_id="$1"
+    local job_id="$2"
+
+    # * Extract color codes
+    # * Find lines containing either/or section_start section_end tags
+    # * Extract section timestamps and names into a JSON object for each
+    ansi2txt |
+        grep -o -E '(section_start|section_end):[0-9]+:[a-zA-Z0-9_]+' |
+        sed -z -E "s/section_start:([0-9]+):([a-zA-Z0-9_]+)\nsection_end:([0-9]+):[a-zA-Z0-9_]+/{\"pipeline_id\": $pipeline_id, \"job_id\": $job_id, \"task\":\"\2\", \"start\": \1, \"end\": \3}/g" |
+        grep -o -E "{.*}" | # Filter out remaining lines that didn't get matched. This happens when a job log gets truncated
+        jq --slurp
+}
+
+extract_job_details() {
+    local job_id=$1
+    jq "map(select(.id == $job_id))[0]"
+}
+
+transform_sections_to_profile() {
+    local -r ts_offset=$1
+
+    # Normalize timestamps to start at the same time as the job execution's
+    # start time because we can't guarantee matching timestamps across the
+    # runner and gitlab servers
+    jq ".[0].start as \$base |
+        map(
+            { name: .task, cat: \"PERF\", ph: \"B\", pid: .pipeline_id, tid: .job_id, ts: ((.start - \$base) * 10e5 + $ts_offset) },
+            { name: .task, cat: \"PERF\", ph: \"E\", pid: .pipeline_id, tid: .job_id, ts: ((.end - \$base) * 10e5 + $ts_offset) }
+        )"
+}
+
+transform_job_details_to_profile() {
+    local -r job_details_json_object="$1"
+    local -r job_sections_json_array="$2"
+    local full_perf_sequence=""
+
+    # Metadata for thread id of the job
+    full_perf_sequence="$full_perf_sequence $(echo "$job_details_json_object" | jq '{name: "thread_name", ph: "M", pid: .pipeline.id, tid: .id, "args": {"name": (.stage + ": " + .name)}}')"
+
+    # Start of job
+    full_perf_sequence="$full_perf_sequence $(echo "$job_details_json_object" | jq '{name: "job", cat: "PERF", ph: "B", pid: .pipeline.id, tid: .id, ts: (((.started_at | sub("\\.[0-9]+.*$"; "Z") | fromdate) - .queued_duration) * 10e5)}')"
+
+    # Queuing
+    # It looks like jobs are "created" at the time that the pipeline as a whole is created, which doesn't really help;
+    # so we back-calculate when queuing started from the time the job execution started
+    full_perf_sequence="$full_perf_sequence $(echo "$job_details_json_object" | jq '{name: "queue", cat: "PERF", ph: "B", pid: .pipeline.id, tid: .id, ts: (((.started_at | sub("\\.[0-9]+.*$"; "Z") | fromdate) - .queued_duration) * 10e5)}')"
+    full_perf_sequence="$full_perf_sequence $(echo "$job_details_json_object" | jq '{name: "queue", cat: "PERF", ph: "E", pid: .pipeline.id, tid: .id, ts: (.started_at | sub("\\.[0-9]+.*$"; "Z") | fromdate * 10e5)}')"
+
+    # Start of execution
+    local -r job_exec_start="$(echo "$job_details_json_object" | jq '{name: "exec", cat: "PERF", ph: "B", pid: .pipeline.id, tid: .id, ts: (.started_at | sub("\\.[0-9]+.*$"; "Z") | fromdate * 10e5)}')"
+    local -r job_exec_start_ts="$(echo "$job_exec_start" | jq -r '.ts')"
+    full_perf_sequence="$full_perf_sequence $job_exec_start"
+
+    # Timestamped operations in job trace
+    full_perf_sequence="$full_perf_sequence $(echo "$job_sections_json_array" | transform_sections_to_profile "$job_exec_start_ts")"
+
+    # End of execution
+    full_perf_sequence="$full_perf_sequence $(echo "$job_details_json_object" | jq '{name: "exec", cat: "PERF", ph: "E", pid: .pipeline.id, tid: .id, ts: (.finished_at | sub("\\.[0-9]+.*$"; "Z") | fromdate * 10e5)}')"
+
+    # End of job
+    full_perf_sequence="$full_perf_sequence $(echo "$job_details_json_object" | jq '{name: "job", cat: "PERF", ph: "E", pid: .pipeline.id, tid: .id, ts: (.finished_at | sub("\\.[0-9]+.*$"; "Z") | fromdate * 10e5)}')"
+
+    # JSON-ify
+    echo "$full_perf_sequence" | jq -s 'flatten(1)'
+}
+
+get_job_ids_from_pipeline_stats() {
+    jq -r 'map(select(.id) | .id) | join(" ")'
+}
+
+get_access_token() {
+    local token_file="$1"
+    tr -d '\n' <"$token_file"
+}
+
+main() {
+    local gitlab_url=""
+    local gitlab_token=""
+    local gitlab_token_file="$HOME/.ssh/gitlab-access-token.txt"
+    local gitlab_project=""
+    local gitlab_pipeline_id=""
+    local output="/dev/stdout"
+    local details=0
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+        --help | -h)
+            usage
+            exit 0
+            ;;
+        --token-file | -t)
+            gitlab_token_file="$2"
+            shift
+            ;;
+        --gitlab-url | -u)
+            gitlab_url="$2"
+            shift
+            ;;
+        --project | -p)
+            gitlab_project="$2"
+            shift
+            ;;
+        --output | -o)
+            output="$2"
+            shift
+            ;;
+        --details | -d)
+            details=1
+            ;;
+        -*)
+            echo "Unexpected option: $1" >&2
+            exit 1
+            ;;
+        *)
+            if [[ -z "$gitlab_pipeline_id" ]]; then
+                gitlab_pipeline_id="$1"
+            else
+                echo "Unexpected positional argument: '$1'" >&2
+                exit 1
+            fi
+            ;;
+        esac
+        shift
+    done
+
+    if [[ -z "$gitlab_url" ]]; then
+        echo "Missing required GitLab URL" >&2
+        exit 1
+    fi
+    gitlab_token="$(get_access_token "$gitlab_token_file")"
+    if [[ -z "$gitlab_token" ]]; then
+        echo "Failed to get GitLab access token" >&2
+        exit 1
+    fi
+
+    if [[ -z "$gitlab_project" ]]; then
+        echo "Missing required project ID/Path" >&2
+        exit 1
+    fi
+    gitlab_project="${gitlab_project//\//%2F}"
+
+    if [[ -z "$gitlab_pipeline_id" ]]; then
+        echo "Missing required positional argument PIPELINE_ID" >&2
+        exit 1
+    fi
+
+    echo "Get project details..." >&2
+    local -r project_details_json_object="$(query_project "$gitlab_url" "$gitlab_project" "$gitlab_token")"
+    local -r project_name="$(echo "$project_details_json_object" | jq -r '.name')"
+
+    # Get the details of the pipeline; filter out jobs that didn't run
+    echo "Get pipeline details..." >&2
+    local -r pipeline_details_json_array="$(query_pipeline_stats "$gitlab_url" "$gitlab_project" "$gitlab_pipeline_id" "$gitlab_token" | jq '.[] | select(.started_at != null)' | jq -s)"
+
+    # Extract a space-delimited list of the job ids
+    local -r job_ids_array=($(echo "$pipeline_details_json_array" | get_job_ids_from_pipeline_stats))
+
+    # Build up an array of the details of all the jobs' profiles and then jq slurp them at the end
+    local job_perfs=()
+    for i in "${!job_ids_array[@]}"; do
+        local job_id="${job_ids_array[$i]}"
+
+        # Extract the details of just this one job
+        local job_details_json_object
+        job_details_json_object="$(echo "$pipeline_details_json_array" | extract_job_details "$job_id")"
+
+        # Pull down the trace for the job and build a json array of the details for each section of the trace
+        local job_sections_json_array=""
+
+        if [[ "$details" == "1" ]]; then
+            echo "Get job trace $job_id..." >&2
+            job_sections_json_array="$(query_job_trace "$gitlab_url" "$gitlab_project" "$job_id" "$gitlab_token" | transform_job_trace_to_sections "$gitlab_pipeline_id" "$job_id")"
+        fi
+
+        # Combine the overall job details with the sections into a perf profile of the job
+        job_perfs["$i"]="$(transform_job_details_to_profile "$job_details_json_object" "$job_sections_json_array")"
+    done
+
+    local -r job_name_event="{\"name\": \"process_name\", \"ph\": \"M\", \"pid\": $gitlab_pipeline_id, \"args\": {\"name\": \"$project_name\"}}"
+
+    # Concat all the details we've gotten into final result
+    echo "[$job_name_event] ${job_perfs[*]}" | jq -s 'add' >"$output"
+}
+
+main "$@"
