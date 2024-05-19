@@ -1,7 +1,4 @@
 #!/bin/bash
-set -o errexit
-set -o pipefail
-set -o nounset
-set -o noclobber
 
-gvim -v "$@"
+# The Fedora vim package doesn't include the clipboard features I want, so use gvim instead
+exec gvim -v "$@"
