@@ -1,0 +1,17 @@
+# vi: ft=udevrules
+
+# I only have a USB-CANmodule1 with a single port, so all I want is to detect a systec probe, set a
+# 250k baud, and bring up the interface. For my purposes, the default "can0" interface name is
+# sufficient.
+#
+# I could possibly also use canplugd to autobaud, but I doubt I'll ever need access to a 500k bus,
+# and if I do, I can always set it manually.
+#
+# If you have a USB-CANmodule2 with dual ports, you'll maybe want to customize the interface names,
+# and match on the USB address to specify which one's which (follow the example in the sysWORXX
+# driver README.md).
+SUBSYSTEM=="usb" \
+    , DRIVERS=="systec_can" \
+    , ACTION=="add" \
+    , RUN+="/usr/sbin/ip link set can0 type can bitrate 250000" \
+    , RUN+="/usr/sbin/ip link set can0 up"
