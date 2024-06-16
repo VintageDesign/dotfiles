@@ -4,7 +4,26 @@ set -o pipefail
 set -o nounset
 set -o noclobber
 
-echo ""
-while [ $? -eq 0 ]; do
-    bash -c "$* && git rebase --continue"
+rebase_in_progress() {
+    test -d "$(git rev-parse --git-path rebase-merge)" || test -d "$(git rev-parse --git-path rebase-apply)"
+}
+
+if ! rebase_in_progress; then
+    echo "No rebase in progress" >&2
+    exit 1
+fi
+
+while true; do
+    if bash -c "$*"; then
+        if rebase_in_progress; then
+            git rebase --continue
+        else
+            echo "Command '$*' finished"
+            exit 0
+        fi
+    else
+        OLD_EXIT_STATUS=$?
+        echo "Command '$*' failed" >&2
+        exit $OLD_EXIT_STATUS
+    fi
 done
