@@ -32,7 +32,7 @@ main() {
         )"
 
         # Switch to the selected branch
-        --bind="enter:become($filter_branch | xargs git switch)"
+        --bind="enter:become($filter_branch | sed 's|^origin/||' | xargs git switch)"
 
         # Delete the selected branch(es)
         --bind="del:execute($filter_branches | xargs git branch --delete --force)+reload($reload)"
