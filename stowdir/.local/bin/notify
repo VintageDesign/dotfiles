@@ -1,0 +1,35 @@
+#!/bin/bash
+
+SECONDS=0
+bash -c "$*"
+EXIT_STATUS=$?
+ELAPSED_HOURS=$((SECONDS / 3600))
+ELAPSED_MINUTES=$(((SECONDS / 60) % 60))
+ELAPSED_SECONDS=$((SECONDS % 60))
+
+ELAPSED=""
+if [[ $ELAPSED_HOURS -ne 0 ]]; then
+    ELAPSED="${ELAPSED_HOURS}h"
+fi
+if [[ $ELAPSED_MINUTES -ne 0 ]]; then
+    if [[ -n $ELAPSED ]]; then
+        ELAPSED+=" "
+    fi
+    ELAPSED+="${ELAPSED_MINUTES}m"
+fi
+if [[ $ELAPSED_SECONDS -ne 0 ]]; then
+    if [[ -n $ELAPSED ]]; then
+        ELAPSED+=" "
+    fi
+    ELAPSED+="${ELAPSED_SECONDS}s"
+fi
+
+if [[ "$EXIT_STATUS" -eq 0 ]]; then
+    gsconnect --notification "Success ($ELAPSED)" --notification-body "$*"
+    echo "Command '$*' succeeded after $ELAPSED"
+else
+    gsconnect --notification "Failure [\$?=$EXIT_STATUS] ($ELAPSED)" --notification-body "$*"
+    echo "Command '$*' failed with status $EXIT_STATUS after $ELAPSED"
+fi
+
+exit "$EXIT_STATUS"
