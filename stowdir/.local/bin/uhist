@@ -8,6 +8,7 @@ from os.path import expanduser
 MULTI_COMMAND_COMMANDS = {
     "apt",
     "cargo",
+    "dnf",
     "docker",
     "git",
     "ip",
@@ -15,8 +16,9 @@ MULTI_COMMAND_COMMANDS = {
     "service",
     "sudo",
     "systemctl",
-    "time",
 }
+
+COMMAND_WRAPPERS = ["notify", "time"]
 
 BASH_HISTORY = expanduser("~/.bash_history")
 
@@ -25,7 +27,14 @@ def get_subcommands(command):
     """Takes the root, or root + subcommand if indicated by MULTI_COMMAND_COMMANDS."""
     if not command:
         return ""
+
+    # Strip off the wrapper
+    if command in COMMAND_WRAPPERS and len(command) >= 2:
+        command = command[1:]
+
     root = command[0]
+
+    # Concatenate any subcommands
     if root in MULTI_COMMAND_COMMANDS and len(command) >= 2:
         root = root + " " + command[1]
     return root
@@ -44,7 +53,11 @@ def main(n):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "-n", "--number", default=10, type=int, help="The number of most-common items to show",
+        "-n",
+        "--number",
+        default=10,
+        type=int,
+        help="The number of most-common items to show",
     )
 
     args = parser.parse_args()
