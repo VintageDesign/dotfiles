@@ -1,0 +1,51 @@
+#!/bin/bash
+#!/bin/bash
+set -o errexit
+set -o pipefail
+set -o nounset
+set -o noclobber
+
+export RED=$(tput setaf 1)
+export GREEN=$(tput setaf 2)
+export YELLOW=$(tput setaf 3)
+export BLUE=$(tput setaf 4)
+export RESET=$(tput sgr0)
+
+debug() {
+    echo "${BLUE}DEBUG:${RESET} $*"
+}
+
+info() {
+    echo "${GREEN}INFO:${RESET} $*"
+}
+
+error() {
+    echo "${RED}ERROR:${RESET} $*" >&2
+}
+
+gsconnect() {
+    ~/.local/share/gnome-shell/extensions/gsconnect@andyholmes.github.io/service/daemon.js "$@"
+}
+
+connected_device() {
+    local -r num_devs="$(gsconnect --list-devices | wc -l)"
+    if [[ "$num_devs" -ne 1 ]]; then
+        error "Found $num_devs available devices"
+        gsconnect --list-all
+
+        echo "Available:"
+        gsconnect --list-devices
+        exit 1
+    fi
+
+    gsconnect --list-devices
+}
+
+gsconnect_connected_device() {
+    local device
+    device="$(connected_device)"
+
+    gsconnect --device "$device" "$@"
+}
+
+gsconnect_connected_device "$@"
