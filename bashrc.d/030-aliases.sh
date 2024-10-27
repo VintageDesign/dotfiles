@@ -60,6 +60,10 @@ docker() {
         shift
         docker-cwd "$@"
         ;;
+    imf | ifm | if)
+        shift
+        docker-imf "$@"
+        ;;
     *)
         command docker "$@"
         ;;

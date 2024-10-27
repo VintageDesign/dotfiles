@@ -1,0 +1,67 @@
+#!/bin/bash
+set -o errexit
+set -o pipefail
+set -o nounset
+set -o noclobber
+
+## Print the (first) selected line
+SINGLE_SELECTION="echo {}"
+## Print all selected lines, one per line
+MULTI_SELECTION="printf '%s\n' {+}"
+
+filter-image-hash() {
+    awk '{ print $3 }'
+}
+
+filter-repository-tag() {
+    awk '{ print $1 ":" $2 }'
+}
+
+__FZF_LIST_IMAGES="docker images"
+__FZF_ARGS=(
+    # TODO: What's a useful preview?
+    # --preview-label="[ Image ]"
+    # --preview="echo preview"
+    # --preview-window="top,30%"
+    --header="<enter> run   <del> delete   <ctrl-p> pull
+
+"
+    --header-lines=1
+
+    # Run the image in docker-cwd
+    --bind="enter:become(
+        $(declare -f filter-image-hash)
+        $SINGLE_SELECTION | filter-image-hash | xargs -o docker-cwd
+    )"
+
+    # Delete
+    --bind="del:execute(
+        $(declare -f filter-image-hash)
+        $MULTI_SELECTION | filter-image-hash | xargs docker rmi
+    )+reload($__FZF_LIST_IMAGES)"
+
+    # Pull
+    --bind="ctrl-p:become(
+        $(declare -f filter-repository-tag)
+        $MULTI_SELECTION | filter-repository-tag | xargs --max-lines=1 docker pull
+    )"
+
+    # Retag
+    # TODO: How to input the new name?
+    # --bind="ctrl-t:execute(
+    # )+reload($__FZF_LIST_IMAGES)"
+)
+
+if ! $__FZF_LIST_IMAGES | fzf \
+    --ansi \
+    --no-sort \
+    --reverse \
+    --exit-0 \
+    --multi \
+    "${__FZF_ARGS[@]}"; then
+
+    # 130 means user exit
+    if [[ $? -eq 130 ]]; then
+        true
+    fi
+fi
