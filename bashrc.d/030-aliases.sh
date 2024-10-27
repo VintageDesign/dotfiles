@@ -23,7 +23,8 @@ alias wiki='vim $VIMWIKI_PATH/index.wiki'
 alias todo='vim $VIMWIKI_PATH/todo/todo.wiki'
 alias readelf='readelf --wide'
 
-function man() {
+# Thin shim for man that provides primitive coloring, and help for builtins
+man() {
     # Export the variables in a subshell to avoid polluting
     # the global environment in unexpected ways.
     (
@@ -48,4 +49,24 @@ function man() {
             ;;
         esac
     )
+}
+
+# Thin shim that lets me inject my own subcommands
+docker() {
+    local subcommand="${1:-''}"
+
+    case "$subcommand" in
+    cwd)
+        shift
+        docker-cwd "$@"
+        ;;
+    *)
+        command docker "$@"
+        ;;
+    esac
+}
+
+# Run the given command with xtrace enabled
+xtrace() {
+    bash -xc "$*"
 }
