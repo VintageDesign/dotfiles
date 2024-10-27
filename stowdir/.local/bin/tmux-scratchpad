@@ -1,0 +1,17 @@
+#!/bin/bash
+set -o errexit
+set -o pipefail
+set -o nounset
+set -o noclobber
+
+is_scratchpad_active() {
+    [[ "$(tmux display-message -p '#S')" = "scratch" ]]
+}
+
+if is_scratchpad_active; then
+    # detach from scratchpad
+    tmux detach-client
+else
+    # open scratchpad
+    tmux new-session -A -s scratch -c ~/scratchpad
+fi
