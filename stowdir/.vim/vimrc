@@ -632,15 +632,6 @@ let test#strategy = "dispatch"
 " Keybinds
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" Handle tmux $TERM quirks in vim
-" See: https://stackoverflow.com/a/9674158
-if $TERM =~ '^screen-256color'
-    map <Esc>OH <Home>
-    map! <Esc>OH <Home>
-    map <Esc>OF <End>
-    map! <Esc>OF <End>
-endif
-
 " Turn off search highlighting with enter
 nnoremap <CR> :nohl<CR><CR>
 

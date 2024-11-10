@@ -11,6 +11,7 @@ if prompt_default_no "Install base system packages?"; then
         iperf
         make
         moreutils
+        ncurses-term
         net-tools
         nmap
         openssh-server
