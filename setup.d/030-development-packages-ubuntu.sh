@@ -7,6 +7,7 @@ if prompt_default_no "Install native software development packages?"; then
         clang-tidy
         clangd
         cmake
+        csvtool
         debuginfod
         doxygen
         elfutils
