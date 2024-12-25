@@ -179,6 +179,12 @@ set nojoinspaces
 set title
 " Same as title string set by .bashrc, but with the filename and mode too.
 set titlestring=%{$USER}@%{hostname()}:\ %F\ %m
+set titleold=
+
+augroup NoThanksForFlyingVim
+    autocmd!
+    autocmd VimLeave * set notitle
+augroup END
 
 " Show line numbers
 set number
@@ -430,10 +436,13 @@ let g:ale_fixers = {
             \   'html':     ['prettier'],
             \   'javascript':['prettier'],
             \   'json':     ['jq'],
+            \   'markdown': ['dprint'],
             \   'python':   ['isort', 'black'],
             \   'rust':     ['rustfmt'],
             \   'sh':       ['shfmt'],
             \   'tex':      ['latexindent'],
+            \   'toml':     ['dprint'],
+            \   'vimwiki':  ['dprint'],
             \}
 let g:ale_linters = {
             \   'cmake':    ['cmake_lint'],
