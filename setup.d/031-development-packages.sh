@@ -126,7 +126,7 @@ if prompt_default_no "Install/update Rust?"; then
         curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
         # shellcheck disable=SC1090
         [ -f ~/.cargo/env ] && source ~/.cargo/env
-        rustup component add rust-analyzer
+        rustup component add rust-analyzer llvm-tools-preview
         rustup completions bash >"$DOTFILES_SETUP_SCRIPT_DIR/stowdir/.bash_completion.d/rustup"
         rustup completions bash cargo >"$DOTFILES_SETUP_SCRIPT_DIR/stowdir/.bash_completion.d/cargo"
     fi
@@ -139,7 +139,9 @@ if prompt_default_no "Install/update Rust?"; then
             cargo-download \
             cargo-duplicates \
             cargo-expand \
+            cargo-llvm-cov \
             cargo-modules \
+            cargo-mutants \
             cargo-nextest \
             cargo-outdated \
             cargo-udeps \
@@ -149,6 +151,9 @@ if prompt_default_no "Install/update Rust?"; then
             minidump-stackwalk \
             rustfilt \
             ;
+
+        cargo mutants --completions bash >"$DOTFILES_SETUP_SCRIPT_DIR/stowdir/.bash_completion.d/cargo-mutants"
+        # TODO: Write own completions for nextest since its CLI is subtlely different from cargo-test
     fi
 fi # Rust
 
