@@ -151,9 +151,6 @@ if prompt_default_no "Install/update Rust?"; then
             minidump-stackwalk \
             rustfilt \
             ;
-
-        cargo mutants --completions bash >"$DOTFILES_SETUP_SCRIPT_DIR/stowdir/.bash_completion.d/cargo-mutants"
-        # TODO: Write own completions for nextest since its CLI is subtlely different from cargo-test
     fi
 fi # Rust
 
