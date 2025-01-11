@@ -450,9 +450,12 @@ let g:ale_fixers = {
             \   'toml':     ['dprint'],
             \   'vimwiki':  ['dprint'],
             \}
+
+" npm install -g typescript-language-server typescript
 let g:ale_linters = {
             \   'cmake':    ['cmake_lint'],
             \   'cpp':      ['clangd'],
+            \   'javascript':['tsserver', 'eslint'],
             \   'python':   ['pydocstyle', 'pylint', 'pylsp', 'jedils'],
             \   'rust':     ['analyzer'],
             \   'tex':      ['chktex'],
