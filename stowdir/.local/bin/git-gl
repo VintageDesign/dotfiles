@@ -106,6 +106,8 @@ fzf-git-log() {
     shift
 
     local fzf_args=(
+        --style=full
+        --list-border=none
         # Show a preview of each commit with 'git show | delta'
         --preview-label="[ Commit ]"
         --preview="
@@ -155,9 +157,9 @@ fzf-git-log() {
         )"
     )
 
-    local fzf_header="<ctrl-h> copy hash   <ctrl-g> copy message   <ctrl-y> checkout"
+    local fzf_header="<C-h> copy hash   <C-g> copy message   <C-y> checkout"
     if [[ "$rebase" = "true" ]]; then
-        fzf_header="$fzf_header   <ctrl-r> rebase"
+        fzf_header="$fzf_header   <C-r> rebase"
         fzf_args+=(
             # Interactively rebase the current branch onto the selected commit
             #
@@ -190,7 +192,7 @@ fzf-git-log() {
             )+abort"
         )
     else
-        fzf_header="$fzf_header   <ctrl-p> cherry pick"
+        fzf_header="$fzf_header   <C-p> cherry pick"
         fzf_args+=(
             # Cherry pick the selected commits (in the order that they were selected)
             --bind="ctrl-p:execute(

@@ -39,6 +39,8 @@ strip-trailing-whitespace() {
 
 main() {
     local -r fzf_args=(
+        --style=full
+        --list-border=none
         --header-first
         --header="<enter> checkout   <ctrl-f> fetch   <ctrl-h> copy   <delete> delete"
 
