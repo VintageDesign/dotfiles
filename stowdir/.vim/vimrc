@@ -365,15 +365,19 @@ augroup overrideYamlIndentation
     autocmd FileType yaml setlocal ts=4 sts=4 sw=4 expandtab
 augroup END
 
+augroup exitVimIfQuickfixIsLastWindowOpen
+    autocmd!
+    autocmd WinEnter * if winnr('$') == 1 && &buftype == "quickfix" | set buftype=nofile | call SetAltScreen() | q | endif
+augroup END
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Netrw
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Close netrw if last window open.
-augroup netrw_close
+augroup exitVimIfNetrwIsLastWindowOpen
     autocmd!
-    autocmd WinEnter * if winnr("$") == 1 && getbufvar(winbufnr(winnr()), "&filetype") == "netrw" | q | endif
+    autocmd WinEnter * if winnr("$") == 1 && getbufvar(winbufnr(winnr()), "&filetype") == "netrw" | call SetAltScreen() | q | endif
 augroup END
 
 " Open netrw to the current file's directory
