@@ -1,4 +1,5 @@
 {
+    "alwaysOnSystemIdle": true,
     "closeAppOnCross": true,
     "disableGlobalShortcuts": [
         "Ctrl+Shift+C"
