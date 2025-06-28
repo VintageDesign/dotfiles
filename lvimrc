@@ -1,0 +1,4 @@
+" Copy this file into a project as .lvimrc
+
+" Switch back to 2018 rustfmt edition for certain work projects
+let g:ale_rust_rustfmt_options = '--config group_imports=StdExternalCrate,imports_granularity=Module'
