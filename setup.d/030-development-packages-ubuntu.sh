@@ -35,7 +35,6 @@ if prompt_default_no "Install native software development packages?"; then
         pandoc
         pkg-config
         python3-dev
-        python3-distutils
         sqlite3
         sqlitebrowser
         valgrind

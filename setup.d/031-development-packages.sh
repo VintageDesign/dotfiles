@@ -11,7 +11,7 @@ if prompt_default_no "Install Python development packages?"; then
     fi
 
     if prompt_default_yes "Install/update Python development packages?"; then
-        pip install --upgrade --user --requirement "$DOTFILES_SETUP_SCRIPT_DIR/requirements.txt"
+        pip install --break-system-packages --upgrade --user --requirement "$DOTFILES_SETUP_SCRIPT_DIR/requirements.txt"
         info "${YELLOW}Modifying $(which pylint) to use environment python instead of system python..."
         sed -i 's|/usr/bin/python3|/usr/bin/env python3|' "$(which pylint)"
     fi
