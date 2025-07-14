@@ -317,16 +317,18 @@ def main(args):
 
 if __name__ == "__main__":
     args = parse_args()
-    fmt = "%(asctime)s - %(module)s - %(levelname)s: %(message)s"
+    fmt = "%(asctime)s %(module)s %(levelname)s: %(message)s"
     logging.basicConfig(
         format=fmt,
+        datefmt="%Y-%m-%dT%H:%M:%S%z",
         level=args.log_level,
         stream=sys.stderr,
     )
     # Color log output if possible, because I'm a sucker
     try:
         import coloredlogs
-        coloredlogs.install(fmt=fmt, level=args.log_level)
+
+        coloredlogs.install(fmt=fmt, level=args.log_level, datefmt="%Y-%m-%dT%H:%M:%S%z")
     except ImportError:
         pass
     main(args)
