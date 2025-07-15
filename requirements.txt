@@ -4,16 +4,12 @@ coloredlogs
 compdb
 git-filter-repo
 gitlint
-ipython
 isort
 jedi
 jedi-language-server
 libtmux
-matplotlib>=3.6.0
 more-itertools
-numpy
 parsedatetime
-pandas
 pip
 pydocstyle
 pygments
