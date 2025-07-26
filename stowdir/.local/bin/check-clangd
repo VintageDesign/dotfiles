@@ -11,7 +11,7 @@ FILE="$1"
 "$CLANGD" \
     --completion-style=bundled \
     --compute-dead \
-    --query-driver="/opt/**/*-linux-*,/usr/bin/c++" \
+    --query-driver="/opt/**/*-linux-*,/usr/bin/c++,/usr/bin/cc,/usr/bin/gcc,/usr/bin/g++" \
     -j=4 \
     --clang-tidy \
     --log=verbose \
