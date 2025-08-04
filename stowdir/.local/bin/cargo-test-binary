@@ -17,5 +17,5 @@ set -o noclobber
 #     ./target/debug/deps/snap-23e7d0bd36164783
 #     $ cargo test-binary --lib
 #     ./target/debug/deps/generative-fb99f3d8284e5e30
-cargo --quiet test --no-run --message-format json "$@" |
+cargo test --no-run --message-format json "$@" |
     jq -r 'select(.executable != null) | .executable'
