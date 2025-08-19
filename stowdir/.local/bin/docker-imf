@@ -23,7 +23,7 @@ __FZF_ARGS=(
     # --preview-label="[ Image ]"
     # --preview="echo preview"
     # --preview-window="top,30%"
-    --header="<enter> run   <del> delete   <ctrl-p> pull
+    --header="<enter> run   <del> delete   <ctrl-p> pull   <ctrl-y> copy
 
 "
     --header-lines=1
@@ -44,6 +44,12 @@ __FZF_ARGS=(
     --bind="ctrl-p:become(
         $(declare -f filter-repository-tag)
         $MULTI_SELECTION | filter-repository-tag | xargs --max-lines=1 docker pull
+    )"
+
+    # Copy image
+    --bind="ctrl-y:execute(
+        $(declare -f filter-repository-tag)
+        $MULTI_SELECTION | filter-repository-tag | clip
     )"
 
     # Retag
