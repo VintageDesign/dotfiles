@@ -113,7 +113,7 @@ export GIT_PS1_SHOWUPSTREAM='auto'
 export GIT_PS1_SHOWCONFLICTSTATE='yes'
 
 if function_exists __git_ps1; then
-    PS1="${PS1}\[${BLUE}\]\$(__git_ps1)\[${RESET}\]"
+    PS1="\[${YELLOW}\]\$(__git_ps1)\[${RESET}\] ${PS1}"
 fi
 
 ##################################################################################################
