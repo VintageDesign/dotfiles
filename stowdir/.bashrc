@@ -13,32 +13,36 @@ export PATH="$HOME/.local/bin${PATH:+:${PATH}}"
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 [ -f ~/.cargo/env ] && source ~/.cargo/env
 
-has_existing_non_scratch_tmux_session() {
-    if ! tmux info &>/dev/null; then
-        # tmux server isn't running; there's no sessions of any kind
-        return 1
-    fi
+#has_existing_non_scratch_tmux_session() {
+#    if ! tmux info &>/dev/null; then
+#        # tmux server isn't running; there's no sessions of any kind
+#        return 1
+#    fi
+#
+#    local non_scratch_sessions
+#    non_scratch_sessions="$(tmux list-sessions -f '#{?#{==:#S,scratch},,#S}' 2>/dev/null)"
+#    test -n "$non_scratch_sessions"
+#}
+#
+#if [[ -z "$TMUX" ]]; then
+#    if ! has_existing_non_scratch_tmux_session; then
+#        # If there are no existing sessions, make a new one
+#        tmux new-session
+#    else
+#        # If there _is_ an existing session, make a new one, but use the first discovered session as
+#        # a shared session group. This is the "rogue mode" from https://github.com/zolrath/wemux
+#        # Windows are shared (and cursors within a window). But two sessions can be in different
+#        # windows at the same time.
+#        #
+#        # Note that for this to be a pleasant experience, both sessions should use the same size.
+#        # Otherwise, when a window gets focused, it will resize both windows.
+#        tmux new-session -t "$(tmux list-sessions -F '#S' | head -1)"
+#    fi
+#fi
 
-    local non_scratch_sessions
-    non_scratch_sessions="$(tmux list-sessions -f '#{?#{==:#S,scratch},,#S}' 2>/dev/null)"
-    test -n "$non_scratch_sessions"
-}
-
-if [[ -z "$TMUX" ]]; then
-    if ! has_existing_non_scratch_tmux_session; then
-        # If there are no existing sessions, make a new one
-        tmux new-session
-    else
-        # If there _is_ an existing session, make a new one, but use the first discovered session as
-        # a shared session group. This is the "rogue mode" from https://github.com/zolrath/wemux
-        # Windows are shared (and cursors within a window). But two sessions can be in different
-        # windows at the same time.
-        #
-        # Note that for this to be a pleasant experience, both sessions should use the same size.
-        # Otherwise, when a window gets focused, it will resize both windows.
-        tmux new-session -t "$(tmux list-sessions -F '#S' | head -1)"
-    fi
-fi
+case $- in *i*)
+    [ -z "$TMUX" ] && exec tmux
+esac
 
 ##################################################################################################
 # Find the location of the dotfiles repository by resolving the ~/.bashrc symlink.
@@ -65,3 +69,5 @@ for rcfile in "${DOTFILES_DIR}/bashrc.d/"*.sh; do
     [ -f "$rcfile" ] && source "$rcfile"
 done
 unset -v rcfile
+
+source ~/commands/utils.sh
