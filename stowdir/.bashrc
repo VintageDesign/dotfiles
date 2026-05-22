@@ -10,7 +10,6 @@ esac
 # Add ~/.local/bin/ to PATH
 export PATH="$HOME/.local/bin${PATH:+:${PATH}}"
 # Need to be sourced before everything else so that bash-completion works as expected.
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 [ -f ~/.cargo/env ] && source ~/.cargo/env
 
 #has_existing_non_scratch_tmux_session() {
@@ -40,8 +39,8 @@ export PATH="$HOME/.local/bin${PATH:+:${PATH}}"
 #    fi
 #fi
 
-case $- in *i*)
-    [ -z "$TMUX" ] && exec tmux
+case $- in *i*) 
+    [ -z "$TMUX" ] && exec tmux 
 esac
 
 ##################################################################################################
@@ -70,4 +69,7 @@ for rcfile in "${DOTFILES_DIR}/bashrc.d/"*.sh; do
 done
 unset -v rcfile
 
+alias vim=nvim
 source ~/commands/utils.sh
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
