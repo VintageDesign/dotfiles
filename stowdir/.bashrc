@@ -39,8 +39,13 @@ export PATH="$HOME/.local/bin${PATH:+:${PATH}}"
 #    fi
 #fi
 
-case $- in *i*) 
-    [ -z "$TMUX" ] && exec tmux 
+# Prevent Copilot from nuking your bash history
+copilot() {
+    HISTFILE=/dev/null command copilot "$@"
+}
+
+case $- in *i*)
+    [ -z "$TMUX" ] && exec tmux
 esac
 
 ##################################################################################################
@@ -73,3 +78,5 @@ alias vim=nvim
 source ~/commands/utils.sh
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+export CMAKE_CXX_COMPILER_LAUNCHER=ccache
+export CMAKE_C_COMPILER_LAUNCHER=ccache
