@@ -7,6 +7,10 @@ case $- in
 *) return ;;
 esac
 
+# Disable XON/XOFF flow control so Ctrl-S (and Ctrl-Q) are free for keybindings
+# instead of freezing/unfreezing terminal output.
+stty -ixon
+
 # Add ~/.local/bin/ to PATH
 export PATH="$HOME/.local/bin${PATH:+:${PATH}}"
 # Need to be sourced before everything else so that bash-completion works as expected.
