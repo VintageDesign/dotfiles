@@ -22,10 +22,9 @@ if prompt_default_no "Install base system packages?"; then
         stow
         traceroute
         tree
-        vim-gtk
+        vim
         wl-clipboard
     )
 
     sudo apt install -y --no-install-recommends "${PACKAGES[@]}"
-    sudo snap install poke
 fi
