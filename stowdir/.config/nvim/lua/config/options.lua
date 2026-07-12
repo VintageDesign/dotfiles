@@ -2,6 +2,8 @@
 -- Add any additional options here
 -- Options are automatically loaded before lazy.nvim startup
 vim.opt.relativenumber = false
+vim.opt.colorcolumn = "100"
+vim.opt.textwidth = 100
 vim.api.nvim_create_autocmd("VimEnter", {
   group = vim.api.nvim_create_augroup("open_explorer", {}),
   callback = function()
